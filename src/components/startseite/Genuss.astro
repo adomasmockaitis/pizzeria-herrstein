@@ -1,0 +1,218 @@
+---
+// Abschnitt "Italienischer Genuss pur" mit Speisekarten-Intro und gestapelter Teaser-Karte
+import { Image } from 'astro:assets';
+import Button from '../Button.astro';
+import Karte from '../Karte.astro';
+import texte from '../../content/texte.json';
+import pizzaRand from '../../assets/fotos/pizza-rand-inna-gurina.webp';
+
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+---
+
+<section class="genuss" id="genuss" aria-labelledby="genuss-titel">
+  <!-- Deko-Pizza am linken Rand (nur >= 1024px) -->
+  <div class="genuss__pizza" aria-hidden="true">
+    <div class="genuss__pizza-rahmen">
+      <Image
+        src={pizzaRand}
+        alt=""
+        widths={[320, 520, 800]}
+        sizes="(min-width: 1024px) 460px, 0px"
+        loading="lazy"
+        class="genuss__pizza-bild"
+      />
+    </div>
+  </div>
+
+  <div class="container genuss__grid">
+    <div class="genuss__intro">
+      <h2 id="genuss-titel" class="genuss__titel">{texte.genuss.ueberschrift}</h2>
+      <p class="genuss__text">{texte.genuss.text}</p>
+      <div class="genuss__aktion">
+        <Button href={`${base}speisekarte`} variante="rot" groesse="klein">
+          {texte.genuss.button}
+        </Button>
+      </div>
+    </div>
+
+    <div class="genuss__teaser-stapel">
+      <Karte farbe="gruen" schatten class="genuss__teaser">
+        <h3 class="genuss__teaser-titel">{texte.genuss.teaserTitel}</h3>
+        <p class="genuss__teaser-text">{texte.genuss.teaserText}</p>
+        <div class="genuss__teaser-aktion">
+          <Button href={`${base}speisekarte#fleischgerichte`} variante="rot" groesse="klein">
+            {texte.genuss.teaserButton}
+          </Button>
+        </div>
+      </Karte>
+    </div>
+  </div>
+</section>
+
+<style>
+  .genuss {
+    position: relative;
+    overflow-x: clip;
+    padding-top: var(--abstand-l);
+    margin-top: calc(var(--abstand-sektion) - var(--abstand-l));
+  }
+
+  .genuss__pizza {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .genuss__pizza {
+      display: block;
+      position: absolute;
+      width: 240px;
+      left: -165px;
+      top: 52%;
+      aspect-ratio: 603 / 621;
+      transform: rotate(180deg);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .genuss__pizza-rahmen {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .genuss__pizza-bild {
+      position: absolute;
+      max-width: none;
+      width: 179.27%;
+      height: 115.99%;
+      left: -19.82%;
+      top: -10.66%;
+    }
+  }
+
+  @media (min-width: 1380px) {
+    .genuss__pizza {
+      width: clamp(320px, 27vw, 520px);
+      left: clamp(-290px, -15.5vw, -180px);
+      top: 1.5rem;
+    }
+  }
+
+  .genuss__grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--abstand-xl);
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .genuss__grid {
+      grid-template-columns: 1.15fr 1fr;
+      gap: clamp(2rem, 4vw, 4rem);
+    }
+  }
+
+  .genuss__intro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--abstand-m);
+  }
+
+  .genuss__titel {
+    font-size: var(--text-xl);
+    font-weight: var(--gewicht-fett);
+    line-height: var(--zeilenhoehe-eng);
+  }
+
+  .genuss__text {
+    font-size: var(--text-basis);
+    line-height: var(--zeilenhoehe);
+  }
+
+  @media (min-width: 1024px) {
+    .genuss__text {
+      font-size: var(--text-l);
+    }
+  }
+
+  .genuss__aktion {
+    margin-top: var(--abstand-xs);
+  }
+
+  /* Stapel-Effekt: Wrapper bildet eigenen Stacking Context, ::before liegt dahinter */
+  .genuss__teaser-stapel {
+    position: relative;
+    isolation: isolate;
+    margin-inline: 0.25rem;
+  }
+
+  .genuss__teaser-stapel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: var(--radius-karte);
+    background-color: var(--farbe-rot);
+    transform: rotate(1.2deg);
+    pointer-events: none;
+  }
+
+  .genuss__teaser-stapel :global(.genuss__teaser) {
+    position: relative;
+    z-index: 1;
+    transform: rotate(-1.2deg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--abstand-m);
+  }
+
+  @media (min-width: 768px) {
+    .genuss__teaser-stapel::before {
+      transform: rotate(1.8deg);
+    }
+
+    .genuss__teaser-stapel :global(.genuss__teaser) {
+      transform: rotate(-2deg);
+    }
+  }
+
+  .genuss__teaser-titel {
+    font-size: var(--text-xl);
+    font-weight: var(--gewicht-fett);
+    line-height: var(--zeilenhoehe-eng);
+  }
+
+  @media (min-width: 1024px) {
+    .genuss__teaser-titel {
+      font-size: var(--text-2xl);
+    }
+  }
+
+  .genuss__teaser-text {
+    font-size: var(--text-basis);
+    line-height: var(--zeilenhoehe);
+  }
+
+  @media (min-width: 1024px) {
+    .genuss__teaser-text {
+      font-size: var(--text-l);
+    }
+  }
+
+  .genuss__teaser-aktion {
+    margin-top: var(--abstand-xs);
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  @media (min-width: 768px) {
+    .genuss__teaser-aktion {
+      justify-content: flex-end;
+    }
+  }
+</style>

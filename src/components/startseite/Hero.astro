@@ -1,0 +1,301 @@
+---
+// Vollbild-Hero mit Foto, großem Logo (h1), Headline, Subline, CTA-Buttons und Scroll-Pfeil
+import { Image } from 'astro:assets';
+import Button from '../Button.astro';
+import { DEMO_MODE } from '../../config';
+import kontakt from '../../content/kontakt.json';
+import texte from '../../content/texte.json';
+import heroPizza from '../../assets/fotos/hero-pizza-ivan-torres.jpg';
+import logoGross from '../../assets/logo/logo-gross.svg';
+import pfeilRunter from '../../assets/icons/pfeil-runter.png';
+
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+---
+
+<section
+  class:list={['hero', 'auf-rot', DEMO_MODE && 'hero--mit-demo']}
+  id="top"
+  data-hero-sentinel
+  aria-labelledby="hero-titel"
+>
+  <Image
+    src={heroPizza}
+    alt={texte.hero.bildAlt}
+    widths={[640, 1024, 1440, 1920]}
+    sizes="100vw"
+    loading="eager"
+    fetchpriority="high"
+    class="hero__hintergrund"
+  />
+  <div class="hero__overlay" aria-hidden="true"></div>
+  <div class="hero__verlauf-unten" aria-hidden="true"></div>
+
+  <div class="container hero__inhalt">
+    <h1 id="hero-titel" class="hero__titel">
+      <Image
+        src={logoGross}
+        alt={kontakt.name}
+        class="hero__logo"
+        loading="eager"
+      />
+    </h1>
+
+    <div class="hero__textgruppe">
+      <p class="hero__headline">{texte.hero.headline}</p>
+      <p class="hero__subline">{texte.hero.subline}</p>
+    </div>
+
+    <div class="hero__aktionen">
+      <Button href={kontakt.telefon.link} variante="rot" icon="telefon">
+        {texte.hero.buttonPrimaer}
+      </Button>
+      <Button href={`${base}speisekarte`} variante="hell">
+        {texte.hero.buttonSekundaer}
+      </Button>
+    </div>
+  </div>
+
+  <a
+    href="#genuss"
+    class="hero__pfeil"
+    data-hero-pfeil
+    aria-label={texte.hero.scrollPfeilLabel}
+  >
+    <Image
+      src={pfeilRunter}
+      alt=""
+      width={30}
+      height={30}
+      loading="eager"
+      class="hero__pfeil-icon"
+      aria-hidden="true"
+    />
+  </a>
+</section>
+
+<script>
+  const pfeil = document.querySelector<HTMLAnchorElement>('[data-hero-pfeil]');
+
+  if (pfeil) {
+    const aktualisierePfeil = () => {
+      pfeil.classList.toggle('ist-versteckt', window.scrollY > 40);
+    };
+
+    aktualisierePfeil();
+    window.addEventListener('scroll', aktualisierePfeil, { passive: true });
+  }
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    height: 100vh;
+    height: 100svh;
+    min-height: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    padding-top: calc(var(--header-hoehe) + var(--abstand-m));
+    padding-bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px));
+    color: var(--farbe-text-hell);
+  }
+
+  .hero--mit-demo {
+    height: calc(100vh - var(--demo-balken-hoehe));
+    height: calc(100svh - var(--demo-balken-hoehe));
+  }
+
+  @media (min-width: 768px) {
+    .hero {
+      padding-top: calc(var(--header-hoehe) + var(--abstand-l));
+    }
+  }
+
+  .hero__hintergrund {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 40%;
+    z-index: 0;
+  }
+
+  .hero__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--farbe-schwarz) 24%, transparent) 0%,
+      color-mix(in srgb, var(--farbe-schwarz) 46%, transparent) 100%
+    );
+  }
+
+  /* Unterer Verlauf ins Offwhite (Figma Rectangle 192) */
+  .hero__verlauf-unten {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: clamp(2.5rem, 6svh, 4.5rem);
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      color-mix(in srgb, var(--farbe-offwhite) 25%, transparent) 55%,
+      var(--farbe-offwhite) 100%
+    );
+  }
+
+  .hero__inhalt {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(var(--abstand-m), 3svh, var(--abstand-xl));
+    text-align: center;
+  }
+
+  .hero__titel {
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Seitenverhältnis des großen SVG-Logos (245.327 × 177.329) exakt wahren */
+  .hero__logo {
+    width: min(176px, 50vw);
+    height: auto;
+    aspect-ratio: 245.327 / 177.329;
+  }
+
+  @media (min-width: 768px) {
+    .hero__logo {
+      width: clamp(11rem, 22svh, 15.33rem);
+    }
+  }
+
+  .hero__textgruppe {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--abstand-s);
+  }
+
+  .hero__headline {
+    font-family: var(--schrift-headline);
+    font-weight: 400;
+    font-size: var(--text-hero);
+    line-height: var(--zeilenhoehe-eng);
+    color: var(--farbe-text-hell);
+    text-shadow: var(--schatten-text);
+    max-width: none;
+  }
+
+  .hero__subline {
+    font-family: var(--schrift-basis);
+    font-weight: var(--gewicht-normal);
+    font-size: var(--text-hero-sub);
+    line-height: var(--zeilenhoehe);
+    color: var(--farbe-text-hell);
+    text-shadow: var(--schatten-text);
+    max-width: 45.5rem;
+    margin-inline: auto;
+  }
+
+  .hero__aktionen {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--abstand-m);
+    margin-top: var(--abstand-xs);
+  }
+
+  /* Mobil (iOS-typisch): Buttons untereinander in voller Breite */
+  @media (max-width: 767px) {
+    .hero__aktionen {
+      flex-direction: column;
+      flex-wrap: nowrap;
+      align-items: stretch;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .hero__aktionen :global(.btn) {
+      width: 100%;
+      min-height: 50px;
+      border-radius: 14px;
+      font-size: var(--text-basis);
+    }
+  }
+
+  /* Scroll-Pfeil: auch auf Mobil sichtbar, 44×44 px Tippfläche, blendet beim Scrollen aus */
+  .hero__pfeil {
+    position: absolute;
+    z-index: 3;
+    bottom: calc(var(--abstand-l) + env(safe-area-inset-bottom, 0px));
+    left: 50%;
+    transform: translateX(-50%);
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition:
+      opacity 200ms ease,
+      transform 100ms ease;
+  }
+
+  .hero__pfeil.ist-versteckt:not(:focus-visible),
+  :global(html.nach-hero) .hero__pfeil:not(:focus-visible) {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .hero__pfeil:active {
+    transform: translateX(-50%) scale(0.95);
+    opacity: 0.85;
+  }
+
+  .hero__pfeil-icon {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px color-mix(in srgb, var(--farbe-schwarz) 60%, transparent));
+    animation: pfeil-wippen 2s ease-in-out infinite;
+  }
+
+  @media (min-width: 768px) {
+    .hero__pfeil-icon {
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  @keyframes pfeil-wippen {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(6px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__pfeil {
+      transition: none;
+    }
+
+    .hero__pfeil-icon {
+      animation: none;
+    }
+  }
+</style>

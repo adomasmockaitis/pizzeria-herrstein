@@ -1,323 +1,65 @@
 ---
-// Checkpoint-Seite für Phase 2: Vorschau von Layout, Header, Hero, Buttons, Karten und Footer
-import { Image } from 'astro:assets';
+// Startseite: Zusammenspiel der 5 Sektionen mit Schema.org-Restaurant-Metadaten
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Button from '../components/Button.astro';
-import Karte from '../components/Karte.astro';
+import Hero from '../components/startseite/Hero.astro';
+import Genuss from '../components/startseite/Genuss.astro';
+import Lieferservice from '../components/startseite/Lieferservice.astro';
+import Lieferkosten from '../components/startseite/Lieferkosten.astro';
+import OeffnungszeitenKontakt from '../components/startseite/OeffnungszeitenKontakt.astro';
 import kontakt from '../content/kontakt.json';
+import oeffnungszeiten from '../content/oeffnungszeiten.json';
 import texte from '../content/texte.json';
-import heroPizza from '../assets/fotos/hero-pizza-ivan-torres.jpg';
-import logoGross from '../assets/logo/logo-gross.svg';
-import telefonIcon from '../assets/icons/telefon.png';
-import whatsappIcon from '../assets/icons/whatsapp.png';
-import pfeilRunter from '../assets/icons/pfeil-runter.png';
 
-const rawBase = import.meta.env.BASE_URL;
-const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+const schemaTagMap: Record<string, string> = {
+  Montag: 'Monday',
+  Dienstag: 'Tuesday',
+  Mittwoch: 'Wednesday',
+  Donnerstag: 'Thursday',
+  Freitag: 'Friday',
+  Samstag: 'Saturday',
+  Sonntag: 'Sunday',
+};
+
+const openingHoursSpecification = oeffnungszeiten.tage.flatMap((eintrag) => {
+  if (eintrag.ruhetag || eintrag.zeiten.length === 0) {
+    return [];
+  }
+  const dayOfWeek = schemaTagMap[eintrag.tag] ?? eintrag.tag;
+  return eintrag.zeiten.map((spanne) => ({
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek,
+    opens: spanne.von,
+    closes: spanne.bis,
+  }));
+});
+
+const restaurantSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Restaurant',
+  name: kontakt.name,
+  servesCuisine: 'Italienisch',
+  telephone: kontakt.telefon.anzeige,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: kontakt.adresse.strasse,
+    postalCode: kontakt.adresse.plz,
+    addressLocality: kontakt.adresse.ort,
+    addressCountry: 'DE',
+  },
+  openingHoursSpecification,
+};
 ---
 
 <BaseLayout
   title={kontakt.name}
-  description={texte.hero.subline}
+  description={texte.meta.beschreibung}
   headerTransparent={true}
   aktiv="home"
 >
-  <!-- Provisorischer Hero-Bereich (Phase-2-Checkpoint) -->
-  <section class="hero auf-rot" id="top" data-hero-sentinel>
-    <Image
-      src={heroPizza}
-      alt="Frisch gebackene Pizza mit geschmolzenem Käse und frischen Kräutern auf einem Holzbrett"
-      widths={[640, 1024, 1440, 1920]}
-      sizes="100vw"
-      loading="eager"
-      fetchpriority="high"
-      class="hero__hintergrund"
-    />
-    <div class="hero__overlay" aria-hidden="true"></div>
-
-    <div class="container hero__inhalt">
-      <h1 class="hero__titel">
-        <Image
-          src={logoGross}
-          alt={kontakt.name}
-          class="hero__logo"
-          loading="eager"
-        />
-      </h1>
-
-      <div class="hero__aktionen">
-        <Button href={kontakt.telefon.link} variante="rot" icon="telefon">
-          {texte.hero.buttonPrimaer}
-        </Button>
-        <Button href={`${base}speisekarte`} variante="hell">
-          {texte.hero.buttonSekundaer}
-        </Button>
-      </div>
-    </div>
-
-    <!-- Scroll-Pfeil (Figma): Link zum ersten Abschnitt, erst ab Tablet sichtbar -->
-    <a href="#erster-abschnitt" class="hero__pfeil" aria-label="Nach unten scrollen">
-      <Image
-        src={pfeilRunter}
-        alt=""
-        width={30}
-        height={30}
-        class="hero__pfeil-icon"
-        aria-hidden="true"
-      />
-    </a>
-  </section>
-
-  <!-- Vorschau der Basis-Bausteine (Phase 2) -->
-  <section class="vorschau" id="erster-abschnitt">
-    <div class="container">
-      <h2 class="sektion-titel vorschau__titel">Bausteine (Vorschau)</h2>
-
-      <div class="vorschau__grid">
-        <Karte farbe="rot" schatten class="bestell-karte">
-          <Image
-            src={telefonIcon}
-            alt=""
-            width={48}
-            height={48}
-            class="bestell-karte__icon"
-            aria-hidden="true"
-          />
-          <h3 class="bestell-karte__titel">{texte.lieferservice.karten.telefon}</h3>
-          <p class="bestell-karte__untertitel">Rufen Sie uns direkt an</p>
-          <p class="bestell-karte__nummer">{kontakt.telefon.anzeige}</p>
-          <div class="bestell-karte__aktion">
-            <Button href={kontakt.telefon.link} variante="gruen" groesse="klein" icon="telefon">
-              Jetzt anrufen
-            </Button>
-          </div>
-        </Karte>
-
-        <Karte farbe="gruen" schatten class="bestell-karte">
-          <Image
-            src={whatsappIcon}
-            alt=""
-            width={48}
-            height={48}
-            class="bestell-karte__icon"
-            aria-hidden="true"
-          />
-          <h3 class="bestell-karte__titel">{texte.lieferservice.karten.whatsapp}</h3>
-          <p class="bestell-karte__untertitel">Schreiben Sie uns eine Nachricht</p>
-          <p class="bestell-karte__nummer">{kontakt.whatsapp.anzeige}</p>
-          <div class="bestell-karte__aktion">
-            <Button
-              href={kontakt.whatsapp.link}
-              variante="rot"
-              groesse="klein"
-              icon="whatsapp"
-              extern
-            >
-              WhatsApp öffnen
-            </Button>
-          </div>
-        </Karte>
-      </div>
-    </div>
-  </section>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(restaurantSchema)} />
+  <Hero />
+  <Genuss />
+  <Lieferservice />
+  <Lieferkosten />
+  <OeffnungszeitenKontakt />
 </BaseLayout>
-
-<style>
-  /* Provisorischer Hero */
-  .hero {
-    position: relative;
-    min-height: 70vh;
-    display: grid;
-    place-items: center;
-    overflow: hidden;
-    padding-top: calc(var(--header-hoehe) + var(--abstand-xl));
-    padding-bottom: var(--abstand-2xl);
-    color: var(--farbe-text-hell);
-  }
-
-  .hero__hintergrund {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: 0;
-  }
-
-  .hero__overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    background: linear-gradient(
-      to bottom,
-      color-mix(in srgb, var(--farbe-schwarz) 25%, transparent) 0%,
-      color-mix(in srgb, var(--farbe-schwarz) 45%, transparent) 100%
-    );
-  }
-
-  .hero__inhalt {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--abstand-xl);
-    text-align: center;
-  }
-
-  .hero__titel {
-    display: flex;
-    justify-content: center;
-  }
-
-  /* Seitenverhältnis des großen SVG-Logos (245.327 × 177.329) exakt wahren */
-  .hero__logo {
-    width: min(15.33rem, 68vw);
-    height: auto;
-    aspect-ratio: 245.327 / 177.329;
-  }
-
-  .hero__aktionen {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--abstand-m);
-  }
-
-  /* Scroll-Pfeil: 44px Tippfläche unten mittig im Hero, Icon 30px wippt sanft */
-  .hero__pfeil {
-    display: none;
-  }
-
-  @media (min-width: 768px) {
-    .hero__pfeil {
-      position: absolute;
-      z-index: 2;
-      bottom: var(--abstand-m);
-      left: 50%;
-      width: 44px;
-      height: 44px;
-      margin-left: -22px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-    }
-
-    .hero__pfeil-icon {
-      width: 30px;
-      height: 30px;
-      object-fit: contain;
-      animation: pfeil-wippen 2s ease-in-out infinite;
-    }
-  }
-
-  @keyframes pfeil-wippen {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-
-    50% {
-      transform: translateY(6px);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .hero__pfeil-icon {
-      animation: none;
-    }
-  }
-
-  /* Mobil (iOS-typisch): großes Logo max. 200px, beide Buttons untereinander in voller Breite */
-  @media (max-width: 767px) {
-    .hero__logo {
-      width: min(200px, 68vw);
-    }
-
-    .hero__aktionen {
-      flex-direction: column;
-      flex-wrap: nowrap;
-      align-items: stretch;
-      width: 100%;
-      max-width: 320px;
-      gap: var(--abstand-m);
-    }
-
-    .hero__aktionen :global(.btn) {
-      width: 100%;
-      min-height: 50px;
-      border-radius: 14px;
-      font-size: var(--text-basis);
-    }
-  }
-
-  /* Vorschau-Sektion */
-  .vorschau {
-    padding-block: var(--abstand-sektion);
-  }
-
-  .vorschau__titel {
-    margin-bottom: var(--abstand-xl);
-  }
-
-  /* Kartenabstand: mobil 16px, ab Tablet unverändert */
-  .vorschau__grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--abstand-m);
-  }
-
-  @media (min-width: 768px) {
-    .vorschau__grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: var(--abstand-l);
-    }
-  }
-
-  /* Bestellkarten nach Figma-Vorlage (Karte ist eigene Komponente, daher :global) */
-  .vorschau__grid :global(.bestell-karte) {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .bestell-karte__icon {
-    width: 3rem;
-    height: 3rem;
-    object-fit: contain;
-    margin-bottom: var(--abstand-m);
-  }
-
-  .bestell-karte__titel {
-    font-size: var(--text-l);
-    font-weight: var(--gewicht-fett);
-    line-height: var(--zeilenhoehe-eng);
-  }
-
-  .bestell-karte__untertitel {
-    font-size: var(--text-s);
-    margin-top: var(--abstand-2xs);
-  }
-
-  @media (min-width: 1024px) {
-    .bestell-karte__untertitel {
-      margin-top: var(--abstand-xs);
-    }
-  }
-
-  .bestell-karte__nummer {
-    font-size: var(--text-2xl);
-    font-weight: var(--gewicht-fett);
-    line-height: var(--zeilenhoehe-eng);
-    margin-block: var(--abstand-l);
-  }
-
-  .bestell-karte__aktion {
-    margin-top: auto;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-</style>

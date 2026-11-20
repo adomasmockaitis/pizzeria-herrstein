@@ -1,5 +1,8 @@
 {
   "_hinweis": "Figma-Entwürfe, werden in Phase 4 überarbeitet",
+  "meta": {
+    "beschreibung": "Pizzeria Turnhalle Herrstein – Authentische italienische Küche, perfekt für Lieferung und Abholung in Herrstein und Umgebung."
+  },
   "navigation": [
     { "label": "Home", "href": "#top" },
     { "label": "Speisekarte", "href": "/speisekarte" },
@@ -11,14 +14,36 @@
     "headline": "Frisch. Heiß. Direkt zu dir.",
     "subline": "Authentische italienische Küche – perfekt für Lieferung und Abholung",
     "buttonPrimaer": "Jetzt bestellen",
-    "buttonSekundaer": "Speisekarte ansehen"
+    "buttonSekundaer": "Speisekarte ansehen",
+    "bildAlt": "Frisch gebackene Pizza mit geschmolzenem Käse und frischen Kräutern auf einem Holzbrett",
+    "scrollPfeilLabel": "Zum nächsten Abschnitt scrollen"
   },
   "genuss": {
     "ueberschrift": "Italienischer Genuss pur",
-    "teaserTitel": "Fleischgerichte vom Feinsten"
+    "text": "Entdecke die Vielfalt unserer frisch zubereiteten Vorspeisen, knackigen Salate, herzhaften Fleischgerichte sowie unserer beliebten Pizzen und cremigen Pastagerichte – für jeden Geschmack das Richtige.",
+    "button": "Speisekarte ansehen",
+    "teaserTitel": "Fleischgerichte vom Feinsten",
+    "teaserText": "Schnitzel, Cordon Bleu, Rumpsteak und mehr – frisch zubereitet, mit Sauce, Beilage und knackigem Salat serviert.",
+    "teaserButton": "Fleischgerichte entdecken"
   },
   "lieferservice": {
-    "ueberschrift": "Heiß & frisch – direkt zu dir nach Hause",
+    "ueberschrift": "Heiß & frisch - direkt zu dir nach Hause",
+    "intro": "Ob Sie Ihr Lieblingsgericht lieber bequem liefern lassen oder selbst abholen – wir sorgen dafür, dass alles frisch zubereitet und heiß bei Ihnen ankommt. Die Lieferkosten richten sich nach dem Ort und sind unten in der Übersicht aufgeführt. Weitere Orte beliefern wir gerne auf Anfrage.",
+    "telefonUntertitel": "Rufen Sie uns direkt an",
+    "telefonButton": "Jetzt anrufen",
+    "whatsappUntertitel": "Schreiben Sie uns eine Nachricht",
+    "whatsappButton": "WhatsApp öffnen",
+    "whatsappAriaLabel": "WhatsApp öffnen (öffnet in neuem Tab)",
+    "adresseButton": "Auf Karte anzeigen",
+    "adresseAriaLabel": "Standort auf Google Maps anzeigen (öffnet in neuem Tab)",
+    "bestellinfoPunkte": {
+      "abholungTitel": "Abholung",
+      "abholungText": "Abholung vor Ort möglich.",
+      "lieferungTitel": "Lieferung",
+      "lieferungText": "Lieferkosten finden Sie in der Übersicht oder per Adresssuche.",
+      "mindestbestellwertTitel": "Mindestbestellwert",
+      "oeffnungszeitenTitel": "Öffnungszeiten"
+    },
     "karten": {
       "telefon": "Telefonisch bestellen",
       "whatsapp": "WhatsApp bestellen",
@@ -28,9 +53,26 @@
   },
   "lieferkosten": {
     "ueberschrift": "Lieferkosten",
-    "suchfeldPlatzhalter": "Adresse suchen …"
+    "untertitel": "Suchen Sie per Adresseingabe oder direkt in der Übersicht.",
+    "suchfeldLabel": "Ort suchen",
+    "suchfeldPlatzhalter": "Ort eingeben, z. B. Idar …",
+    "sucheLeerenLabel": "Suche leeren",
+    "zonePrefix": "Lieferzone",
+    "statusAlle": "Alle {anzahl} Lieferzonen angezeigt",
+    "statusTrefferSingular": "1 Zone gefunden",
+    "statusTrefferPlural": "{anzahl} Zonen gefunden",
+    "statusKeinTreffer": "Keine Lieferzone gefunden"
   },
   "oeffnungszeitenKontakt": {
-    "ueberschrift": "Öffnungszeiten & Kontakt"
+    "ueberschrift": "Öffnungszeiten & Kontakt",
+    "oeffnungszeitenTitel": "Unsere Öffnungszeiten",
+    "geschlossenLabel": "geschlossen",
+    "kontaktTitel": "So erreichen Sie uns",
+    "labelTelefon": "Telefon:",
+    "labelWhatsapp": "WhatsApp:",
+    "labelEmail": "E-Mail:",
+    "whatsappAriaLabel": "Per WhatsApp schreiben (öffnet in neuem Tab)",
+    "karteButton": "Auf Karte anzeigen",
+    "karteAriaLabel": "Standort auf Google Maps anzeigen (öffnet in neuem Tab)"
   }
 }

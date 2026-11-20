@@ -4,6 +4,7 @@
 /* Ergänzende Werte (bewusst NICHT in tokens.css) */
 :root {
   --farbe-leiste-text: #1d1d1f;                                   /* iOS-nahes Dunkelgrau für Schrift auf heller Leiste */
+  --farbe-status-zu: #6e6e73;                                     /* Grauer Punkt für geschlossenen Live-Status */
   --leiste-hoehe: calc(44px + env(safe-area-inset-top, 0px));     /* kompakte Navigationsleiste (iOS: 44 pt) */
 }
 

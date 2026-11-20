@@ -4,6 +4,7 @@ interface Props {
   farbe?: 'rot' | 'gruen';
   as?: 'article' | 'section' | 'div';
   schatten?: boolean;
+  id?: string;
   class?: string;
 }
 
@@ -11,11 +12,13 @@ const {
   farbe = 'rot',
   as: Tag = 'article',
   schatten = false,
+  id,
   class: className = '',
 } = Astro.props;
 ---
 
 <Tag
+  id={id}
   class:list={[
     'karte',
     `karte--${farbe}`,

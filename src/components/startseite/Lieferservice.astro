@@ -1,0 +1,467 @@
+---
+// Abschnitt "Heiß & frisch - direkt zu dir nach Hause" mit 2x2-Bestellkarten und Deko-Mockups
+import { Image } from 'astro:assets';
+import Button from '../Button.astro';
+import Karte from '../Karte.astro';
+import { formatiereOeffnungszeitenKurz } from '../../scripts/oeffnungsstatus';
+import kontakt from '../../content/kontakt.json';
+import lieferzonen from '../../content/lieferzonen.json';
+import oeffnungszeiten from '../../content/oeffnungszeiten.json';
+import texte from '../../content/texte.json';
+import telefonIcon from '../../assets/icons/telefon.png';
+import whatsappIcon from '../../assets/icons/whatsapp.png';
+import pinIcon from '../../assets/icons/pin.png';
+import lieferungIcon from '../../assets/icons/lieferung.png';
+import euroIcon from '../../assets/icons/euro.png';
+import uhrIcon from '../../assets/icons/uhr.png';
+import pizzakartonMockup from '../../assets/mockups/pizzakarton.webp';
+import papiertueteMockup from '../../assets/mockups/papiertuete.webp';
+
+const oeffnungszeitenZeilen = formatiereOeffnungszeitenKurz(oeffnungszeiten.tage);
+const { bestellinfoPunkte } = texte.lieferservice;
+---
+
+<section class="lieferservice" id="lieferservice" aria-labelledby="lieferservice-titel">
+  <div class="container">
+    <div class="lieferservice__kopf">
+      <h2 id="lieferservice-titel" class="sektion-titel">
+        {texte.lieferservice.ueberschrift}
+      </h2>
+      <p class="lieferservice__intro">{texte.lieferservice.intro}</p>
+      <p class="lieferservice__firma">{lieferzonen.firmenlieferung.text}</p>
+    </div>
+
+    <div class="lieferservice__buehne">
+      <!-- Deko-Mockups nur >= 1024px, gespiegelt wie in Figma, damit die Schrift lesbar ist -->
+      <div class="lieferservice__karton" aria-hidden="true">
+        <div class="lieferservice__mockup-spiegel">
+          <Image
+            src={pizzakartonMockup}
+            alt=""
+            widths={[380, 760]}
+            sizes="(min-width: 1024px) 380px, 0px"
+            loading="lazy"
+            class="lieferservice__karton-bild"
+          />
+        </div>
+      </div>
+
+      <div class="lieferservice__tuete" aria-hidden="true">
+        <div class="lieferservice__mockup-spiegel">
+          <Image
+            src={papiertueteMockup}
+            alt=""
+            widths={[300, 600]}
+            sizes="(min-width: 1024px) 300px, 0px"
+            loading="lazy"
+            class="lieferservice__tuete-bild"
+          />
+        </div>
+      </div>
+
+      <div class="lieferservice__grid">
+        <!-- 1. Rot: Telefonisch bestellen -->
+        <Karte farbe="rot" schatten class="bestell-karte">
+          <Image
+            src={telefonIcon}
+            alt=""
+            width={64}
+            height={64}
+            loading="lazy"
+            class="bestell-karte__icon"
+            aria-hidden="true"
+          />
+          <h3 class="bestell-karte__titel">{texte.lieferservice.karten.telefon}</h3>
+          <p class="bestell-karte__untertitel">{texte.lieferservice.telefonUntertitel}</p>
+          <p class="bestell-karte__nummer">{kontakt.telefon.anzeige}</p>
+          <div class="bestell-karte__aktion">
+            <Button
+              href={kontakt.telefon.link}
+              variante="gruen"
+              groesse="klein"
+              icon="telefon"
+              class="bestell-karte__button"
+            >
+              {texte.lieferservice.telefonButton}
+            </Button>
+          </div>
+        </Karte>
+
+        <!-- 2. Grün: WhatsApp bestellen -->
+        <Karte farbe="gruen" schatten class="bestell-karte">
+          <Image
+            src={whatsappIcon}
+            alt=""
+            width={64}
+            height={64}
+            loading="lazy"
+            class="bestell-karte__icon"
+            aria-hidden="true"
+          />
+          <h3 class="bestell-karte__titel">{texte.lieferservice.karten.whatsapp}</h3>
+          <p class="bestell-karte__untertitel">{texte.lieferservice.whatsappUntertitel}</p>
+          <p class="bestell-karte__nummer">{kontakt.whatsapp.anzeige}</p>
+          <div class="bestell-karte__aktion">
+            <Button
+              href={kontakt.whatsapp.link}
+              variante="rot"
+              groesse="klein"
+              icon="whatsapp"
+              extern
+              ariaLabel={texte.lieferservice.whatsappAriaLabel}
+              class="bestell-karte__button"
+            >
+              {texte.lieferservice.whatsappButton}
+            </Button>
+          </div>
+        </Karte>
+
+        <!-- 3. Rot: Bestellinformationen -->
+        <Karte farbe="rot" schatten class="info-karte">
+          <h3 class="info-karte__titel">{texte.lieferservice.karten.bestellinfos}</h3>
+          <ul class="info-liste">
+            <li class="info-liste__eintrag">
+              <Image
+                src={pinIcon}
+                alt=""
+                width={36}
+                height={36}
+                loading="lazy"
+                class="info-liste__icon"
+                aria-hidden="true"
+              />
+              <div>
+                <p class="info-liste__label">{bestellinfoPunkte.abholungTitel}</p>
+                <p class="info-liste__text">{bestellinfoPunkte.abholungText}</p>
+              </div>
+            </li>
+            <li class="info-liste__eintrag">
+              <Image
+                src={lieferungIcon}
+                alt=""
+                width={36}
+                height={36}
+                loading="lazy"
+                class="info-liste__icon"
+                aria-hidden="true"
+              />
+              <div>
+                <p class="info-liste__label">{bestellinfoPunkte.lieferungTitel}</p>
+                <p class="info-liste__text">{bestellinfoPunkte.lieferungText}</p>
+              </div>
+            </li>
+            <li class="info-liste__eintrag">
+              <Image
+                src={euroIcon}
+                alt=""
+                width={36}
+                height={36}
+                loading="lazy"
+                class="info-liste__icon"
+                aria-hidden="true"
+              />
+              <div>
+                <p class="info-liste__label">{bestellinfoPunkte.mindestbestellwertTitel}</p>
+                <p class="info-liste__text">{lieferzonen.mindestbestellwert.text}</p>
+              </div>
+            </li>
+            <li class="info-liste__eintrag">
+              <Image
+                src={uhrIcon}
+                alt=""
+                width={36}
+                height={36}
+                loading="lazy"
+                class="info-liste__icon"
+                aria-hidden="true"
+              />
+              <div>
+                <p class="info-liste__label">{bestellinfoPunkte.oeffnungszeitenTitel}</p>
+                <p class="info-liste__text">
+                  {oeffnungszeitenZeilen.map((zeile, idx) => (
+                    <>
+                      {idx > 0 && <br />}
+                      {zeile.tageLabel}
+                      <br />
+                      {zeile.zeitenText}
+                    </>
+                  ))}
+                </p>
+              </div>
+            </li>
+          </ul>
+        </Karte>
+
+        <!-- 4. Grün: Adresse -->
+        <Karte farbe="gruen" schatten class="bestell-karte">
+          <Image
+            src={pinIcon}
+            alt=""
+            width={60}
+            height={60}
+            loading="lazy"
+            class="bestell-karte__icon"
+            aria-hidden="true"
+          />
+          <h3 class="bestell-karte__titel">{texte.lieferservice.karten.adresse}</h3>
+          <p class="adresse-karte__name">{kontakt.name}</p>
+          <p class="adresse-karte__zeile">
+            {kontakt.adresse.strasse}, {kontakt.adresse.plz} {kontakt.adresse.ort}
+          </p>
+          <div class="bestell-karte__aktion">
+            <Button
+              href={kontakt.karte.google}
+              variante="rot"
+              groesse="klein"
+              icon="pin"
+              extern
+              ariaLabel={texte.lieferservice.adresseAriaLabel}
+              class="bestell-karte__button"
+            >
+              {texte.lieferservice.adresseButton}
+            </Button>
+          </div>
+        </Karte>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .lieferservice {
+    position: relative;
+    overflow-x: clip;
+    padding-top: var(--abstand-l);
+    margin-top: calc(var(--abstand-sektion) - var(--abstand-l));
+  }
+
+  .lieferservice__kopf {
+    text-align: center;
+    margin-bottom: var(--abstand-xl);
+  }
+
+  .lieferservice__intro,
+  .lieferservice__firma {
+    margin-inline: auto;
+    font-size: var(--text-basis);
+    line-height: var(--zeilenhoehe);
+  }
+
+  .lieferservice__intro {
+    margin-top: var(--abstand-m);
+    max-width: 68ch;
+  }
+
+  .lieferservice__firma {
+    margin-top: var(--abstand-s);
+  }
+
+  @media (min-width: 1024px) {
+    .lieferservice__intro,
+    .lieferservice__firma {
+      font-size: var(--text-l);
+    }
+  }
+
+  .lieferservice__buehne {
+    position: relative;
+  }
+
+  .lieferservice__karton,
+  .lieferservice__tuete {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .lieferservice__karton,
+    .lieferservice__tuete {
+      display: block;
+      position: absolute;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .lieferservice__mockup-spiegel {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      transform: scaleX(-1);
+    }
+
+    .lieferservice__karton {
+      --karton-w: clamp(240px, 24vw, 380px);
+      width: var(--karton-w);
+      aspect-ratio: 585 / 395;
+      top: -1.75rem;
+      right: calc(var(--karton-w) * -0.74);
+    }
+
+    .lieferservice__karton-bild {
+      position: absolute;
+      max-width: none;
+      width: 136.43%;
+      height: 151.52%;
+      left: -13.47%;
+      top: -32.17%;
+    }
+
+    .lieferservice__tuete {
+      --tuete-w: clamp(210px, 19vw, 300px);
+      width: var(--tuete-w);
+      aspect-ratio: 613 / 460;
+      bottom: -1.5rem;
+      left: calc(var(--tuete-w) * -0.88);
+    }
+
+    .lieferservice__tuete-bild {
+      position: absolute;
+      max-width: none;
+      width: 129.07%;
+      height: 129.14%;
+      left: -34.62%;
+      top: -17.69%;
+    }
+  }
+
+  @media (min-width: 1440px) {
+    .lieferservice__tuete {
+      left: calc(var(--tuete-w) * -0.8);
+    }
+  }
+
+  .lieferservice__grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--abstand-m);
+  }
+
+  @media (min-width: 768px) {
+    .lieferservice__grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--abstand-l);
+    }
+  }
+
+  .lieferservice__grid :global(.bestell-karte) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .bestell-karte__icon {
+    width: 3rem;
+    height: 3rem;
+    object-fit: contain;
+    margin-bottom: var(--abstand-m);
+  }
+
+  @media (min-width: 1024px) {
+    .bestell-karte__icon {
+      width: 4rem;
+      height: 4rem;
+    }
+  }
+
+  .bestell-karte__titel,
+  .info-karte__titel {
+    font-size: var(--text-l);
+    font-weight: var(--gewicht-fett);
+    line-height: var(--zeilenhoehe-eng);
+  }
+
+  @media (min-width: 1024px) {
+    .bestell-karte__titel,
+    .info-karte__titel {
+      font-size: var(--text-xl);
+    }
+  }
+
+  .bestell-karte__untertitel {
+    font-size: var(--text-s);
+    margin-top: var(--abstand-2xs);
+  }
+
+  @media (min-width: 1024px) {
+    .bestell-karte__untertitel {
+      margin-top: var(--abstand-xs);
+    }
+  }
+
+  .bestell-karte__nummer {
+    font-size: var(--text-2xl);
+    font-weight: var(--gewicht-fett);
+    line-height: var(--zeilenhoehe-eng);
+    margin-block: var(--abstand-l);
+  }
+
+  .adresse-karte__name {
+    font-size: var(--text-basis);
+    font-weight: var(--gewicht-extrafett);
+    margin-top: var(--abstand-m);
+  }
+
+  .adresse-karte__zeile {
+    font-size: var(--text-s);
+    margin-top: var(--abstand-2xs);
+    margin-bottom: var(--abstand-l);
+  }
+
+  .bestell-karte__aktion {
+    margin-top: auto;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .bestell-karte__aktion :global(.bestell-karte__button) {
+    width: min(100%, 22.5rem);
+  }
+
+  /* Bestellinformationen */
+  .lieferservice__grid :global(.info-karte) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--abstand-l);
+  }
+
+  .info-karte__titel {
+    text-align: center;
+  }
+
+  .info-liste {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--abstand-m);
+  }
+
+  .info-liste__eintrag {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--abstand-m);
+  }
+
+  .info-liste__icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    flex-shrink: 0;
+    object-fit: contain;
+    margin-top: 2px;
+  }
+
+  .info-liste__label {
+    font-size: var(--text-basis);
+    font-weight: var(--gewicht-fett);
+    line-height: var(--zeilenhoehe-eng);
+  }
+
+  .info-liste__text {
+    font-size: var(--text-s);
+    line-height: var(--zeilenhoehe);
+    margin-top: 2px;
+  }
+</style>

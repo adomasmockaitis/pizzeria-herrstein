@@ -1,0 +1,525 @@
+---
+// Abschnitt "Lieferkosten" mit Live-Ortssuche, abwechselnd farbigen Zonen-Karten und Fallback-Hinweis
+import { Image } from 'astro:assets';
+import Button from '../Button.astro';
+import Karte from '../Karte.astro';
+import kontakt from '../../content/kontakt.json';
+import lieferzonen from '../../content/lieferzonen.json';
+import texte from '../../content/texte.json';
+import lupeIcon from '../../assets/icons/lupe.png';
+
+const sichtbareZonen = lieferzonen.zonen.filter((zone) => zone.sichtbar);
+---
+
+<section
+  class="lieferkosten"
+  id="lieferkosten"
+  aria-labelledby="lieferkosten-titel"
+  data-status-alle={texte.lieferkosten.statusAlle}
+  data-status-singular={texte.lieferkosten.statusTrefferSingular}
+  data-status-plural={texte.lieferkosten.statusTrefferPlural}
+  data-status-leer={texte.lieferkosten.statusKeinTreffer}
+  data-anzahl-gesamt={sichtbareZonen.length}
+>
+  <div class="container">
+    <div class="lieferkosten__kopf">
+      <h2 id="lieferkosten-titel" class="sektion-titel">
+        {texte.lieferkosten.ueberschrift}
+      </h2>
+      <p class="lieferkosten__untertitel">{texte.lieferkosten.untertitel}</p>
+    </div>
+
+    <div class="lieferkosten__suche">
+      <label for="lieferzonen-suche" class="visually-hidden">
+        {texte.lieferkosten.suchfeldLabel}
+      </label>
+      <Image
+        src={lupeIcon}
+        alt=""
+        width={22}
+        height={22}
+        loading="lazy"
+        class="lieferkosten__lupe"
+        aria-hidden="true"
+      />
+      <input
+        id="lieferzonen-suche"
+        type="search"
+        inputmode="search"
+        autocomplete="off"
+        placeholder={texte.lieferkosten.suchfeldPlatzhalter}
+        class="lieferkosten__eingabe auf-rot"
+        data-zonen-suche
+      />
+      <button
+        type="button"
+        class="lieferkosten__leeren auf-rot"
+        hidden
+        data-suche-leeren
+        aria-label={texte.lieferkosten.sucheLeerenLabel}
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <p class="visually-hidden" role="status" aria-live="polite" data-suche-status></p>
+
+    <div class="lieferkosten__grid" data-zonen-grid>
+      {sichtbareZonen.map((zone, index) => {
+        const farbe = index % 2 === 0 ? 'gruen' : 'rot';
+        const badgeFarbe = farbe === 'gruen' ? 'rot' : 'gruen';
+        const preisText = `${zone.preis}\u202F€`;
+
+        return (
+          <Karte farbe={farbe} schatten class="zone-karte" data-zone-karte>
+            <h3 class="zone-karte__titel">
+              {texte.lieferkosten.zonePrefix} {zone.id}
+            </h3>
+            <p class="zone-karte__orte">
+              {zone.orte.map((ort, ortIndex) => (
+                <>
+                  <span class="zone-karte__ort" data-ort={ort}>
+                    {ort}
+                  </span>
+                  {ortIndex < zone.orte.length - 1 && ', '}
+                </>
+              ))}
+            </p>
+            <span class:list={['zone-karte__preis', `zone-karte__preis--${badgeFarbe}`]}>
+              {preisText}
+            </span>
+          </Karte>
+        );
+      })}
+    </div>
+
+    <div class="lieferkosten__leer" hidden data-zonen-leer>
+      <p class="lieferkosten__leer-text">{lieferzonen.keinTrefferText}</p>
+      <Button href={kontakt.telefon.link} variante="rot" groesse="klein" icon="telefon">
+        {texte.lieferservice.telefonButton}
+      </Button>
+    </div>
+  </div>
+</section>
+
+<script>
+  interface Normalisiert {
+    text: string;
+    indexMap: Array<[number, number]>;
+  }
+
+  function normalisiereMitIndex(eingabe: string): Normalisiert {
+    let text = '';
+    const indexMap: Array<[number, number]> = [];
+
+    for (let i = 0; i < eingabe.length; i++) {
+      const roh = eingabe[i].toLowerCase();
+      if (/[\s-]/.test(roh)) {
+        continue;
+      }
+
+      if (roh === 'ß') {
+        text += 'ss';
+        indexMap.push([i, i + 1], [i, i + 1]);
+        continue;
+      }
+
+      const basis = roh.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      for (const zeichen of basis) {
+        if (!/[\s-]/.test(zeichen)) {
+          text += zeichen;
+          indexMap.push([i, i + 1]);
+        }
+      }
+    }
+
+    return { text, indexMap };
+  }
+
+  function erzeugeAnfrageVarianten(eingabe: string): string[] {
+    const { text } = normalisiereMitIndex(eingabe);
+    if (!text) return [];
+
+    const umlautErsetzt = text
+      .replace(/ae/g, 'a')
+      .replace(/oe/g, 'o')
+      .replace(/ue/g, 'u');
+
+    return umlautErsetzt !== text ? [text, umlautErsetzt] : [text];
+  }
+
+  function berechneTrefferBereich(
+    ort: string,
+    anfragen: string[],
+  ): [number, number] | null {
+    const { text, indexMap } = normalisiereMitIndex(ort);
+    if (!text) return null;
+
+    for (const anfrage of anfragen) {
+      const pos = text.indexOf(anfrage);
+      if (pos !== -1) {
+        const start = indexMap[pos]?.[0] ?? 0;
+        const ende = indexMap[pos + anfrage.length - 1]?.[1] ?? ort.length;
+        return [start, ende];
+      }
+    }
+
+    return null;
+  }
+
+  function setzeOrtHervorhebung(element: HTMLElement, ort: string, bereich: [number, number] | null) {
+    element.textContent = '';
+    if (!bereich) {
+      element.textContent = ort;
+      return;
+    }
+
+    const [start, ende] = bereich;
+    if (start > 0) {
+      element.appendChild(document.createTextNode(ort.slice(0, start)));
+    }
+    const mark = document.createElement('mark');
+    mark.className = 'zone-karte__treffer';
+    mark.textContent = ort.slice(start, ende);
+    element.appendChild(mark);
+    if (ende < ort.length) {
+      element.appendChild(document.createTextNode(ort.slice(ende)));
+    }
+  }
+
+  const sektion = document.querySelector<HTMLElement>('.lieferkosten');
+  const eingabe = sektion?.querySelector<HTMLInputElement>('[data-zonen-suche]');
+  const leerenBtn = sektion?.querySelector<HTMLButtonElement>('[data-suche-leeren]');
+  const statusEl = sektion?.querySelector<HTMLElement>('[data-suche-status]');
+  const leerBox = sektion?.querySelector<HTMLElement>('[data-zonen-leer]');
+
+  if (sektion && eingabe && statusEl && leerBox) {
+    const karten = Array.from(sektion.querySelectorAll<HTMLElement>('.zone-karte')).map(
+      (karte) => ({
+        karte,
+        orte: Array.from(karte.querySelectorAll<HTMLElement>('[data-ort]')).map((el) => ({
+          el,
+          ort: el.dataset.ort ?? '',
+        })),
+      }),
+    );
+
+    const statusAlle = sektion.dataset.statusAlle ?? '';
+    const statusSingular = sektion.dataset.statusSingular ?? '';
+    const statusPlural = sektion.dataset.statusPlural ?? '';
+    const statusLeer = sektion.dataset.statusLeer ?? '';
+    const anzahlGesamt = sektion.dataset.anzahlGesamt ?? String(karten.length);
+
+    let statusTimer: number | undefined;
+
+    const meldeStatus = (trefferKarten: number, hatSuche: boolean, sofort: boolean) => {
+      window.clearTimeout(statusTimer);
+      const schreiben = () => {
+        if (!hatSuche) {
+          statusEl.textContent = statusAlle.replace('{anzahl}', anzahlGesamt);
+        } else if (trefferKarten === 0) {
+          statusEl.textContent = statusLeer;
+        } else if (trefferKarten === 1) {
+          statusEl.textContent = statusSingular;
+        } else {
+          statusEl.textContent = statusPlural.replace('{anzahl}', String(trefferKarten));
+        }
+      };
+
+      if (sofort) {
+        schreiben();
+      } else {
+        statusTimer = window.setTimeout(schreiben, 250);
+      }
+    };
+
+    const filterZonen = (sofortStatus = false) => {
+      const rohWert = eingabe.value.trim();
+      const anfragen = erzeugeAnfrageVarianten(rohWert);
+      const hatSuche = anfragen.length > 0;
+
+      if (leerenBtn) {
+        leerenBtn.hidden = eingabe.value.length === 0;
+      }
+
+      let sichtbareAnzahl = 0;
+
+      for (const eintrag of karten) {
+        if (!hatSuche) {
+          eintrag.karte.hidden = false;
+          sichtbareAnzahl++;
+          for (const ortEintrag of eintrag.orte) {
+            setzeOrtHervorhebung(ortEintrag.el, ortEintrag.ort, null);
+          }
+          continue;
+        }
+
+        let zonePasst = false;
+        for (const ortEintrag of eintrag.orte) {
+          const bereich = berechneTrefferBereich(ortEintrag.ort, anfragen);
+          if (bereich) {
+            zonePasst = true;
+          }
+          setzeOrtHervorhebung(ortEintrag.el, ortEintrag.ort, bereich);
+        }
+
+        eintrag.karte.hidden = !zonePasst;
+        if (zonePasst) sichtbareAnzahl++;
+      }
+
+      leerBox.hidden = !hatSuche || sichtbareAnzahl > 0;
+      meldeStatus(sichtbareAnzahl, hatSuche, sofortStatus);
+    };
+
+    eingabe.addEventListener('input', () => filterZonen(false));
+
+    eingabe.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && eingabe.value.length > 0) {
+        event.preventDefault();
+        eingabe.value = '';
+        filterZonen(true);
+      }
+    });
+
+    leerenBtn?.addEventListener('click', () => {
+      eingabe.value = '';
+      filterZonen(true);
+      eingabe.focus();
+    });
+  }
+</script>
+
+<style>
+  .lieferkosten {
+    padding-top: var(--abstand-l);
+    margin-top: calc(var(--abstand-sektion) - var(--abstand-l));
+  }
+
+  .lieferkosten__kopf {
+    text-align: center;
+    margin-bottom: var(--abstand-xl);
+  }
+
+  .lieferkosten__untertitel {
+    margin-top: var(--abstand-m);
+    margin-inline: auto;
+    font-size: var(--text-basis);
+    line-height: var(--zeilenhoehe);
+  }
+
+  @media (min-width: 1024px) {
+    .lieferkosten__untertitel {
+      font-size: var(--text-l);
+    }
+  }
+
+  /* Suchfeld: rote Pill, mind. 44px hoch, >= 16px Schrift gegen iOS-Zoom */
+  .lieferkosten__suche {
+    position: relative;
+    margin-bottom: var(--abstand-l);
+  }
+
+  .lieferkosten__lupe {
+    position: absolute;
+    left: var(--abstand-m);
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.375rem;
+    height: 1.375rem;
+    object-fit: contain;
+    pointer-events: none;
+  }
+
+  .lieferkosten__eingabe {
+    width: 100%;
+    min-height: 44px;
+    height: 3rem;
+    padding-block: var(--abstand-xs);
+    padding-inline: 3.25rem;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background-color: var(--farbe-rot);
+    color: var(--farbe-text-hell);
+    font-family: var(--schrift-basis);
+    font-size: max(1rem, var(--text-basis));
+    font-weight: var(--gewicht-fett);
+    line-height: 1.3;
+    box-shadow: var(--schatten-klein);
+  }
+
+  .lieferkosten__eingabe::placeholder {
+    color: color-mix(in srgb, var(--farbe-offwhite) 80%, transparent);
+    font-weight: var(--gewicht-normal);
+  }
+
+  .lieferkosten__eingabe::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .lieferkosten__leeren {
+    position: absolute;
+    right: var(--abstand-2xs);
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--farbe-text-hell);
+    font-size: 1.375rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .lieferkosten__leeren[hidden] {
+    display: none;
+  }
+
+  /* Zonen-Raster: mobil kompakte Liste, ab Tablet 2 Spalten */
+  .lieferkosten__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--abstand-m);
+  }
+
+  @media (min-width: 768px) {
+    .lieferkosten__grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--abstand-l);
+    }
+  }
+
+  .lieferkosten__grid :global(.zone-karte) {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto 1fr;
+    align-items: center;
+    column-gap: var(--abstand-m);
+    row-gap: var(--abstand-2xs);
+    padding: var(--abstand-m);
+  }
+
+  .lieferkosten__grid :global(.zone-karte[hidden]) {
+    display: none;
+  }
+
+  .zone-karte__titel {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: var(--text-l);
+    font-weight: var(--gewicht-fett);
+    line-height: var(--zeilenhoehe-eng);
+  }
+
+  .zone-karte__orte {
+    grid-column: 1;
+    grid-row: 2;
+    max-width: none;
+    font-size: var(--text-s);
+    line-height: var(--zeilenhoehe);
+  }
+
+  .zone-karte__preis {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+    min-width: 56px;
+    height: 56px;
+    padding-inline: var(--abstand-xs);
+    border-radius: var(--radius-badge);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-xl);
+    font-weight: var(--gewicht-fett);
+    line-height: 1;
+    color: var(--farbe-text-hell);
+    white-space: nowrap;
+  }
+
+  .zone-karte__preis--rot {
+    background-color: var(--farbe-rot);
+  }
+
+  .zone-karte__preis--gruen {
+    background-color: var(--farbe-gruen);
+  }
+
+  @media (min-width: 768px) {
+    .lieferkosten__grid :global(.zone-karte) {
+      min-height: 13.375rem;
+      padding: calc(var(--abstand-m) * 2);
+      grid-template-columns: 1fr auto;
+      grid-template-rows: auto 1fr;
+      align-items: start;
+      row-gap: var(--abstand-s);
+    }
+
+    .zone-karte__titel {
+      grid-column: 1 / -1;
+      grid-row: 1;
+      font-size: var(--text-2xl);
+    }
+
+    .zone-karte__orte {
+      grid-column: 1;
+      grid-row: 2;
+      align-self: start;
+      font-size: var(--text-s);
+    }
+
+    .zone-karte__preis {
+      grid-column: 2;
+      grid-row: 2;
+      align-self: end;
+      min-width: 70px;
+      height: 70px;
+      font-size: var(--text-2xl);
+    }
+  }
+
+  /* Suchtreffer-Hervorhebung (Elemente werden per DOM erzeugt -> :global nötig) */
+  .lieferkosten__grid :global(.karte--gruen .zone-karte__treffer) {
+    background-color: var(--farbe-offwhite);
+    color: var(--farbe-gruen-dunkel);
+    border-radius: 4px;
+    padding: 0 0.2em;
+    font-weight: var(--gewicht-fett);
+  }
+
+  .lieferkosten__grid :global(.karte--rot .zone-karte__treffer) {
+    background-color: var(--farbe-offwhite);
+    color: var(--farbe-rot-dunkel);
+    border-radius: 4px;
+    padding: 0 0.2em;
+    font-weight: var(--gewicht-fett);
+  }
+
+  .lieferkosten__leer {
+    margin-top: var(--abstand-l);
+    padding: var(--abstand-l);
+    border-radius: var(--radius-karte);
+    border: 2px solid color-mix(in srgb, var(--farbe-rot) 25%, transparent);
+    background-color: var(--farbe-offwhite);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--abstand-m);
+  }
+
+  .lieferkosten__leer[hidden] {
+    display: none;
+  }
+
+  .lieferkosten__leer-text {
+    font-size: var(--text-basis);
+    font-weight: var(--gewicht-fett);
+    margin-inline: auto;
+  }
+</style>

@@ -42,6 +42,7 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
     <script>
       import '../scripts/scroll-zustand.ts';
     </script>
+    <slot name="head" />
   </head>
   <body>
     <a class="skip-link auf-rot" href="#inhalt">Zum Inhalt springen</a>
