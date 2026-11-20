@@ -1,0 +1,67 @@
+{
+  "_hinweis": "Format von sonderzeiten: Array aus Objekten mit { datum: { von: 'YYYY-MM-DD', bis: 'YYYY-MM-DD' }, geschlossen: true/false, text: 'Beschreibung' }",
+  "zeitzone": "Europe/Berlin",
+  "tage": [
+    {
+      "tag": "Montag",
+      "kuerzel": "Mo",
+      "ruhetag": true,
+      "zeiten": []
+    },
+    {
+      "tag": "Dienstag",
+      "kuerzel": "Di",
+      "ruhetag": false,
+      "zeiten": [
+        { "von": "11:00", "bis": "14:00" },
+        { "von": "17:00", "bis": "22:00" }
+      ]
+    },
+    {
+      "tag": "Mittwoch",
+      "kuerzel": "Mi",
+      "ruhetag": false,
+      "zeiten": [
+        { "von": "11:00", "bis": "14:00" },
+        { "von": "17:00", "bis": "22:00" }
+      ]
+    },
+    {
+      "tag": "Donnerstag",
+      "kuerzel": "Do",
+      "ruhetag": false,
+      "zeiten": [
+        { "von": "11:00", "bis": "14:00" },
+        { "von": "17:00", "bis": "22:00" }
+      ]
+    },
+    {
+      "tag": "Freitag",
+      "kuerzel": "Fr",
+      "ruhetag": false,
+      "zeiten": [
+        { "von": "11:00", "bis": "14:00" },
+        { "von": "17:00", "bis": "22:00" }
+      ]
+    },
+    {
+      "tag": "Samstag",
+      "kuerzel": "Sa",
+      "ruhetag": false,
+      "zeiten": [
+        { "von": "11:00", "bis": "14:00" },
+        { "von": "17:00", "bis": "22:00" }
+      ]
+    },
+    {
+      "tag": "Sonntag",
+      "kuerzel": "So",
+      "ruhetag": false,
+      "zeiten": [
+        { "von": "11:00", "bis": "14:00" },
+        { "von": "17:00", "bis": "22:00" }
+      ]
+    }
+  ],
+  "sonderzeiten": []
+}

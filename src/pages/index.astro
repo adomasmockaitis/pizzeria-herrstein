@@ -1,0 +1,39 @@
+---
+import { DEMO_MODE, DEMO_HINWEIS_TEXT } from '../config';
+import kontakt from '../content/kontakt.json';
+import lieferzonen from '../content/lieferzonen.json';
+
+const sichtbareZonen = lieferzonen.zonen.filter((zone) => zone.sichtbar);
+---
+
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{kontakt.name}</title>
+    {DEMO_MODE && <meta name="robots" content="noindex, nofollow" />}
+  </head>
+  <body>
+    {DEMO_MODE && (
+      <div role="status">
+        <strong>{DEMO_HINWEIS_TEXT}</strong>
+      </div>
+    )}
+
+    <main>
+      <h1>{kontakt.name}</h1>
+      <p>
+        Telefon: <a href={kontakt.telefon.link}>{kontakt.telefon.anzeige}</a>
+      </p>
+
+      <h2>Lieferzonen</h2>
+      <ul>
+        {sichtbareZonen.map((zone) => (
+          <li>
+            <strong>{zone.name}</strong> ({zone.preis} €): {zone.orte.join(', ')}
+          </li>
+        ))}
+      </ul>
+    </main>
+  </body>
+</html>

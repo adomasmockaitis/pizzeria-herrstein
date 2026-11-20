@@ -1,0 +1,34 @@
+{
+  "_hinweis": "Kürzel an die echte Speisekarte des Inhabers anpassen",
+  "bestaetigt": false,
+  "allergene": {
+    "a": "Glutenhaltiges Getreide",
+    "b": "Krebstiere",
+    "c": "Eier",
+    "d": "Fisch",
+    "e": "Erdnüsse",
+    "f": "Sojabohnen",
+    "g": "Milch (einschließlich Laktose)",
+    "h": "Schalenfrüchte",
+    "i": "Sellerie",
+    "j": "Senf",
+    "k": "Sesamsamen",
+    "l": "Schwefeldioxid und Sulfite",
+    "m": "Lupinen",
+    "n": "Weichtiere"
+  },
+  "zusatzstoffe": {
+    "1": "Mit Farbstoff",
+    "2": "Mit Konservierungsstoff",
+    "3": "Mit Antioxidationsmittel",
+    "4": "Mit Geschmacksverstärker",
+    "5": "Geschwefelt",
+    "6": "Geschwärzt",
+    "7": "Gewachst",
+    "8": "Mit Phosphat",
+    "9": "Mit Süßungsmittel",
+    "10": "Enthält eine Phenylalaninquelle",
+    "11": "Koffeinhaltig",
+    "12": "Chininhaltig"
+  }
+}

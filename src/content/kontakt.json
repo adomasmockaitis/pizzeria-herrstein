@@ -1,0 +1,27 @@
+{
+  "name": "Pizzeria Turnhalle Herrstein",
+  "adresse": {
+    "strasse": "Brühlstraße 12",
+    "plz": "55756",
+    "ort": "Herrstein"
+  },
+  "telefon": {
+    "anzeige": "06785 9992555",
+    "link": "tel:+4967859992555"
+  },
+  "whatsapp": {
+    "anzeige": "0174 5390999",
+    "link": "https://wa.me/491745390999",
+    "bestaetigt": false
+  },
+  "email": {
+    "adresse": "kontakt@pizzeria-herrstein.de",
+    "verlinken": false,
+    "bestaetigt": false,
+    "hinweis": "[TODO: Domain/E-Mail mit Inhaber klären]"
+  },
+  "karte": {
+    "google": "https://www.google.com/maps/search/?api=1&query=Br%C3%BChlstra%C3%9Fe+12%2C+55756+Herrstein",
+    "osm": "https://www.openstreetmap.org/search?query=Br%C3%BChlstra%C3%9Fe%2012%2C%2055756%20Herrstein"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "_hinweis": "Figma-Entwürfe, werden in Phase 4 überarbeitet",
+  "navigation": [
+    { "label": "Home", "href": "#top" },
+    { "label": "Speisekarte", "href": "/speisekarte" },
+    { "label": "Lieferservice", "href": "#lieferservice" },
+    { "label": "Öffnungszeiten", "href": "#oeffnungszeiten" },
+    { "label": "Kontakt", "href": "#kontakt" }
+  ],
+  "hero": {
+    "headline": "Frisch. Heiß. Direkt zu dir.",
+    "subline": "Authentische italienische Küche – perfekt für Lieferung und Abholung",
+    "buttonPrimaer": "Jetzt bestellen",
+    "buttonSekundaer": "Speisekarte ansehen"
+  },
+  "genuss": {
+    "ueberschrift": "Italienischer Genuss pur",
+    "teaserTitel": "Fleischgerichte vom Feinsten"
+  },
+  "lieferservice": {
+    "ueberschrift": "Heiß & frisch – direkt zu dir nach Hause",
+    "karten": {
+      "telefon": "Telefonisch bestellen",
+      "whatsapp": "WhatsApp bestellen",
+      "bestellinfos": "Bestellinformationen",
+      "adresse": "Adresse"
+    }
+  },
+  "lieferkosten": {
+    "ueberschrift": "Lieferkosten",
+    "suchfeldPlatzhalter": "Adresse suchen …"
+  },
+  "oeffnungszeitenKontakt": {
+    "ueberschrift": "Öffnungszeiten & Kontakt"
+  }
+}

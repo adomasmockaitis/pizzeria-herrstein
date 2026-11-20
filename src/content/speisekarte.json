@@ -1,0 +1,204 @@
+{
+  "stand": null,
+  "hinweis": "Preise und Angebot können abweichen.",
+  "kategorien": [
+    {
+      "id": "vorspeisen",
+      "name": "Vorspeisen",
+      "gerichte": [
+        {
+          "name": "[Platzhalter] Vorspeise 1",
+          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
+          "preis": null,
+          "allergene": [],
+          "zusatzstoffe": [],
+          "vegetarisch": false,
+          "platzhalter": true
+        },
+        {
+          "name": "[Platzhalter] Vorspeise 2",
+          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
+          "preis": null,
+          "allergene": [],
+          "zusatzstoffe": [],
+          "vegetarisch": true,
+          "platzhalter": true
+        },
+        {
+          "name": "[Platzhalter] Vorspeise 3",
+          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
+          "preis": null,
+          "allergene": [],
+          "zusatzstoffe": [],
+          "vegetarisch": false,
+          "platzhalter": true
+        }
+      ]
+    },
+    {
+      "id": "salat",
+      "name": "Salat",
+      "gerichte": [
+        {
+          "name": "[Platzhalter] Salat 1",
+          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
+          "preis": null,
+          "allergene": [],
+          "zusatzstoffe": [],
+          "vegetarisch": true,
+          "platzhalter": true
+        },
+        {
+          "name": "[Platzhalter] Salat 2",
+          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
+          "preis": null,
+          "allergene": [],
+          "zusatzstoffe": [],
+          "vegetarisch": false,
+          "platzhalter": true
+        },
+        {
+          "name": "[Platzhalter] Salat 3",
+          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
+          "preis": null,
+          "allergene": [],
+          "zusatzstoffe": [],
+          "vegetarisch": true,
+          "platzhalter": true
+        }
+      ]
+    },
+    {
+      "id": "kindermenue",
+      "name": "Kindermenü",
+      "gerichte": [
+        {
+          "name": "[Platzhalter] Kindermenü 1",
+          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
+          "preis": null,
+          "allergene": [],
+          "zusatzstoffe": [],
+          "vegetarisch": false,
+          "platzhalter": true
+        },
+        {
+          "name": "[Platzhalter] Kindermenü 2",
+          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
+          "preis": null,
+          "allergene": [],
+          "zusatzstoffe": [],
+          "vegetarisch": true,
+          "platzhalter": true
+        },
+        {
+          "name": "[Platzhalter] Kindermenü 3",
+          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
+          "preis": null,
+          "allergene": [],
+          "zusatzstoffe": [],
+          "vegetarisch": false,
+          "platzhalter": true
+        }
+      ]
+    },
+    {
+      "id": "pizza",
+      "name": "Pizza",
+      "gerichte": [
+        {
+          "name": "[Platzhalter] Pizza Margherita",
+          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
+          "preis": null,
+          "allergene": [],
+          "zusatzstoffe": [],
+          "vegetarisch": true,
+          "platzhalter": true
+        },
+        {
+          "name": "[Platzhalter] Pizza Salami",
+          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
+          "preis": null,
+          "allergene": [],
+          "zusatzstoffe": [],
+          "vegetarisch": false,
+          "platzhalter": true
+        },
+        {
+          "name": "[Platzhalter] Pizza Speziale",
+          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
+          "preis": null,
+          "allergene": [],
+          "zusatzstoffe": [],
+          "vegetarisch": false,
+          "platzhalter": true
+        }
+      ]
+    },
+    {
+      "id": "nudeln",
+      "name": "Nudeln",
+      "gerichte": [
+        {
+          "name": "[Platzhalter] Nudeln 1",
+          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
+          "preis": null,
+          "allergene": [],
+          "zusatzstoffe": [],
+          "vegetarisch": true,
+          "platzhalter": true
+        },
+        {
+          "name": "[Platzhalter] Nudeln 2",
+          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
+          "preis": null,
+          "allergene": [],
+          "zusatzstoffe": [],
+          "vegetarisch": false,
+          "platzhalter": true
+        },
+        {
+          "name": "[Platzhalter] Nudeln 3",
+          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
+          "preis": null,
+          "allergene": [],
+          "zusatzstoffe": [],
+          "vegetarisch": false,
+          "platzhalter": true
+        }
+      ]
+    },
+    {
+      "id": "fleischgerichte",
+      "name": "Fleischgerichte",
+      "gerichte": [
+        {
+          "name": "[Platzhalter] Fleischgericht 1",
+          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
+          "preis": null,
+          "allergene": [],
+          "zusatzstoffe": [],
+          "vegetarisch": false,
+          "platzhalter": true
+        },
+        {
+          "name": "[Platzhalter] Fleischgericht 2",
+          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
+          "preis": null,
+          "allergene": [],
+          "zusatzstoffe": [],
+          "vegetarisch": false,
+          "platzhalter": true
+        },
+        {
+          "name": "[Platzhalter] Fleischgericht 3",
+          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
+          "preis": null,
+          "allergene": [],
+          "zusatzstoffe": [],
+          "vegetarisch": false,
+          "platzhalter": true
+        }
+      ]
+    }
+  ]
+}

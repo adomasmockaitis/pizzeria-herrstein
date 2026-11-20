@@ -1,0 +1,133 @@
+{
+  "mindestbestellwert": {
+    "text": "Kein Mindestbestellwert",
+    "bestaetigt": false
+  },
+  "firmenlieferung": {
+    "text": "Für Firmen liefern wir mittags kostenfrei.",
+    "bestaetigt": false
+  },
+  "keinTrefferText": "Dein Ort ist nicht dabei? Ruf uns an, wir liefern gerne auf Anfrage.",
+  "zonen": [
+    {
+      "id": 1,
+      "name": "Zone 1",
+      "orte": [
+        "Herrstein",
+        "Niederwörresbach"
+      ],
+      "preis": 1,
+      "sichtbar": true
+    },
+    {
+      "id": 2,
+      "name": "Zone 2",
+      "orte": [
+        "Niederhosenbach",
+        "Oberwörresbach"
+      ],
+      "preis": 2,
+      "sichtbar": true
+    },
+    {
+      "id": 3,
+      "name": "Zone 3",
+      "orte": [
+        "Breitenthal",
+        "Wickenrodt",
+        "Mörschied",
+        "Herborn",
+        "Veitsrodt",
+        "Gerach",
+        "Oberhosenbach"
+      ],
+      "preis": 3,
+      "sichtbar": true
+    },
+    {
+      "id": 4,
+      "name": "Zone 4",
+      "orte": [
+        "Kempfeld",
+        "Weiden",
+        "Hottenbach",
+        "Sonnschied",
+        "Fischbach",
+        "Hintertiefenbach",
+        "Schauren",
+        "Vollmersbach",
+        "Göttschied",
+        "Tiefenstein",
+        "Asbach",
+        "Sulzbach"
+      ],
+      "preis": 4,
+      "sichtbar": true
+    },
+    {
+      "id": 5,
+      "name": "Zone 5",
+      "orte": [
+        "Stipshausen",
+        "Kirschweiler",
+        "Bruchweiler",
+        "Weierbach",
+        "Idar",
+        "Hettenrodt",
+        "Hellertshausen",
+        "Regulshausen",
+        "Griebelschied"
+      ],
+      "preis": 5,
+      "sichtbar": true
+    },
+    {
+      "id": 6,
+      "name": "Zone 6",
+      "orte": [
+        "Niederhosenbach",
+        "Oberwörresbach"
+      ],
+      "preis": 6,
+      "sichtbar": false,
+      "platzhalter": true
+    },
+    {
+      "id": 7,
+      "name": "Zone 7",
+      "orte": [
+        "Breitenthal",
+        "Wickenrodt",
+        "Mörschied",
+        "Herborn",
+        "Veitsrodt",
+        "Gerach",
+        "Oberhosenbach"
+      ],
+      "preis": 7,
+      "sichtbar": false,
+      "platzhalter": true
+    },
+    {
+      "id": 8,
+      "name": "Zone 8",
+      "orte": [
+        "Kempfeld",
+        "Weiden",
+        "Hottenbach",
+        "Sonnschied",
+        "Fischbach",
+        "Hintertiefenbach",
+        "Schauren",
+        "Vollmersbach",
+        "Göttschied",
+        "Tiefenstein",
+        "Asbach",
+        "Sulzbach"
+      ],
+      "preis": 8,
+      "sichtbar": false,
+      "platzhalter": true
+    }
+  ]
+}
