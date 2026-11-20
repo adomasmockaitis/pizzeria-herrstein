@@ -206,9 +206,20 @@ const { kategorien } = Astro.props;
     };
 
     for (const link of links) {
-      link.addEventListener('click', () => {
+      link.addEventListener('click', (event) => {
         const id = link.dataset.katLink;
         if (!id) return;
+        // Kein neuer Verlaufseintrag pro Kategorie: sonst müsste „Zurück“ erst durch alle
+        // angetippten Kategorien. Selbst scrollen und die Adresse nur ersetzen.
+        const ziel = document.getElementById(id);
+        if (ziel && !event.metaKey && !event.ctrlKey && !event.shiftKey) {
+          event.preventDefault();
+          const reduziert = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          ziel.scrollIntoView({ behavior: reduziert ? 'auto' : 'smooth', block: 'start' });
+          const url = new URL(window.location.href);
+          url.hash = id;
+          window.history.replaceState(window.history.state, '', url);
+        }
         klickZielId = id;
         window.clearTimeout(klickSperreTimer);
         klickSperreTimer = window.setTimeout(loeseKlickSperre, 800);

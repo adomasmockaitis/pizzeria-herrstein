@@ -132,11 +132,42 @@ document.addEventListener('click', (event) => {
   } catch {
     vonStartseite = false;
   }
-  if (vonStartseite && window.history.length > 1) {
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    window.history.back();
+  if (!vonStartseite || window.history.length <= 1) return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+
+  // Direkt zum letzten Startseiten-Eintrag im Verlauf springen – egal wie viele
+  // Einträge (z. B. Anker) dazwischen liegen. Navigation API (Chrome/Edge), sonst zurückzählen.
+  const nav = (window as Window & {
+    navigation?: {
+      currentEntry?: { index: number };
+      entries?: () => { index: number; url: string | null; key: string }[];
+      traverseTo?: (key: string) => unknown;
+    };
+  }).navigation;
+  const aktuell = nav?.currentEntry?.index;
+  const eintraege = nav?.entries?.();
+  if (nav?.traverseTo && eintraege && typeof aktuell === 'number') {
+    for (let i = aktuell - 1; i >= 0; i--) {
+      const eintrag = eintraege.find((e) => e.index === i);
+      if (eintrag?.url && istStartseiteUrl(eintrag.url)) {
+        nav.traverseTo(eintrag.key);
+        return;
+      }
+      if (eintrag?.url && !istSpeisekarteUrl(eintrag.url)) break;
+    }
   }
+  // Fallback (Safari/Firefox): Anzahl gleicher-Seite-Einträge seit Ankunft zurückgehen
+  let schritte = 1;
+  try {
+    const ankunft = parseInt(sessionStorage.getItem('pizzeria-ankunft-laenge') || '', 10);
+    if (!isNaN(ankunft) && window.history.length >= ankunft) {
+      schritte = Math.max(1, window.history.length - ankunft + 1);
+    }
+  } catch {
+    // ignorieren
+  }
+  window.history.go(-schritte);
 }, true);
 
 // Klick-Handler für Kategorie-Karten ("Frisch aus unserer Küche") und Speisekarte-Buttons
@@ -247,3 +278,15 @@ window.addEventListener('pageswap', (rohEvent) => {
 window.addEventListener('pageshow', (e) => {
   if ((e as PageTransitionEvent).persisted) entferneAlleMorphNamen();
 });
+
+// Für den Zurück-Fallback: Verlaufslänge bei Ankunft auf der Speisekarte merken
+if (istSpeisekarteUrl(window.location.href)) {
+  const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+  if (!nav || nav.type !== 'back_forward') {
+    try {
+      sessionStorage.setItem('pizzeria-ankunft-laenge', String(window.history.length));
+    } catch {
+      // ignorieren
+    }
+  }
+}
