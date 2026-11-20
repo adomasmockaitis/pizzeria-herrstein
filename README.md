@@ -13,14 +13,16 @@ npm install
 npm run dev
 ```
 
-Die Seite läuft anschließend unter `http://localhost:4321`.
+Die Seite läuft anschließend unter `http://localhost:4321/pizzeria-herrstein/`.
 
-## Bauen & Vorschau
+## Bauen & Vorschau (lokal mit Base-Path testen)
 
 ```bash
 npm run build
 npm run preview
 ```
+
+Die gebaute Vorschau ist danach lokal unter `http://localhost:4321/pizzeria-herrstein/` (bzw. dem in der Konsole angezeigten Port) erreichbar. So lassen sich alle Unterpfad-Links, Assets und Seitenübergänge exakt wie auf GitHub Pages prüfen.
 
 ## Inhalte ändern
 
@@ -43,6 +45,36 @@ In `src/config.ts` steuert `DEMO_MODE`:
 - `true`: Suchmaschinen werden blockiert (`noindex, nofollow` und `robots.txt` mit `Disallow: /`) und der Demo-Hinweisbalken wird angezeigt.
 - `false`: Indexierung erlaubt, Demo-Hinweisbalken ausgeblendet.
 
-## Deployment
+## Demo veröffentlichen (GitHub Pages)
 
-Folgt in Phase 6 (GitHub Pages).
+Der GitHub-Actions-Workflow liegt bereits unter `.github/workflows/deploy.yml` und baut die Website automatisch bei jedem Push auf `main` (oder manuell über **Actions → Run workflow**).
+
+### Einmalige Schritte auf GitHub
+
+1. Ein **öffentliches** Repository mit dem Namen `pizzeria-herrstein` unter dem Account `adomasmockaitis` anlegen.
+2. Das lokale Projekt auf den Branch `main` pushen.
+3. Im Repository unter **Settings → Pages → Build and deployment → Source** den Eintrag **GitHub Actions** auswählen.
+4. Im Reiter **Actions** warten, bis der Workflow **Deploy auf GitHub Pages** erfolgreich durchgelaufen ist.
+5. Die Demo im Browser testen: `https://adomasmockaitis.github.io/pizzeria-herrstein/` (insbesondere Startseite, `/speisekarte/`, Kategorie-Anker, Zurück-Link und Bilder).
+
+### Hinweis zu `robots.txt` unter einem Unterpfad
+
+Bei GitHub Pages unter einem Repository-Unterpfad (`/pizzeria-herrstein/`) lesen Suchmaschinen-Bots `/pizzeria-herrstein/robots.txt` **nicht**, da `robots.txt` nur im Domain-Root (`https://adomasmockaitis.github.io/robots.txt`) ausgewertet wird. Den Schutz vor Indexierung im Demo-Modus übernehmen zuverlässig die `<meta name="robots" content="noindex, nofollow">`-Tags auf jeder Seite. Der Endpoint `src/pages/robots.txt.ts` bleibt unverändert im Projekt, damit er beim späteren Livegang unter eigener Domain direkt greift.
+
+### Livegang mit eigener Domain (Site & Base per Umgebungsvariable)
+
+Standardmäßig nutzt `astro.config.mjs` die Werte für die GitHub-Pages-Demo (`SITE=https://adomasmockaitis.github.io`, `BASE=/pizzeria-herrstein`). Für den späteren Livegang unter eigener Domain (ohne Unterpfad) lassen sich beide Werte ohne Codeänderung per Umgebungsvariable überschreiben:
+
+```bash
+# Linux / macOS
+SITE=https://pizzeria-herrstein.de BASE=/ npm run build
+```
+
+```powershell
+# Windows (PowerShell)
+$env:SITE = "https://pizzeria-herrstein.de"
+$env:BASE = "/"
+npm run build
+```
+
+Bei Hosting-Anbietern wie Netlify oder Cloudflare Pages werden `SITE` und `BASE` einfach in den Build-Umgebungsvariablen hinterlegt.

@@ -39,11 +39,14 @@ const normalisierePfad = (pfad: string): string => {
   return bereinigt || '/';
 };
 
+const BASIS_PFAD = normalisierePfad(import.meta.env.BASE_URL || '/');
+const SPEISEKARTE_PFAD = `${BASIS_PFAD === '/' ? '' : BASIS_PFAD}/speisekarte`;
+
 const istSpeisekarteUrl = (urlStr?: string): boolean => {
   if (!urlStr) return false;
   try {
     const url = new URL(urlStr, window.location.href);
-    return normalisierePfad(url.pathname).endsWith('/speisekarte');
+    return normalisierePfad(url.pathname) === SPEISEKARTE_PFAD;
   } catch {
     return false;
   }
@@ -53,8 +56,7 @@ const istStartseiteUrl = (urlStr?: string): boolean => {
   if (!urlStr) return false;
   try {
     const url = new URL(urlStr, window.location.href);
-    const base = normalisierePfad(import.meta.env.BASE_URL || '/');
-    return normalisierePfad(url.pathname) === base;
+    return normalisierePfad(url.pathname) === BASIS_PFAD;
   } catch {
     return false;
   }

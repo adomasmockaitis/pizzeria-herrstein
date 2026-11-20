@@ -370,7 +370,8 @@ const istLangerHinweis = Boolean(kategorie.hinweis && kategorie.hinweis.length >
     font-size: var(--text-xs);
     font-weight: var(--gewicht-fett);
     line-height: 1.2;
-    color: color-mix(in srgb, var(--farbe-offwhite) 90%, transparent);
+    /* volles Offwhite: auf Grün sonst nur 4,1:1 Kontrast (Lighthouse) */
+    color: var(--farbe-offwhite);
     white-space: nowrap;
   }
 

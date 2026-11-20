@@ -499,3 +499,16 @@ h2 {
     opacity: 1;
   }
 }
+
+/* Optische Hervorhebung für [TODO]-Platzhalter in Rechtstexten (Kontrast > 8:1) */
+.todo {
+  display: inline;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background-color: #fff3c4;
+  color: #4a3000;
+  border: 1px solid var(--farbe-status-bald-rand);
+  font-weight: var(--gewicht-fett);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}

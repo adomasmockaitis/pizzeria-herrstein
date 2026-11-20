@@ -11,7 +11,7 @@ const aktuellesJahr = new Date().getFullYear();
 
 const navZiele = [
   { href: base },
-  { href: `${base}speisekarte` },
+  { href: `${base}speisekarte/` },
   { href: `${base}#lieferservice` },
   { href: `${base}#oeffnungszeiten` },
   { href: `${base}#kontakt` },
@@ -63,8 +63,8 @@ const logoAlt = texte.footer.logoAlt.replace('{name}', kontakt.name);
       </div>
 
       <div class="footer__rechtliches">
-        <a href={`${base}impressum`} class="footer__link">{texte.footer.impressum}</a>
-        <a href={`${base}datenschutz`} class="footer__link">{texte.footer.datenschutz}</a>
+        <a href={`${base}impressum/`} class="footer__link">{texte.footer.impressum}</a>
+        <a href={`${base}datenschutz/`} class="footer__link">{texte.footer.datenschutz}</a>
       </div>
     </div>
 

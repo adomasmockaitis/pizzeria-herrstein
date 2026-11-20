@@ -1,0 +1,344 @@
+---
+// Impressum: Unterseite mit Large Title, Trikolore-Linie und hellem Inhaltsblock nach § 5 DDG
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AbschnittTitel from '../components/AbschnittTitel.astro';
+import kontakt from '../content/kontakt.json';
+import rechtliches from '../content/rechtliches.json';
+
+const t = rechtliches.impressum;
+const metaTitel = t.metaTitel.replace('{name}', kontakt.name);
+const metaBeschreibung = t.metaBeschreibung.replace('{name}', kontakt.name);
+
+const teileMitTodo = (text: string) =>
+  text
+    .split(/(\[TODO:[^\]]+\])/g)
+    .filter(Boolean)
+    .map((teil) => ({
+      text: teil,
+      istTodo: /^\[TODO:[^\]]+\]$/.test(teil),
+    }));
+---
+
+<BaseLayout
+  title={metaTitel}
+  description={metaBeschreibung}
+  headerTransparent={false}
+  headerVariante="unterseite"
+  headerTitel={t.headerTitel}
+>
+  <div class="rechtliches-seite">
+    <header class="unterseite-kopf">
+      <div class="container">
+        <div class="unterseite-kopf__titel-wrap">
+          <h1 class="unterseite-kopf__titel" data-large-title>
+            {t.ueberschrift}
+          </h1>
+          <div class="unterseite-kopf__trikolore" aria-hidden="true">
+            <span class="unterseite-kopf__trikolore-gruen"></span>
+            <span class="unterseite-kopf__trikolore-weiss"></span>
+            <span class="unterseite-kopf__trikolore-rot"></span>
+          </div>
+          <p class="unterseite-kopf__untertitel">{t.untertitel}</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <article class="rechtliches-box" aria-label={t.ueberschrift}>
+        <section class="rechtliches-abschnitt" aria-labelledby="imp-anbieter">
+          <AbschnittTitel id="imp-anbieter" as="h2" variante="kompakt" farbe="rot" class="rechtliches-abschnitt__titel">
+            {t.anbieterTitel}
+          </AbschnittTitel>
+          <address class="rechtliches-adresse">
+            <p><strong>{kontakt.name}</strong></p>
+            <p><mark class="todo">{t.inhaberTodo}</mark></p>
+            <p>
+              {kontakt.adresse.strasse}<br />
+              {kontakt.adresse.plz} {kontakt.adresse.ort}
+            </p>
+          </address>
+        </section>
+
+        <section class="rechtliches-abschnitt" aria-labelledby="imp-kontakt">
+          <AbschnittTitel id="imp-kontakt" as="h2" variante="kompakt" farbe="rot" class="rechtliches-abschnitt__titel">
+            {t.kontaktTitel}
+          </AbschnittTitel>
+          <dl class="rechtliches-dl">
+            <div class="rechtliches-dl__zeile">
+              <dt>{t.telefonLabel}</dt>
+              <dd>
+                <a href={kontakt.telefon.link} class="text-link">
+                  {kontakt.telefon.anzeige}
+                </a>
+              </dd>
+            </div>
+            <div class="rechtliches-dl__zeile">
+              <dt>{t.emailLabel}</dt>
+              <dd>
+                <mark class="todo">{t.emailTodo}</mark>
+              </dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="rechtliches-abschnitt" aria-labelledby="imp-ust">
+          <AbschnittTitel id="imp-ust" as="h2" variante="kompakt" farbe="rot" class="rechtliches-abschnitt__titel">
+            {t.ustTitel}
+          </AbschnittTitel>
+          <p><mark class="todo">{t.ustTodo}</mark></p>
+        </section>
+
+        <section class="rechtliches-abschnitt" aria-labelledby="imp-register">
+          <AbschnittTitel id="imp-register" as="h2" variante="kompakt" farbe="rot" class="rechtliches-abschnitt__titel">
+            {t.registerTitel}
+          </AbschnittTitel>
+          <p><mark class="todo">{t.registerTodo}</mark></p>
+        </section>
+
+        <section class="rechtliches-abschnitt" aria-labelledby="imp-verantwortlich">
+          <AbschnittTitel id="imp-verantwortlich" as="h2" variante="kompakt" farbe="rot" class="rechtliches-abschnitt__titel">
+            {t.verantwortlichTitel}
+          </AbschnittTitel>
+          <p><mark class="todo">{t.verantwortlichTodo}</mark></p>
+        </section>
+
+        <section class="rechtliches-abschnitt" aria-labelledby="imp-streitbeilegung">
+          <AbschnittTitel id="imp-streitbeilegung" as="h2" variante="kompakt" farbe="rot" class="rechtliches-abschnitt__titel">
+            {t.streitbeilegungTitel}
+          </AbschnittTitel>
+          <p>
+            {t.streitbeilegungText}{' '}
+            <mark class="todo">{t.streitbeilegungTodo}</mark>
+          </p>
+        </section>
+
+        <section class="rechtliches-abschnitt" aria-labelledby="imp-bildnachweise">
+          <AbschnittTitel id="imp-bildnachweise" as="h2" variante="kompakt" farbe="gruen" class="rechtliches-abschnitt__titel">
+            {t.bildnachweiseTitel}
+          </AbschnittTitel>
+          <p>{t.bildnachweiseIntro}</p>
+          <ul class="rechtliches-liste">
+            {t.bildnachweiseListe.map((eintrag) => (
+              <li>
+                <strong>{eintrag.motiv}:</strong>{' '}
+                {teileMitTodo(eintrag.quelle).map((teil) =>
+                  teil.istTodo ? <mark class="todo">{teil.text}</mark> : teil.text,
+                )}
+              </li>
+            ))}
+          </ul>
+          <p class="rechtliches-hinweis-link">
+            <a
+              href={t.unsplashLinkUrl}
+              class="text-link"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={t.unsplashLinkAriaLabel}
+            >
+              {t.unsplashLinkText}
+            </a>
+          </p>
+        </section>
+
+        <section class="rechtliches-abschnitt" aria-labelledby="imp-gestaltung">
+          <AbschnittTitel id="imp-gestaltung" as="h2" variante="kompakt" farbe="gruen" class="rechtliches-abschnitt__titel">
+            {t.gestaltungTitel}
+          </AbschnittTitel>
+          <p>{t.gestaltungText}</p>
+        </section>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  // Large-Title-Verhalten wie auf /speisekarte (kompakter Titel in der Navigationsleiste beim Scrollen)
+  const largeTitle = document.querySelector<HTMLElement>('[data-large-title]');
+  const navTitel = document.querySelector<HTMLElement>('[data-nav-titel]');
+  const headerEl = document.querySelector<HTMLElement>('.header--unterseite');
+  const reduziertMedia = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  if (largeTitle && navTitel) {
+    const aktualisiere = () => {
+      if (reduziertMedia.matches) {
+        largeTitle.style.transform = '';
+        largeTitle.style.opacity = '';
+        const navUnten = headerEl?.getBoundingClientRect().bottom ?? 56;
+        navTitel.classList.toggle('ist-sichtbar', largeTitle.getBoundingClientRect().bottom <= navUnten + 4);
+        return;
+      }
+      const fortschritt = Math.min(1, Math.max(0, window.scrollY / 80));
+      const skala = 1 - fortschritt * 0.08;
+      largeTitle.style.transform = fortschritt > 0.001 ? `scale(${skala.toFixed(4)})` : '';
+      largeTitle.style.opacity = fortschritt > 0.001 ? (1 - fortschritt).toFixed(3) : '';
+      navTitel.classList.toggle('ist-sichtbar', fortschritt >= 0.65);
+    };
+
+    let rahmen = false;
+    const beiScroll = () => {
+      if (rahmen) return;
+      rahmen = true;
+      window.requestAnimationFrame(() => {
+        rahmen = false;
+        aktualisiere();
+      });
+    };
+
+    aktualisiere();
+    window.addEventListener('scroll', beiScroll, { passive: true });
+    window.addEventListener('resize', beiScroll, { passive: true });
+    reduziertMedia.addEventListener('change', aktualisiere);
+  }
+</script>
+
+<style>
+  .rechtliches-seite {
+    padding-bottom: var(--abstand-2xl);
+  }
+
+  .unterseite-kopf {
+    padding-top: var(--abstand-l);
+    padding-bottom: var(--abstand-m);
+  }
+
+  .unterseite-kopf__titel-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--abstand-2xs);
+  }
+
+  .unterseite-kopf__titel {
+    font-family: var(--schrift-basis);
+    font-weight: var(--gewicht-fett);
+    font-size: clamp(2.125rem, 1.8rem + 1.1vw, 2.75rem);
+    line-height: 1.1;
+    color: var(--farbe-leiste-text);
+    transform-origin: left center;
+    will-change: transform, opacity;
+  }
+
+  .unterseite-kopf__trikolore {
+    width: 6rem;
+    height: 4px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: var(--schatten-klein);
+    margin-block: var(--abstand-2xs);
+  }
+
+  .unterseite-kopf__trikolore-gruen {
+    background-color: var(--farbe-gruen-figma);
+  }
+
+  .unterseite-kopf__trikolore-weiss {
+    background-color: var(--farbe-weiss);
+    box-shadow: inset 0 0 0 1px var(--farbe-haarlinie);
+  }
+
+  .unterseite-kopf__trikolore-rot {
+    background-color: var(--farbe-rot);
+  }
+
+  .unterseite-kopf__untertitel {
+    font-size: var(--text-m);
+    line-height: var(--zeilenhoehe);
+    color: var(--farbe-text-sekundaer);
+  }
+
+  /* Heller Inhaltsblock mit konzentrischen Ecken (wie Legende auf /speisekarte) */
+  .rechtliches-box {
+    --karte-innen: var(--abstand-m);
+    padding: var(--karte-innen);
+    border-radius: calc(var(--karte-innen) + var(--radius-innen));
+    background-color: var(--farbe-weiss);
+    color: var(--farbe-leiste-text);
+    box-shadow:
+      0 0 0 1px var(--farbe-haarlinie),
+      var(--schatten-liste);
+    display: flex;
+    flex-direction: column;
+    gap: var(--abstand-xl);
+  }
+
+  @media (min-width: 768px) {
+    .rechtliches-box {
+      --karte-innen: var(--abstand-xl);
+    }
+  }
+
+  .rechtliches-abschnitt {
+    display: flex;
+    flex-direction: column;
+    gap: var(--abstand-s);
+  }
+
+  .rechtliches-abschnitt + .rechtliches-abschnitt {
+    padding-top: var(--abstand-l);
+    border-top: 1px solid var(--farbe-haarlinie);
+  }
+
+  .rechtliches-abschnitt__titel {
+    margin-bottom: var(--abstand-2xs);
+  }
+
+  .rechtliches-adresse {
+    font-style: normal;
+    display: flex;
+    flex-direction: column;
+    gap: var(--abstand-xs);
+    max-width: 70ch;
+  }
+
+  .rechtliches-dl {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--abstand-xs);
+    max-width: 70ch;
+  }
+
+  .rechtliches-dl__zeile {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--abstand-2xs) var(--abstand-xs);
+  }
+
+  .rechtliches-dl dt {
+    font-weight: var(--gewicht-fett);
+    color: var(--farbe-leiste-text);
+  }
+
+  .rechtliches-dl dd {
+    margin: 0;
+  }
+
+  .rechtliches-liste {
+    max-width: 70ch;
+    padding-inline-start: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--abstand-xs);
+  }
+
+  .rechtliches-hinweis-link {
+    margin-top: var(--abstand-2xs);
+  }
+
+  .text-link {
+    color: var(--farbe-rot);
+    font-weight: var(--gewicht-fett);
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 0.22em;
+  }
+
+  @media (hover: hover) {
+    .text-link:hover {
+      color: var(--farbe-rot-dunkel);
+    }
+  }
+</style>

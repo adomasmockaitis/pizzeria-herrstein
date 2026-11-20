@@ -102,7 +102,7 @@ const drehungenMobil = [-1, 1, -1, 1, -1];
         </AbschnittTitel>
         <p class="genuss__text">{texte.genuss.text}</p>
         <div class="genuss__aktion">
-          <Button href={`${base}speisekarte`} variante="rot" groesse="klein">
+          <Button href={`${base}speisekarte/`} variante="rot" groesse="klein">
             {texte.genuss.button}
           </Button>
         </div>
@@ -127,7 +127,7 @@ const drehungenMobil = [-1, 1, -1, 1, -1];
                 <p class="genuss__karte-text">{kat.text}</p>
                 <div class="genuss__karte-aktion">
                   <Button
-                    href={`${base}speisekarte${kat.anker}`}
+                    href={`${base}speisekarte/${kat.anker}`}
                     variante={buttonVariante}
                     groesse="klein"
                   >

@@ -1,0 +1,178 @@
+---
+// 404-Fehlerseite im Design der Pizzeria-Website
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/Button.astro';
+import kontakt from '../content/kontakt.json';
+import rechtliches from '../content/rechtliches.json';
+import pizzaRund from '../assets/fotos/pizza-rand-inna-gurina.webp';
+
+const t = rechtliches.fehler404;
+const metaTitel = t.metaTitel.replace('{name}', kontakt.name);
+const metaBeschreibung = t.metaBeschreibung.replace('{name}', kontakt.name);
+
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+---
+
+<BaseLayout
+  title={metaTitel}
+  description={metaBeschreibung}
+  headerTransparent={false}
+  headerVariante="unterseite"
+  headerTitel={t.headerTitel}
+>
+  <section class="fehler-seite" aria-labelledby="fehler-titel">
+    <div class="container">
+      <div class="fehler-karte">
+        <div class="fehler-karte__inhalt">
+          <p class="fehler-karte__code">{t.code}</p>
+          <h1 id="fehler-titel" class="fehler-karte__titel" data-large-title>
+            {t.ueberschrift}
+          </h1>
+          <div class="fehler-karte__trikolore" aria-hidden="true">
+            <span class="fehler-karte__trikolore-gruen"></span>
+            <span class="fehler-karte__trikolore-weiss"></span>
+            <span class="fehler-karte__trikolore-rot"></span>
+          </div>
+          <p class="fehler-karte__text">{t.text}</p>
+
+          <div class="fehler-karte__aktionen">
+            <Button href={base} variante="rot">
+              {t.buttonStartseite}
+            </Button>
+            <Button href={`${base}speisekarte`} variante="hell" class="fehler-karte__btn-hell">
+              {t.buttonSpeisekarte}
+            </Button>
+          </div>
+        </div>
+
+        <div class="fehler-karte__bild-wrap" aria-hidden="true">
+          <Image
+            src={pizzaRund}
+            alt=""
+            width={320}
+            height={320}
+            class="fehler-karte__bild"
+            loading="eager"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .fehler-seite {
+    padding-block: var(--abstand-xl) var(--abstand-2xl);
+  }
+
+  .fehler-karte {
+    --karte-innen: var(--abstand-l);
+    padding: var(--karte-innen);
+    border-radius: calc(var(--karte-innen) + var(--radius-innen));
+    background-color: var(--farbe-weiss);
+    color: var(--farbe-leiste-text);
+    box-shadow:
+      0 0 0 1px var(--farbe-haarlinie),
+      var(--schatten-liste);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--abstand-xl);
+    align-items: center;
+  }
+
+  @media (min-width: 768px) {
+    .fehler-karte {
+      --karte-innen: var(--abstand-xl);
+      grid-template-columns: minmax(0, 1.35fr) minmax(180px, 0.65fr);
+      gap: var(--abstand-2xl);
+    }
+  }
+
+  .fehler-karte__inhalt {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--abstand-s);
+  }
+
+  .fehler-karte__code {
+    font-size: var(--text-s);
+    font-weight: var(--gewicht-fett);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--farbe-rot);
+  }
+
+  .fehler-karte__titel {
+    font-family: var(--schrift-basis);
+    font-weight: var(--gewicht-fett);
+    font-size: clamp(2.125rem, 1.8rem + 1.1vw, 2.75rem);
+    line-height: 1.1;
+    color: var(--farbe-leiste-text);
+  }
+
+  .fehler-karte__trikolore {
+    width: 6rem;
+    height: 4px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: var(--schatten-klein);
+  }
+
+  .fehler-karte__trikolore-gruen {
+    background-color: var(--farbe-gruen-figma);
+  }
+
+  .fehler-karte__trikolore-weiss {
+    background-color: var(--farbe-weiss);
+    box-shadow: inset 0 0 0 1px var(--farbe-haarlinie);
+  }
+
+  .fehler-karte__trikolore-rot {
+    background-color: var(--farbe-rot);
+  }
+
+  .fehler-karte__text {
+    font-size: var(--text-basis);
+    line-height: var(--zeilenhoehe);
+    color: var(--farbe-text-sekundaer);
+    max-width: 70ch;
+  }
+
+  .fehler-karte__aktionen {
+    margin-top: var(--abstand-xs);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--abstand-s);
+    width: 100%;
+  }
+
+  /* Klar sichtbarer Rand für den hellen Button auf hellem Hintergrund (Kontrast) */
+  .fehler-karte__aktionen :global(.fehler-karte__btn-hell) {
+    border-color: var(--farbe-haarlinie-stark);
+  }
+
+  .fehler-karte__bild-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .fehler-karte__bild {
+    width: min(220px, 60vw);
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.14));
+  }
+
+  @media (min-width: 768px) {
+    .fehler-karte__bild {
+      width: min(280px, 100%);
+    }
+  }
+</style>

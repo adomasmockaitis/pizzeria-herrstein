@@ -63,7 +63,8 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
         var MORPH = 'kategorie-morph';
         function pfad(u) { try { var p = new URL(u, location.href).pathname.replace(/\/+$/, ''); return p || '/'; } catch (e) { return ''; } }
         var basis = (vtBase || '/').replace(/\/+$/, '') || '/';
-        function istKarte(u) { return !!u && pfad(u).slice(-12) === '/speisekarte'; }
+        var kartePfad = (basis === '/' ? '' : basis) + '/speisekarte';
+        function istKarte(u) { return !!u && pfad(u) === kartePfad; }
         function istStart(u) { return !!u && pfad(u) === basis; }
         function lese() {
           try { var d = JSON.parse(sessionStorage.getItem(SCHLUESSEL) || 'null'); sessionStorage.removeItem(SCHLUESSEL);

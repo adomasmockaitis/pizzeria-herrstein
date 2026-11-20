@@ -33,10 +33,18 @@ const openingHoursSpecification = oeffnungszeiten.tage.flatMap((eintrag) => {
   }));
 });
 
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+const startseiteUrl = Astro.site ? new URL(base, Astro.site).href : undefined;
+
 const restaurantSchema = {
   '@context': 'https://schema.org',
   '@type': 'Restaurant',
   name: kontakt.name,
+  ...(startseiteUrl && {
+    url: startseiteUrl,
+    hasMenu: new URL('speisekarte/', startseiteUrl).href,
+  }),
   servesCuisine: 'Italienisch',
   telephone: kontakt.telefon.anzeige,
   address: {

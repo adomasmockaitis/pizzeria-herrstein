@@ -1,0 +1,182 @@
+{
+  "_hinweis": "Zentrale Textdatei (Deutsch) für Impressum, Datenschutzerklärung und 404-Fehlerseite – vorbereitet für Mehrsprachigkeit (Phase 7)",
+  "impressum": {
+    "metaTitel": "Impressum – {name}",
+    "metaBeschreibung": "Impressum und Angaben gemäß § 5 DDG für {name} in Herrstein.",
+    "headerTitel": "Impressum",
+    "ueberschrift": "Impressum",
+    "untertitel": "Angaben gemäß § 5 DDG",
+    "anbieterTitel": "Angaben gemäß § 5 DDG",
+    "inhaberTodo": "[TODO: Name Inhaber / Firmenname und Rechtsform]",
+    "kontaktTitel": "Kontakt",
+    "telefonLabel": "Telefon:",
+    "emailLabel": "E-Mail:",
+    "emailTodo": "[TODO: E-Mail-Adresse]",
+    "ustTitel": "Umsatzsteuer-ID",
+    "ustTodo": "[TODO: Umsatzsteuer-ID nach § 27a UStG, falls vorhanden]",
+    "registerTitel": "Handelsregister & Aufsichtsbehörde",
+    "registerTodo": "[TODO: ggf. Handelsregister / zuständige Aufsichtsbehörde]",
+    "verantwortlichTitel": "Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV",
+    "verantwortlichTodo": "[TODO: Name, Anschrift]",
+    "streitbeilegungTitel": "Verbraucherstreitbeilegung",
+    "streitbeilegungText": "Wir sind weder bereit noch verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.",
+    "streitbeilegungTodo": "[TODO: bestätigen]",
+    "bildnachweiseTitel": "Bildnachweise",
+    "bildnachweiseIntro": "Die auf dieser Website verwendeten Fotos dienen als Platzhalter und stammen – soweit nicht anders angegeben – von Unsplash:",
+    "bildnachweiseListe": [
+      {
+        "motiv": "Pizza (Startseite)",
+        "quelle": "Ivan Torres (Unsplash)"
+      },
+      {
+        "motiv": "Pizza rund",
+        "quelle": "Inna Gurina (Unsplash)"
+      },
+      {
+        "motiv": "Vorspeisen (Caprese auf Teller)",
+        "quelle": "Oksana Simanovscaia (Unsplash)"
+      },
+      {
+        "motiv": "Salat mit Lachs",
+        "quelle": "mk. s (Unsplash)"
+      },
+      {
+        "motiv": "Fleischgericht (Steak in der Pfanne)",
+        "quelle": "behrouz sasani (Unsplash)"
+      },
+      {
+        "motiv": "Nudelgericht (Pappardelle in Schale)",
+        "quelle": "[TODO: Quelle klären]"
+      }
+    ],
+    "unsplashLinkText": "Informationen zur Unsplash-Lizenz",
+    "unsplashLinkUrl": "https://unsplash.com/license",
+    "unsplashLinkAriaLabel": "Informationen zur Unsplash-Lizenz (öffnet in neuem Tab)",
+    "gestaltungTitel": "Gestaltung & Umsetzung",
+    "gestaltungText": "Adomas Mockaitis"
+  },
+  "datenschutz": {
+    "metaTitel": "Datenschutzerklärung – {name}",
+    "metaBeschreibung": "Datenschutzerklärung der {name}: Informationen zu Hosting, Server-Logfiles, externen Links und deinen Rechten nach der DSGVO.",
+    "headerTitel": "Datenschutz",
+    "ueberschrift": "Datenschutzerklärung",
+    "demoHinweis": "Entwurf – vor Veröffentlichung von einer Fachperson oder einem Generator prüfen lassen.",
+    "inhaltsverzeichnisLabel": "Inhaltsverzeichnis",
+    "inhaltsverzeichnisTitel": "Inhalt dieser Seite",
+    "externerLinkHinweis": "(öffnet in neuem Tab)",
+    "verantwortlicher": {
+      "id": "verantwortlicher",
+      "titel": "1. Überblick & Verantwortlicher",
+      "intro": "Der Schutz deiner persönlichen Daten ist uns wichtig. Auf dieser Seite erfährst du kurz und verständlich, welche Daten beim Besuch dieser Website anfallen und welche Rechte du nach der Datenschutz-Grundverordnung (DSGVO) hast.",
+      "label": "Verantwortlich für die Datenverarbeitung auf dieser Website:",
+      "todo": "[TODO: Name, Anschrift, Kontakt]"
+    },
+    "hosting": {
+      "id": "hosting",
+      "titel": "2. Hosting & Server-Logfiles",
+      "statischText": "Diese Website ist eine rein statische Website. Es gibt keine Benutzerkonten, keine Online-Bestellung, kein Kontaktformular und keine eigene Datenbank.",
+      "githubText": "Die Website wird derzeit über GitHub Pages bereitgestellt – einen Dienst der GitHub, Inc. (88 Colin P. Kelly Jr. St, San Francisco, CA 94107, USA), einem Unternehmen der Microsoft Corporation. Wenn du diese Website aufrufst, erfasst der Hoster technisch bedingt Server-Logfiles. Darin können insbesondere deine IP-Adresse, Datum und Uhrzeit des Zugriffs, die aufgerufene Seite oder Datei, die übertragene Datenmenge, der verwendete Browser, das Betriebssystem sowie ggf. die zuvor besuchte Seite (Referrer-URL) gespeichert werden.",
+      "rechtsgrundlage": "Die Verarbeitung erfolgt auf Grundlage unseres berechtigten Interesses an einer sicheren, stabilen und fehlerfreien Bereitstellung der Website (Art. 6 Abs. 1 lit. f DSGVO).",
+      "usaHinweis": "Bei der Nutzung von GitHub Pages können Daten in die USA übermittelt werden. GitHub bzw. die Microsoft Corporation ist nach dem EU-US Data Privacy Framework (DPF) zertifiziert, auf dessen Grundlage ein angemessenes Datenschutzniveau anerkannt ist.",
+      "githubLinkText": "Datenschutzerklärung von GitHub ansehen",
+      "githubLinkUrl": "https://docs.github.com/de/site-policy/privacy-policies/github-general-privacy-statement",
+      "livegangHinweis": "Für den späteren Livegang ist der Umzug zu einem anderen Hosting-Anbieter vorgesehen:",
+      "livegangTodo": "[TODO: Hoster beim Livegang anpassen]"
+    },
+    "keineCookies": {
+      "id": "keine-cookies",
+      "titel": "3. Keine Cookies, kein Tracking, keine Analyse-Tools",
+      "text": "Diese Website verwendet keine Cookies und bindet keinerlei Analyse-, Tracking- oder Werbe-Tools ein (zum Beispiel kein Google Analytics, keine Werbenetzwerke und keine Social-Media-Tracker). Deshalb siehst du hier auch kein Cookie-Banner."
+    },
+    "schriften": {
+      "id": "schriften",
+      "titel": "4. Selbst gehostete Schriften",
+      "text": "Alle auf dieser Website verwendeten Schriftarten (Montserrat und DM Serif Display) sind direkt auf unserem eigenen Server hinterlegt (selbst gehostet). Beim Laden der Seite wird keine Verbindung zu Google Fonts oder anderen externen Schriftanbietern hergestellt."
+    },
+    "sessionStorage": {
+      "id": "session-storage",
+      "titel": "5. Technischer Zwischenspeicher (sessionStorage)",
+      "text": "Für flüssige Seitenübergänge und um beim Zurück-Navigieren deine vorherige Scrollposition wiederherzustellen, speichert die Website kurzzeitig rein technische Angaben im sessionStorage deines Browsers (z. B. die Scrollposition der Startseite und Übergangsinformationen zur Speisekarte). Diese Einträge enthalten keine personenbezogenen Daten, bleiben ausschließlich in deinem Browser, werden nicht an uns oder Dritte übertragen und werden beim Schließen des Browser-Tabs automatisch gelöscht. Rechtsgrundlage für diese Speicherung auf deinem Endgerät ist § 25 Abs. 2 Nr. 2 TDDDG, weil sie für die von dir gewünschte Funktion technisch unbedingt erforderlich ist; eine Einwilligung ist dafür nicht nötig."
+    },
+    "externeLinks": {
+      "id": "externe-links",
+      "titel": "6. Externe Links (Karten, WhatsApp, Telefon)",
+      "intro": "Wir binden keine externen Karten-Iframes oder Plugins direkt in die Website ein. Erst wenn du einen externen Link aktiv anklickst, verlässt du unsere Website und es wird eine Verbindung zum jeweiligen Anbieter aufgebaut:",
+      "eintraege": [
+        {
+          "name": "Google Maps",
+          "beschreibung": "Beim Klick auf „Auf Karte anzeigen“ wirst du zu Google Maps (Google Ireland Limited / Google LLC, USA) weitergeleitet. Erst ab diesem Moment kann Google Daten wie deine IP-Adresse verarbeiten.",
+          "linkText": "Datenschutzerklärung von Google",
+          "linkUrl": "https://policies.google.com/privacy?hl=de"
+        },
+        {
+          "name": "OpenStreetMap",
+          "beschreibung": "Soweit ein Link zu OpenStreetMap (OpenStreetMap Foundation, Großbritannien) aufgerufen wird, erfolgt die Verbindung zu deren Servern erst nach deinem Klick.",
+          "linkText": "Datenschutzerklärung der OpenStreetMap Foundation",
+          "linkUrl": "https://osmfoundation.org/wiki/Privacy_Policy"
+        },
+        {
+          "name": "WhatsApp & Telefon",
+          "beschreibung": "Auch bei Links zu WhatsApp oder Telefon wird erst durch dein Anklicken die jeweilige App bzw. Telefonfunktion geöffnet. Nähere Hinweise dazu findest du im nächsten Abschnitt."
+        }
+      ]
+    },
+    "kontakt": {
+      "id": "kontakt",
+      "titel": "7. Kontakt per Telefon oder WhatsApp",
+      "text": "Wenn du uns anrufst oder per WhatsApp schreibst – etwa für eine Bestellung oder eine Rückfrage –, verarbeiten wir die von dir angegebenen Daten (zum Beispiel Telefonnummer, Name, Lieferadresse und Bestelldetails), um deine Anfrage zu beantworten oder deine Bestellung auszuführen. Rechtsgrundlage hierfür ist Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung bzw. vorvertragliche Maßnahmen) sowie ggf. Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Bearbeitung von Anfragen).",
+      "whatsappText": "WhatsApp wird in Europa von der WhatsApp Ireland Limited betrieben, einem Unternehmen der Meta Platforms, Inc. (USA). Wenn du uns über WhatsApp kontaktierst, gelten die Nutzungsbedingungen und Datenschutzhinweise von WhatsApp. Dabei können Kommunikations- und Metadaten auch an Server von Meta in den USA übermittelt werden. Meta Platforms, Inc. ist nach dem EU-US Data Privacy Framework (DPF) zertifiziert. Wenn du WhatsApp nicht nutzen möchtest, erreichst du uns jederzeit direkt telefonisch.",
+      "whatsappLinkText": "Datenschutzhinweise von WhatsApp (EWR)",
+      "whatsappLinkUrl": "https://www.whatsapp.com/legal/privacy-policy-eea"
+    },
+    "rechte": {
+      "id": "rechte",
+      "titel": "8. Deine Rechte & Beschwerderecht",
+      "intro": "Du hast nach der DSGVO folgende Rechte hinsichtlich der dich betreffenden personenbezogenen Daten:",
+      "liste": [
+        {
+          "titel": "Recht auf Auskunft (Art. 15 DSGVO):",
+          "text": "Du kannst Auskunft darüber verlangen, welche personenbezogenen Daten wir über dich verarbeiten."
+        },
+        {
+          "titel": "Recht auf Berichtigung (Art. 16 DSGVO):",
+          "text": "Du kannst die Berichtigung unrichtiger oder die Vervollständigung unvollständiger Daten verlangen."
+        },
+        {
+          "titel": "Recht auf Löschung (Art. 17 DSGVO):",
+          "text": "Du kannst die Löschung deiner Daten verlangen, sofern keine gesetzlichen Aufbewahrungspflichten entgegenstehen."
+        },
+        {
+          "titel": "Recht auf Einschränkung der Verarbeitung (Art. 18 DSGVO):",
+          "text": "Unter den gesetzlichen Voraussetzungen kannst du die Einschränkung der Verarbeitung verlangen."
+        },
+        {
+          "titel": "Recht auf Datenübertragbarkeit (Art. 20 DSGVO):",
+          "text": "Du hast das Recht, Daten, die wir automatisiert auf Grundlage deiner Einwilligung oder eines Vertrags verarbeiten, in einem gängigen, maschinenlesbaren Format zu erhalten."
+        },
+        {
+          "titel": "Widerspruchsrecht (Art. 21 DSGVO):",
+          "text": "Soweit wir Daten auf Grundlage berechtigter Interessen (Art. 6 Abs. 1 lit. f DSGVO) verarbeiten, kannst du aus Gründen, die sich aus deiner besonderen Situation ergeben, jederzeit Widerspruch einlegen."
+        }
+      ],
+      "beschwerdeTitel": "Beschwerderecht bei der Aufsichtsbehörde",
+      "beschwerdeIntro": "Darüber hinaus hast du nach Art. 77 DSGVO das Recht, dich bei einer Datenschutz-Aufsichtsbehörde zu beschweren. Die für Rheinland-Pfalz zuständige Aufsichtsbehörde ist:",
+      "behoerdeName": "Der Landesbeauftragte für den Datenschutz und die Informationsfreiheit Rheinland-Pfalz (LfDI)",
+      "behoerdeAdresse": "Hintere Bleiche 34, 55116 Mainz",
+      "behoerdeLinkText": "www.datenschutz.rlp.de",
+      "behoerdeLinkUrl": "https://www.datenschutz.rlp.de"
+    },
+    "standLabel": "Stand dieser Datenschutzerklärung:",
+    "standTodo": "[TODO: Datum]"
+  },
+  "fehler404": {
+    "metaTitel": "Seite nicht gefunden – {name}",
+    "metaBeschreibung": "Die gesuchte Seite wurde nicht gefunden. Zurück zur Startseite oder direkt zur Speisekarte der {name}.",
+    "headerTitel": "Seite nicht gefunden",
+    "code": "Fehler 404",
+    "ueberschrift": "Seite nicht gefunden",
+    "text": "Diese Seite gibt es leider nicht – vielleicht hat sich die Adresse geändert oder der Link ist veraltet.",
+    "buttonStartseite": "Zur Startseite",
+    "buttonSpeisekarte": "Zur Speisekarte"
+  }
+}

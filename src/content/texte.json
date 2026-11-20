@@ -8,24 +8,19 @@
   },
   "navigation": [
     {
-      "label": "Startseite",
-      "href": "#top"
+      "label": "Startseite"
     },
     {
-      "label": "Speisekarte",
-      "href": "/speisekarte"
+      "label": "Speisekarte"
     },
     {
-      "label": "Lieferservice",
-      "href": "#lieferservice"
+      "label": "Lieferservice"
     },
     {
-      "label": "Öffnungszeiten",
-      "href": "#oeffnungszeiten"
+      "label": "Öffnungszeiten"
     },
     {
-      "label": "Kontakt",
-      "href": "#kontakt"
+      "label": "Kontakt"
     }
   ],
   "header": {
@@ -235,33 +230,212 @@
       "allergenOhne": "ohne {allergen}",
       "allergenChipOhne": "Ohne {allergen}",
       "zutatenListe": [
-        { "id": "schinken", "label": "Schinken", "stichwoerter": ["schinken", "formfleischvorderschinken"] },
-        { "id": "salami", "label": "Salami", "stichwoerter": ["salami"] },
-        { "id": "peperoniwurst", "label": "Peperoniwurst", "stichwoerter": ["peperoniwurst"] },
-        { "id": "hackfleisch", "label": "Hackfleisch", "stichwoerter": ["hackfleisch"] },
-        { "id": "thunfisch", "label": "Thunfisch", "stichwoerter": ["thunfisch", "tonno"] },
-        { "id": "shrimps", "label": "Shrimps", "stichwoerter": ["shrimps", "shrimp"] },
-        { "id": "lachs", "label": "Lachs", "stichwoerter": ["lachs"] },
-        { "id": "meeresfruechte", "label": "Meeresfrüchte", "stichwoerter": ["meeresfruechte"] },
-        { "id": "sardellen", "label": "Sardellen", "stichwoerter": ["sardellen"] },
-        { "id": "pilze", "label": "Champignons / Pilze", "stichwoerter": ["champignon", "pilz", "steinpilz"] },
-        { "id": "zwiebeln", "label": "Zwiebeln", "stichwoerter": ["zwiebel", "cipoll"] },
-        { "id": "knoblauch", "label": "Knoblauch", "stichwoerter": ["knoblauch"] },
-        { "id": "paprika", "label": "Paprika", "stichwoerter": ["paprika"] },
-        { "id": "peperoni", "label": "Peperoni", "stichwoerter": ["peperoni"], "ausschluss": ["peperoniwurst"] },
-        { "id": "oliven", "label": "Oliven", "stichwoerter": ["oliven"], "ausschluss": ["olivenoel"] },
-        { "id": "spinat", "label": "Spinat", "stichwoerter": ["spinat"] },
-        { "id": "brokkoli", "label": "Brokkoli", "stichwoerter": ["brokkoli", "broccoli"] },
-        { "id": "artischocken", "label": "Artischocken", "stichwoerter": ["artischock"] },
-        { "id": "ananas", "label": "Ananas", "stichwoerter": ["ananas"] },
-        { "id": "ei", "label": "Ei", "stichwoerter": ["eier", "spiegelei", "gekochtesei"] },
-        { "id": "mozzarella", "label": "Mozzarella", "stichwoerter": ["mozzarella"] },
-        { "id": "gorgonzola", "label": "Gorgonzola", "stichwoerter": ["gorgonzola"] },
-        { "id": "schafskaese", "label": "Schafskäse", "stichwoerter": ["schafskaese"] },
-        { "id": "parmesan", "label": "Parmesan", "stichwoerter": ["parmesan"] },
-        { "id": "tomaten", "label": "Tomaten", "stichwoerter": ["tomaten"] },
-        { "id": "kapern", "label": "Kapern", "stichwoerter": ["kapern"] },
-        { "id": "sahne", "label": "Sahne", "stichwoerter": ["sahne", "rahm", "panna"] }
+        {
+          "id": "schinken",
+          "label": "Schinken",
+          "stichwoerter": [
+            "schinken",
+            "formfleischvorderschinken"
+          ]
+        },
+        {
+          "id": "salami",
+          "label": "Salami",
+          "stichwoerter": [
+            "salami"
+          ]
+        },
+        {
+          "id": "peperoniwurst",
+          "label": "Peperoniwurst",
+          "stichwoerter": [
+            "peperoniwurst"
+          ]
+        },
+        {
+          "id": "hackfleisch",
+          "label": "Hackfleisch",
+          "stichwoerter": [
+            "hackfleisch"
+          ]
+        },
+        {
+          "id": "thunfisch",
+          "label": "Thunfisch",
+          "stichwoerter": [
+            "thunfisch",
+            "tonno"
+          ]
+        },
+        {
+          "id": "shrimps",
+          "label": "Shrimps",
+          "stichwoerter": [
+            "shrimps",
+            "shrimp"
+          ]
+        },
+        {
+          "id": "lachs",
+          "label": "Lachs",
+          "stichwoerter": [
+            "lachs"
+          ]
+        },
+        {
+          "id": "meeresfruechte",
+          "label": "Meeresfrüchte",
+          "stichwoerter": [
+            "meeresfruechte"
+          ]
+        },
+        {
+          "id": "sardellen",
+          "label": "Sardellen",
+          "stichwoerter": [
+            "sardellen"
+          ]
+        },
+        {
+          "id": "pilze",
+          "label": "Champignons / Pilze",
+          "stichwoerter": [
+            "champignon",
+            "pilz",
+            "steinpilz"
+          ]
+        },
+        {
+          "id": "zwiebeln",
+          "label": "Zwiebeln",
+          "stichwoerter": [
+            "zwiebel",
+            "cipoll"
+          ]
+        },
+        {
+          "id": "knoblauch",
+          "label": "Knoblauch",
+          "stichwoerter": [
+            "knoblauch"
+          ]
+        },
+        {
+          "id": "paprika",
+          "label": "Paprika",
+          "stichwoerter": [
+            "paprika"
+          ]
+        },
+        {
+          "id": "peperoni",
+          "label": "Peperoni",
+          "stichwoerter": [
+            "peperoni"
+          ],
+          "ausschluss": [
+            "peperoniwurst"
+          ]
+        },
+        {
+          "id": "oliven",
+          "label": "Oliven",
+          "stichwoerter": [
+            "oliven"
+          ],
+          "ausschluss": [
+            "olivenoel"
+          ]
+        },
+        {
+          "id": "spinat",
+          "label": "Spinat",
+          "stichwoerter": [
+            "spinat"
+          ]
+        },
+        {
+          "id": "brokkoli",
+          "label": "Brokkoli",
+          "stichwoerter": [
+            "brokkoli",
+            "broccoli"
+          ]
+        },
+        {
+          "id": "artischocken",
+          "label": "Artischocken",
+          "stichwoerter": [
+            "artischock"
+          ]
+        },
+        {
+          "id": "ananas",
+          "label": "Ananas",
+          "stichwoerter": [
+            "ananas"
+          ]
+        },
+        {
+          "id": "ei",
+          "label": "Ei",
+          "stichwoerter": [
+            "eier",
+            "spiegelei",
+            "gekochtesei"
+          ]
+        },
+        {
+          "id": "mozzarella",
+          "label": "Mozzarella",
+          "stichwoerter": [
+            "mozzarella"
+          ]
+        },
+        {
+          "id": "gorgonzola",
+          "label": "Gorgonzola",
+          "stichwoerter": [
+            "gorgonzola"
+          ]
+        },
+        {
+          "id": "schafskaese",
+          "label": "Schafskäse",
+          "stichwoerter": [
+            "schafskaese"
+          ]
+        },
+        {
+          "id": "parmesan",
+          "label": "Parmesan",
+          "stichwoerter": [
+            "parmesan"
+          ]
+        },
+        {
+          "id": "tomaten",
+          "label": "Tomaten",
+          "stichwoerter": [
+            "tomaten"
+          ]
+        },
+        {
+          "id": "kapern",
+          "label": "Kapern",
+          "stichwoerter": [
+            "kapern"
+          ]
+        },
+        {
+          "id": "sahne",
+          "label": "Sahne",
+          "stichwoerter": [
+            "sahne",
+            "rahm",
+            "panna"
+          ]
+        }
       ]
     }
   }
