@@ -668,7 +668,10 @@ const sichtbareZonen = lieferzonen.zonen.filter((zone) => zone.sichtbar);
     align-items: center;
     column-gap: var(--abstand-m);
     row-gap: var(--abstand-2xs);
-    --karte-innen: var(--abstand-m);
+    /* Mobil: kleine Karte -> großzügiger Innenabstand (20px) und weniger runde innere Elemente (14px).
+       Konzentrisch bleibt es trotzdem: Kartenradius = 20 + 14 = 34px. So bleibt Abstand zwischen Text und Rundung. */
+    --karte-innen: 1.25rem;
+    --radius-innen: 14px;
     padding: var(--karte-innen);
   }
 
@@ -736,6 +739,7 @@ const sichtbareZonen = lieferzonen.zonen.filter((zone) => zone.sichtbar);
     .lieferkosten__grid :global(.zone-karte) {
       min-height: 13.375rem;
       --karte-innen: calc(var(--abstand-m) * 2);
+      --radius-innen: 20px;
       padding: var(--karte-innen);
       grid-template-columns: 1fr auto;
       grid-template-rows: auto 1fr;
