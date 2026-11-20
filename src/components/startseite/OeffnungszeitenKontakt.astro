@@ -30,6 +30,7 @@ const statusTexte = texte.oeffnungsstatus;
           hidden
           data-oeffnungsstatus
           data-jetzt-geoeffnet={statusTexte.jetztGeoeffnet}
+          data-schliesst-bald={statusTexte.schliesstBald}
           data-oeffnet-heute={statusTexte.oeffnetHeute}
           data-oeffnet-tag={statusTexte.oeffnetTag}
           data-geschlossen-hinweis={statusTexte.geschlossenMitHinweis}
@@ -146,6 +147,7 @@ const statusTexte = texte.oeffnungsstatus;
   if (badge && textEl) {
     const statusTexte: OeffnungsstatusTexte = {
       jetztGeoeffnet: badge.dataset.jetztGeoeffnet ?? '',
+      schliesstBald: badge.dataset.schliesstBald ?? '',
       oeffnetHeute: badge.dataset.oeffnetHeute ?? '',
       oeffnetTag: badge.dataset.oeffnetTag ?? '',
       geschlossenMitHinweis: badge.dataset.geschlossenHinweis ?? '',
@@ -155,7 +157,9 @@ const statusTexte = texte.oeffnungsstatus;
 
     const aktualisiere = () => {
       const status = ermittleOeffnungsstatus(new Date(), oeffnungszeiten, statusTexte);
-      badge.classList.toggle('status-badge--offen', status.offen);
+      badge.classList.toggle('status-badge--offen', status.zustand === 'offen');
+      badge.classList.toggle('status-badge--bald', status.zustand === 'bald');
+      badge.classList.toggle('status-badge--zu', status.zustand === 'zu');
       textEl.textContent = status.text;
       badge.hidden = false;
     };
@@ -232,8 +236,18 @@ const statusTexte = texte.oeffnungsstatus;
     background-color: var(--farbe-status-zu);
   }
 
+  /* Ampel: grün = geöffnet, gelb = schließt bald, rot = geschlossen */
   .status-badge--offen .status-badge__punkt {
     background-color: var(--farbe-gruen);
+  }
+
+  .status-badge--bald .status-badge__punkt {
+    background-color: var(--farbe-status-bald);
+    box-shadow: 0 0 0 2px var(--farbe-status-bald-rand);
+  }
+
+  .status-badge--zu .status-badge__punkt {
+    background-color: var(--farbe-rot);
   }
 
   .ok-karte__titel {

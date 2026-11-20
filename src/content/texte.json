@@ -7,11 +7,26 @@
     "skipLink": "Zum Inhalt springen"
   },
   "navigation": [
-    { "label": "Startseite", "href": "#top" },
-    { "label": "Speisekarte", "href": "/speisekarte" },
-    { "label": "Lieferservice", "href": "#lieferservice" },
-    { "label": "Öffnungszeiten", "href": "#oeffnungszeiten" },
-    { "label": "Kontakt", "href": "#kontakt" }
+    {
+      "label": "Startseite",
+      "href": "#top"
+    },
+    {
+      "label": "Speisekarte",
+      "href": "/speisekarte"
+    },
+    {
+      "label": "Lieferservice",
+      "href": "#lieferservice"
+    },
+    {
+      "label": "Öffnungszeiten",
+      "href": "#oeffnungszeiten"
+    },
+    {
+      "label": "Kontakt",
+      "href": "#kontakt"
+    }
   ],
   "header": {
     "logoAlt": "{name} – Startseite",
@@ -42,8 +57,9 @@
   },
   "oeffnungsstatus": {
     "jetztGeoeffnet": "Jetzt geöffnet · bis {bis} Uhr",
-    "oeffnetHeute": "Geschlossen · öffnet heute {von} Uhr",
-    "oeffnetTag": "Geschlossen · öffnet {tag} {von} Uhr",
+    "schliesstBald": "Schließt bald · um {bis} Uhr",
+    "oeffnetHeute": "Geschlossen · öffnet wieder heute um {von} Uhr",
+    "oeffnetTag": "Geschlossen · öffnet wieder {tag} um {von} Uhr",
     "geschlossenMitHinweis": "Geschlossen · {text}",
     "geschlossen": "Geschlossen",
     "derzeitGeschlossen": "Derzeit geschlossen",

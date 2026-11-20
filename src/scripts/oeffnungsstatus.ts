@@ -27,13 +27,21 @@ export interface OeffnungszeitenDaten {
   sonderzeiten?: SonderzeitEintrag[];
 }
 
+/** offen = grün, bald = schließt in ≤ SCHLIESST_BALD_MINUTEN (gelb), zu = geschlossen (rot) */
+export type OeffnungsZustand = 'offen' | 'bald' | 'zu';
+
 export interface Oeffnungsstatus {
   offen: boolean;
+  zustand: OeffnungsZustand;
   text: string;
 }
 
+/** Ab so vielen Minuten vor Schließung gilt „schließt bald“. */
+export const SCHLIESST_BALD_MINUTEN = 30;
+
 export interface OeffnungsstatusTexte {
   jetztGeoeffnet: string;
+  schliesstBald: string;
   oeffnetHeute: string;
   oeffnetTag: string;
   geschlossenMitHinweis: string;
@@ -112,6 +120,7 @@ export function ermittleOeffnungsstatus(
   if (heutigeSonderzeit && heutigeSonderzeit.geschlossen) {
     return {
       offen: false,
+      zustand: 'zu',
       text: heutigeSonderzeit.text
         ? texte.geschlossenMitHinweis.replace('{text}', heutigeSonderzeit.text)
         : texte.geschlossen,
@@ -133,9 +142,11 @@ export function ermittleOeffnungsstatus(
         const vonMin = zuMinuten(spanne.von);
         const bisMin = zuMinuten(spanne.bis);
         if (jetztMinuten >= vonMin && jetztMinuten < bisMin) {
+          const bald = bisMin - jetztMinuten <= SCHLIESST_BALD_MINUTEN;
           return {
             offen: true,
-            text: texte.jetztGeoeffnet.replace('{bis}', spanne.bis),
+            zustand: bald ? 'bald' : 'offen',
+            text: (bald ? texte.schliesstBald : texte.jetztGeoeffnet).replace('{bis}', spanne.bis),
           };
         }
       }
@@ -146,6 +157,7 @@ export function ermittleOeffnungsstatus(
       if (naechsteHeute) {
         return {
           offen: false,
+          zustand: 'zu',
           text: texte.oeffnetHeute.replace('{von}', naechsteHeute.von),
         };
       }
@@ -166,6 +178,7 @@ export function ermittleOeffnungsstatus(
         const erste = sortierteZeiten[0];
         return {
           offen: false,
+          zustand: 'zu',
           text: texte.oeffnetTag.replace('{tag}', zielTag.tag).replace('{von}', erste.von),
         };
       }
@@ -174,6 +187,7 @@ export function ermittleOeffnungsstatus(
 
   return {
     offen: false,
+    zustand: 'zu',
     text: texte.derzeitGeschlossen,
   };
 }
