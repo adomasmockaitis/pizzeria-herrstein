@@ -73,7 +73,28 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
           var el = document.querySelectorAll('[data-vt-morph]');
           for (var i = 0; i < el.length; i++) { el[i].style.viewTransitionName = ''; el[i].removeAttribute('data-vt-morph'); }
         }
+        // Beim Zurückkommen auf die Startseite die gemerkte Scrollposition wiederherstellen
+        // (vor dem Übergang, damit der Rück-Morph die richtige Karte trifft).
+        var positionErledigt = false;
+        function stellePositionWiederHer() {
+          if (positionErledigt || !istStart(location.href)) return;
+          positionErledigt = true;
+          var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+          var act = window.navigation && window.navigation.activation;
+          var zurueck = (act && act.navigationType === 'traverse') || (nav && nav.type === 'back_forward');
+          if (!zurueck) return;
+          try {
+            var y = parseInt(sessionStorage.getItem('pizzeria-start-y') || '', 10);
+            if (!isNaN(y) && Math.abs(window.scrollY - y) > 2) {
+              document.documentElement.style.scrollBehavior = 'auto';
+              window.scrollTo(0, y);
+              document.documentElement.style.scrollBehavior = '';
+            }
+          } catch (e0) {}
+        }
+        window.addEventListener('pageshow', function (ev) { if (ev.persisted) positionErledigt = false; stellePositionWiederHer(); });
         window.addEventListener('pagereveal', function (e) {
+          stellePositionWiederHer();
           var vt = e.viewTransition;
           var gespeichert = lese();
           if (!vt) return;
@@ -89,14 +110,33 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
                 sek.scrollIntoView({ behavior: 'instant', block: 'start' });
                 block.style.viewTransitionName = MORPH;
                 block.setAttribute('data-vt-morph', '1');
+                try { sessionStorage.setItem('pizzeria-vt-herkunft', gespeichert.katId); } catch (e2) {}
                 vt.types.add('morph');
                 vt.finished.finally(aufraeumen);
                 return;
               }
             }
+            try { sessionStorage.removeItem('pizzeria-vt-herkunft'); } catch (e3) {}
             if (!von || istStart(von) || (gespeichert && gespeichert.typ === 'vor')) vt.types.add('vor');
           } else if (istStart(hier)) {
-            if ((von && istKarte(von)) || (gespeichert && gespeichert.typ === 'zurueck')) vt.types.add('zurueck');
+            aufraeumen();
+            if (gespeichert && gespeichert.typ === 'morph-zurueck' && gespeichert.katId) {
+              // Rück-Morph: die Karte im Stapel finden, die auf diese Kategorie verlinkt
+              var links = document.querySelectorAll('[data-genuss-karte] a[href]');
+              var karte = null;
+              for (var i = 0; i < links.length; i++) {
+                if (links[i].getAttribute('href').split('#')[1] === gespeichert.katId) { karte = links[i].closest('.genuss__karte'); break; }
+              }
+              try { sessionStorage.removeItem('pizzeria-vt-herkunft'); } catch (e4) {}
+              if (karte) {
+                karte.style.viewTransitionName = MORPH;
+                karte.setAttribute('data-vt-morph', '1');
+                vt.types.add('morph');
+                vt.finished.finally(aufraeumen);
+                return;
+              }
+            }
+            if ((von && istKarte(von)) || (gespeichert && (gespeichert.typ === 'zurueck' || gespeichert.typ === 'morph-zurueck'))) vt.types.add('zurueck');
           }
           vt.finished.finally(aufraeumen);
         });

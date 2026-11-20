@@ -312,107 +312,6 @@
       ]
     },
     {
-      "id": "kindermenue",
-      "name": "Kindermenü",
-      "hinweis": null,
-      "abschnitte": [
-        {
-          "titel": null,
-          "hinweis": null,
-          "gerichte": [
-            {
-              "name": "Spaghetti Bolognese",
-              "zusatz": null,
-              "beschreibung": null,
-              "preis": 7,
-              "preisKlein": null,
-              "preisGross": null,
-              "kennzeichnung": [],
-              "vegetarisch": false,
-              "unsicher": ["kennzeichnung"]
-            },
-            {
-              "name": "Mini-Pizza Salami",
-              "zusatz": null,
-              "beschreibung": null,
-              "preis": 8,
-              "preisKlein": null,
-              "preisGross": null,
-              "kennzeichnung": [],
-              "vegetarisch": false,
-              "unsicher": ["kennzeichnung"]
-            },
-            {
-              "name": "Schweineschnitzel „Wiener Art“",
-              "zusatz": null,
-              "beschreibung": "mit Pommes Frites",
-              "preis": 10,
-              "preisKlein": null,
-              "preisGross": null,
-              "kennzeichnung": [],
-              "vegetarisch": false,
-              "unsicher": ["kennzeichnung"]
-            },
-            {
-              "name": "Schweineschnitzel „Jäger Art“",
-              "zusatz": null,
-              "beschreibung": "mit Champignons und Pommes Frites",
-              "preis": 12,
-              "preisKlein": null,
-              "preisGross": null,
-              "kennzeichnung": [],
-              "vegetarisch": false,
-              "unsicher": ["kennzeichnung"]
-            },
-            {
-              "name": "Schweineschnitzel in Rahmsoße",
-              "zusatz": null,
-              "beschreibung": "mit Champignons und Pommes Frites",
-              "preis": 12,
-              "preisKlein": null,
-              "preisGross": null,
-              "kennzeichnung": [],
-              "vegetarisch": false,
-              "unsicher": ["kennzeichnung"]
-            },
-            {
-              "name": "Chicken Nuggets",
-              "zusatz": "10 Stück",
-              "beschreibung": "mit Pommes Frites",
-              "preis": 12,
-              "preisKlein": null,
-              "preisGross": null,
-              "kennzeichnung": [],
-              "vegetarisch": false,
-              "unsicher": ["kennzeichnung"]
-            },
-            {
-              "name": "Pommes Frites",
-              "zusatz": null,
-              "beschreibung": null,
-              "preis": 5,
-              "preisKlein": null,
-              "preisGross": null,
-              "kennzeichnung": [],
-              "vegetarisch": true,
-              "unsicher": []
-            },
-            {
-              "name": "Kroketten",
-              "zusatz": null,
-              "beschreibung": null,
-              "preis": 5,
-              "preisKlein": null,
-              "preisGross": null,
-              "kennzeichnung": [],
-              "vegetarisch": true,
-              "unsicher": []
-            }
-          ]
-        }
-      ]
-    },
-    {
       "id": "pizza",
       "name": "Pizza",
       "groessen": {
@@ -1688,6 +1587,107 @@
               "preisGross": null,
               "kennzeichnung": [],
               "vegetarisch": false,
+              "unsicher": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kindermenue",
+      "name": "Kindermenü",
+      "hinweis": null,
+      "abschnitte": [
+        {
+          "titel": null,
+          "hinweis": null,
+          "gerichte": [
+            {
+              "name": "Spaghetti Bolognese",
+              "zusatz": null,
+              "beschreibung": null,
+              "preis": 7,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Mini-Pizza Salami",
+              "zusatz": null,
+              "beschreibung": null,
+              "preis": 8,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Schweineschnitzel „Wiener Art“",
+              "zusatz": null,
+              "beschreibung": "mit Pommes Frites",
+              "preis": 10,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Schweineschnitzel „Jäger Art“",
+              "zusatz": null,
+              "beschreibung": "mit Champignons und Pommes Frites",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Schweineschnitzel in Rahmsoße",
+              "zusatz": null,
+              "beschreibung": "mit Champignons und Pommes Frites",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Chicken Nuggets",
+              "zusatz": "10 Stück",
+              "beschreibung": "mit Pommes Frites",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Pommes Frites",
+              "zusatz": null,
+              "beschreibung": null,
+              "preis": 5,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": []
+            },
+            {
+              "name": "Kroketten",
+              "zusatz": null,
+              "beschreibung": null,
+              "preis": 5,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
               "unsicher": []
             }
           ]

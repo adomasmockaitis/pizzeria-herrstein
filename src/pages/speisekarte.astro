@@ -8,10 +8,16 @@ import Legende from '../components/speisekarte/Legende.astro';
 import kontakt from '../content/kontakt.json';
 import texte from '../content/texte.json';
 import speisekarteRoh from '../content/speisekarte.json';
+import kategorieFarbenRoh from '../content/kategorie-farben.json';
 import {
   formatiereStand,
   type SpeisekarteDaten,
 } from '../scripts/speisekarte-typen';
+
+type KategorieFarbe = 'rot' | 'gruen';
+const kategorieFarben = kategorieFarbenRoh as Record<string, KategorieFarbe>;
+const farbeFuerKategorie = (id: string, index: number): KategorieFarbe =>
+  kategorieFarben[id] ?? (index % 2 === 0 ? 'gruen' : 'rot');
 
 const speisekarte: SpeisekarteDaten = speisekarteRoh;
 
@@ -93,6 +99,11 @@ const filterKonfigJson = JSON.stringify(filterTexte).replace(/</g, '\\u003c');
           <h1 class="speisekarte-kopf__titel" data-large-title>
             {texte.speisekarte.ueberschrift}
           </h1>
+          <div class="speisekarte-kopf__trikolore" aria-hidden="true">
+            <span class="speisekarte-kopf__trikolore-gruen"></span>
+            <span class="speisekarte-kopf__trikolore-weiss"></span>
+            <span class="speisekarte-kopf__trikolore-rot"></span>
+          </div>
           <p class="speisekarte-kopf__stand">{standText}</p>
         </div>
 
@@ -354,7 +365,7 @@ const filterKonfigJson = JSON.stringify(filterTexte).replace(/</g, '\\u003c');
       {speisekarte.kategorien.map((kategorie, index) => (
         <KategorieKarte
           kategorie={kategorie}
-          farbe={index % 2 === 0 ? 'rot' : 'gruen'}
+          farbe={farbeFuerKategorie(kategorie.id, index)}
         />
       ))}
 
@@ -405,6 +416,30 @@ const filterKonfigJson = JSON.stringify(filterTexte).replace(/</g, '\\u003c');
     color: var(--farbe-leiste-text);
     transform-origin: left center;
     will-change: transform, opacity;
+  }
+
+  .speisekarte-kopf__trikolore {
+    width: 6rem;
+    height: 4px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: var(--schatten-klein);
+    margin-block: var(--abstand-2xs);
+  }
+
+  .speisekarte-kopf__trikolore-gruen {
+    background-color: var(--farbe-gruen-figma);
+  }
+
+  .speisekarte-kopf__trikolore-weiss {
+    background-color: var(--farbe-weiss);
+    box-shadow: inset 0 0 0 1px var(--farbe-haarlinie);
+  }
+
+  .speisekarte-kopf__trikolore-rot {
+    background-color: var(--farbe-rot);
   }
 
   .speisekarte-kopf__stand {

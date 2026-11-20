@@ -88,6 +88,7 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
         <a
           href={base}
           class="unterseite-leiste__zurueck"
+          data-zurueck
           aria-label={texte.speisekarte.zurueckAriaLabel}
         >
           <svg
@@ -106,7 +107,7 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
               stroke-linejoin="round"
             />
           </svg>
-          <span>{texte.speisekarte.zurueckStartseite}</span>
+          <span>{texte.speisekarte.zurueck}</span>
         </a>
 
         <span class="unterseite-leiste__titel" data-nav-titel aria-hidden="true">

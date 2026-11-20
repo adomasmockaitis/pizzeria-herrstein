@@ -1,6 +1,9 @@
 ---
 // Sticky Kategorie-Navigation als horizontale Pill-Leiste mit gleitendem Aktiv-Indikator
 import texte from '../../content/texte.json';
+import kategorieFarbenRoh from '../../content/kategorie-farben.json';
+
+type KategorieFarbe = 'rot' | 'gruen';
 
 interface KategorieLink {
   id: string;
@@ -10,6 +13,10 @@ interface KategorieLink {
 interface Props {
   kategorien: KategorieLink[];
 }
+
+const kategorieFarben = kategorieFarbenRoh as Record<string, KategorieFarbe>;
+const farbeFuerKategorie = (id: string, index: number): KategorieFarbe =>
+  kategorieFarben[id] ?? (index % 2 === 0 ? 'gruen' : 'rot');
 
 const { kategorien } = Astro.props;
 ---
@@ -27,7 +34,7 @@ const { kategorien } = Astro.props;
                 class:list={['kat-navi__link', index === 0 && 'kat-navi__link--aktiv auf-rot']}
                 aria-current={index === 0 ? 'true' : undefined}
                 data-kat-link={kategorie.id}
-                data-farbe={index % 2 === 0 ? 'rot' : 'gruen'}
+                data-farbe={farbeFuerKategorie(kategorie.id, index)}
               >
                 {kategorie.name}
               </a>
@@ -270,6 +277,10 @@ const { kategorien } = Astro.props;
     } else {
       aktualisiereAusScroll();
       const startLink = aktiveId ? linkNachId.get(aktiveId) : links[0];
+      if (startLink) {
+        indikator.style.backgroundColor =
+          startLink.dataset.farbe === 'gruen' ? 'var(--farbe-gruen)' : 'var(--farbe-rot)';
+      }
       bewegeIndikator(startLink, false);
     }
   }
@@ -416,6 +427,10 @@ const { kategorien } = Astro.props;
 
     .kat-navi__liste:not(.hat-indikator) .kat-navi__link--aktiv:hover {
       background-color: var(--farbe-rot-dunkel);
+    }
+
+    .kat-navi__liste:not(.hat-indikator) .kat-navi__link--aktiv[data-farbe='gruen']:hover {
+      background-color: var(--farbe-gruen-dunkel);
     }
   }
 

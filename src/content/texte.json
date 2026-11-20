@@ -84,7 +84,6 @@
         "text": "Starte mit Caprese, Shrimps-Cocktail, Panini oder Pizzabrot – frisch zubereitet für den Appetit vorweg.",
         "button": "Alle Vorspeisen",
         "anker": "#vorspeisen",
-        "farbe": "gruen",
         "bild": "vorspeisen-rund.webp"
       },
       {
@@ -92,7 +91,6 @@
         "text": "Ob gemischt, italienisch, mit Shrimps oder einfach als Beilage – knackig frisch und mit Dressing nach deiner Wahl.",
         "button": "Alle Salate",
         "anker": "#salat",
-        "farbe": "rot",
         "bild": "salat-rund.webp"
       },
       {
@@ -100,7 +98,6 @@
         "text": "Über 30 verschiedene Pizzen – von Klassikern bis Diavolo, Calzone oder Alla Chef. Für den großen Hunger gibt es einige auch als Jumbo.",
         "button": "Alle Pizzen",
         "anker": "#pizza",
-        "farbe": "gruen",
         "bild": "pizza-rand-inna-gurina.webp"
       },
       {
@@ -108,7 +105,6 @@
         "text": "Spaghetti, Penne, Tagliatelle oder Tortellini – ob mit Carbonara, Lachs, Steinpilzen oder im Ofen überbacken, immer kräftig abgeschmeckt.",
         "button": "Alle Nudelgerichte",
         "anker": "#nudeln",
-        "farbe": "rot",
         "bild": "nudeln-rund.webp"
       },
       {
@@ -116,7 +112,6 @@
         "text": "Schnitzel, Cordon Bleu oder Rumpsteak – frisch zubereitet, serviert mit Pommes oder Kroketten und knackigem Salat.",
         "button": "Alle Fleischgerichte",
         "anker": "#fleischgerichte",
-        "farbe": "gruen",
         "bild": "fleisch-rund.webp"
       }
     ]

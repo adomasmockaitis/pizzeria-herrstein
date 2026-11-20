@@ -7,15 +7,21 @@ import AbschnittTitel from '../AbschnittTitel.astro';
 import Button from '../Button.astro';
 import Karte from '../Karte.astro';
 import texte from '../../content/texte.json';
+import kategorieFarbenRoh from '../../content/kategorie-farben.json';
+
+type KategorieFarbe = 'gruen' | 'rot';
 
 interface GenussKategorie {
   titel: string;
   text: string;
   button: string;
   anker: string;
-  farbe: 'gruen' | 'rot';
   bild: string;
 }
+
+const kategorieFarben = kategorieFarbenRoh as Record<string, KategorieFarbe>;
+const farbeFuerKategorie = (id: string, index: number): KategorieFarbe =>
+  kategorieFarben[id] ?? (index % 2 === 0 ? 'gruen' : 'rot');
 
 const bilder = import.meta.glob<{ default: ImageMetadata }>('../../assets/fotos/*.{webp,jpg,png}', {
   eager: true,
@@ -35,10 +41,12 @@ const findeBild = (dateiname: string) => {
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 
-const kategorien = (texte.genuss.kategorien as GenussKategorie[]).map((kat) => {
+const kategorien = (texte.genuss.kategorien as GenussKategorie[]).map((kat, index) => {
   const aufgeloest = findeBild(kat.bild);
+  const kategorieId = kat.anker.replace(/^#/, '');
   return {
     ...kat,
+    farbe: farbeFuerKategorie(kategorieId, index),
     bildDateiname: aufgeloest?.dateiname ?? fallbackBild,
     bildSrc: aufgeloest?.src ?? null,
   };

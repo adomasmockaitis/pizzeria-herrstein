@@ -26,7 +26,7 @@ interface PageRevealEventLike extends Event {
 }
 
 interface UebergangSpeicher {
-  typ: 'vor' | 'zurueck' | 'morph';
+  typ: 'vor' | 'zurueck' | 'morph' | 'morph-zurueck';
   katId?: string;
   ts: number;
 }
@@ -102,6 +102,43 @@ const setzeMorphName = (el: HTMLElement | null) => {
   el.setAttribute('data-vt-morph', '1');
 };
 
+const HERKUNFT_SCHLUESSEL = 'pizzeria-vt-herkunft';
+
+const leseHerkunft = (): string | null => {
+  try {
+    return sessionStorage.getItem(HERKUNFT_SCHLUESSEL);
+  } catch {
+    return null;
+  }
+};
+
+/** Ist das Element (Kategorie-Block) gerade spürbar im sichtbaren Bereich? */
+const istImBild = (el: Element): boolean => {
+  const r = el.getBoundingClientRect();
+  const h = window.innerHeight || document.documentElement.clientHeight;
+  return r.bottom > h * 0.15 && r.top < h * 0.85;
+};
+
+// „‹ Zurück“ auf Unterseiten: wenn wir von der Startseite kamen, echt in der Historie zurück –
+// so stellt der Browser die alte Scrollposition (und den Kartenstapel) wieder her.
+document.addEventListener('click', (event) => {
+  const target = event.target instanceof Element ? event.target : null;
+  const link = target?.closest<HTMLAnchorElement>('a[data-zurueck]');
+  if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  let vonStartseite = false;
+  try {
+    const ref = document.referrer ? new URL(document.referrer) : null;
+    vonStartseite = !!ref && ref.origin === window.location.origin && istStartseiteUrl(ref.href);
+  } catch {
+    vonStartseite = false;
+  }
+  if (vonStartseite && window.history.length > 1) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    window.history.back();
+  }
+}, true);
+
 // Klick-Handler für Kategorie-Karten ("Frisch aus unserer Küche") und Speisekarte-Buttons
 document.addEventListener('click', (event) => {
   if (event.defaultPrevented) return;
@@ -139,8 +176,20 @@ document.addEventListener('click', (event) => {
   }
 });
 
+// Scrollposition der Startseite merken, damit „Zurück“ genau dorthin führt
+const merkeStartPosition = () => {
+  if (!istStartseiteUrl(window.location.href)) return;
+  try {
+    sessionStorage.setItem('pizzeria-start-y', String(Math.round(window.scrollY)));
+  } catch {
+    // ignorieren
+  }
+};
+window.addEventListener('pagehide', merkeStartPosition);
+
 // Ausgehende Seite: Richtung und ggf. Morph-Typ setzen
 window.addEventListener('pageswap', (rohEvent) => {
+  merkeStartPosition();
   const event = rohEvent as PageSwapEventLike;
   const vt = event.viewTransition;
   if (!vt) {
@@ -166,8 +215,22 @@ window.addEventListener('pageswap', (rohEvent) => {
     }
   } else if (aktuellSpeisekarte && zielStartseite) {
     entferneAlleMorphNamen();
-    vt.types.add('zurueck');
-    schreibeSpeicher({ typ: 'zurueck', ts: Date.now() });
+    // Rück-Morph: Kamen wir über eine Karte (Herkunft gespeichert) und ist deren Abschnitt
+    // noch im Bild, schrumpft er zurück in die Karte. Sonst normales Zurückschieben.
+    const herkunft = leseHerkunft();
+    const block = herkunft
+      ? document.querySelector<HTMLElement>(
+          `[data-kategorie-sektion="${CSS.escape(herkunft)}"] [data-kategorie-block]`,
+        )
+      : null;
+    if (herkunft && block && istImBild(block)) {
+      setzeMorphName(block);
+      vt.types.add('morph');
+      schreibeSpeicher({ typ: 'morph-zurueck', katId: herkunft, ts: Date.now() });
+    } else {
+      vt.types.add('zurueck');
+      schreibeSpeicher({ typ: 'zurueck', ts: Date.now() });
+    }
   } else {
     entferneAlleMorphNamen();
   }
@@ -179,3 +242,8 @@ window.addEventListener('pageswap', (rohEvent) => {
 
 // Eingehende Seite (pagereveal) wird im Inline-Skript in BaseLayout.astro behandelt,
 // weil ein Modul-Skript zu spät für pagereveal käme.
+
+// Aus dem Back-Forward-Cache zurück: evtl. hängengebliebene Übergangsnamen entfernen
+window.addEventListener('pageshow', (e) => {
+  if ((e as PageTransitionEvent).persisted) entferneAlleMorphNamen();
+});

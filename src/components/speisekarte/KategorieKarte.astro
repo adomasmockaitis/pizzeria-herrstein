@@ -380,7 +380,7 @@ const istLangerHinweis = Boolean(kategorie.hinweis && kategorie.hinweis.length >
     --kategorie-akzent: var(--farbe-rot);
     position: relative;
     overflow: clip;
-    background-color: var(--farbe-weiss);
+    background-color: color-mix(in srgb, var(--kategorie-akzent) 5%, var(--farbe-weiss));
     padding: calc(var(--karte-innen) + 4px) var(--karte-innen) var(--karte-innen);
     border-radius: calc(var(--karte-innen) + var(--radius-innen));
     box-shadow:
@@ -409,7 +409,7 @@ const istLangerHinweis = Boolean(kategorie.hinweis && kategorie.hinweis.length >
   .kategorie-block__hinweis {
     padding-bottom: var(--abstand-s);
     margin-bottom: var(--abstand-xs);
-    border-bottom: 1px solid var(--farbe-haarlinie);
+    border-bottom: 1px solid color-mix(in srgb, var(--kategorie-akzent) 15%, transparent);
     font-size: var(--text-m);
     line-height: var(--zeilenhoehe);
     color: var(--farbe-text-sekundaer);
@@ -423,7 +423,7 @@ const istLangerHinweis = Boolean(kategorie.hinweis && kategorie.hinweis.length >
   .abschnitt:not([hidden]) ~ .abschnitt:not([hidden]) {
     margin-top: var(--abstand-l);
     padding-top: var(--abstand-l);
-    border-top: 1px solid var(--farbe-haarlinie);
+    border-top: 1px solid color-mix(in srgb, var(--kategorie-akzent) 15%, transparent);
   }
 
   .abschnitt__kopf {
@@ -441,7 +441,7 @@ const istLangerHinweis = Boolean(kategorie.hinweis && kategorie.hinweis.length >
     line-height: 1.25;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: var(--farbe-text-sekundaer);
+    color: var(--kategorie-akzent);
   }
 
   .abschnitt__hinweis {
@@ -468,7 +468,7 @@ const istLangerHinweis = Boolean(kategorie.hinweis && kategorie.hinweis.length >
   }
 
   .gericht:not([hidden]) ~ .gericht:not([hidden]) {
-    border-top: 1px solid var(--farbe-haarlinie);
+    border-top: 1px solid color-mix(in srgb, var(--kategorie-akzent) 15%, transparent);
   }
 
   .gericht--ein-preis {
