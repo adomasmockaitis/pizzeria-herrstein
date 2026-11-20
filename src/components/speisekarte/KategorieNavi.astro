@@ -1,0 +1,241 @@
+---
+// Sticky Kategorie-Navigation als horizontale Pill-Leiste mit IntersectionObserver
+import texte from '../../content/texte.json';
+
+interface KategorieLink {
+  id: string;
+  name: string;
+}
+
+interface Props {
+  kategorien: KategorieLink[];
+}
+
+const { kategorien } = Astro.props;
+---
+
+<div class="kat-navi-leiste" data-kat-navi-leiste>
+  <nav class="kat-navi" aria-label={texte.speisekarte.kategorieNaviLabel}>
+    <ul class="kat-navi__liste" data-kat-navi-liste>
+      {kategorien.map((kategorie, index) => (
+        <li class="kat-navi__item">
+          <a
+            href={`#${kategorie.id}`}
+            class:list={['kat-navi__link', index === 0 && 'kat-navi__link--aktiv auf-rot']}
+            aria-current={index === 0 ? 'true' : undefined}
+            data-kat-link={kategorie.id}
+          >
+            {kategorie.name}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</div>
+
+<script>
+  const liste = document.querySelector<HTMLElement>('[data-kat-navi-liste]');
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-kat-link]'));
+  const sektionen = Array.from(
+    document.querySelectorAll<HTMLElement>('[data-kategorie-sektion]'),
+  );
+
+  if (liste && links.length > 0 && sektionen.length > 0) {
+    const reduziertMedia = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const linkNachId = new Map<string, HTMLAnchorElement>();
+    for (const link of links) {
+      const id = link.dataset.katLink;
+      if (id) linkNachId.set(id, link);
+    }
+
+    let aktiveId = links[0].dataset.katLink ?? '';
+
+    const scrolleLinkInsBild = (link: HTMLAnchorElement) => {
+      const linkRect = link.getBoundingClientRect();
+      const listeRect = liste.getBoundingClientRect();
+      const istSichtbar =
+        linkRect.left >= listeRect.left + 8 && linkRect.right <= listeRect.right - 8;
+      if (istSichtbar) return;
+
+      const zielLinks = link.offsetLeft - (liste.clientWidth - link.offsetWidth) / 2;
+      liste.scrollTo({
+        left: Math.max(0, zielLinks),
+        behavior: reduziertMedia.matches ? 'auto' : 'smooth',
+      });
+    };
+
+    const setzeAktiv = (id: string, inLeisteScrollen = true) => {
+      if (!id || !linkNachId.has(id)) return;
+      if (id === aktiveId) return;
+      aktiveId = id;
+
+      for (const link of links) {
+        const istAktiv = link.dataset.katLink === id;
+        link.classList.toggle('kat-navi__link--aktiv', istAktiv);
+        link.classList.toggle('auf-rot', istAktiv);
+        if (istAktiv) {
+          link.setAttribute('aria-current', 'true');
+        } else {
+          link.removeAttribute('aria-current');
+        }
+      }
+
+      if (inLeisteScrollen) {
+        const aktiverLink = linkNachId.get(id);
+        if (aktiverLink) scrolleLinkInsBild(aktiverLink);
+      }
+    };
+
+    // Initialer Hash beim Laden (z. B. Klick von Startseite auf /speisekarte#pizza)
+    const startHash = window.location.hash.replace(/^#/, '');
+    if (startHash && linkNachId.has(startHash)) {
+      setzeAktiv(startHash, true);
+    }
+
+    // Sofortiges visuelles Feedback beim Antippen einer Kategorie-Pill
+    for (const link of links) {
+      link.addEventListener('click', () => {
+        const id = link.dataset.katLink;
+        if (id) setzeAktiv(id, true);
+      });
+    }
+
+    // Aktive Kategorie aus der Scrollposition: die letzte Sektion, deren Anfang die Lesezone
+    // (oberes Drittel des Bildschirms) erreicht hat. Robust auch für sehr lange Kategorien wie Pizza.
+    // Nur 6 Sektionen -> direkt im (passiven) Scroll-Ereignis rechnen, ohne requestAnimationFrame.
+    const aktualisiereAusScroll = () => {
+      const lesezone = window.innerHeight * 0.33;
+      let aktuell = sektionen[0].dataset.kategorieSektion ?? '';
+      for (const sektion of sektionen) {
+        if (sektion.getBoundingClientRect().top <= lesezone) {
+          aktuell = sektion.dataset.kategorieSektion ?? aktuell;
+        } else {
+          break;
+        }
+      }
+      setzeAktiv(aktuell, true);
+    };
+    window.addEventListener('scroll', aktualisiereAusScroll, { passive: true });
+    window.addEventListener('resize', aktualisiereAusScroll, { passive: true });
+    if (!startHash) aktualisiereAusScroll();
+  }
+</script>
+
+<style>
+  /* Sticky direkt unter der festen Header-Leiste */
+  .kat-navi-leiste {
+    position: sticky;
+    top: var(--aktuelle-leiste-hoehe);
+    z-index: 40;
+    background-color: color-mix(in srgb, var(--farbe-offwhite) 86%, transparent);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+    border-top: 0.5px solid rgba(0, 0, 0, 0.08);
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.14);
+  }
+
+  /* Mit JS berücksichtigt --header-top auch Demo-Balken/Hinweis-Banner am Seitenanfang */
+  :global(html.js) .kat-navi-leiste {
+    top: calc(var(--aktuelle-leiste-hoehe) + var(--header-top, 0px));
+  }
+
+  /* Ohne JS ist der mobile Header nicht fixiert, daher klebt die Leiste ganz oben */
+  @media (max-width: 1023px) {
+    :global(html:not(.js)) .kat-navi-leiste {
+      top: 0;
+    }
+  }
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .kat-navi-leiste {
+      background-color: var(--farbe-offwhite);
+    }
+  }
+
+  .kat-navi {
+    width: 100%;
+    max-width: var(--container-max);
+    margin-inline: auto;
+  }
+
+  /* Mobil: horizontal scrollbar mit Snap und versteckter Scrollbar */
+  .kat-navi__liste {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: var(--abstand-xs);
+    padding: var(--abstand-xs) var(--container-rand);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: var(--container-rand);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .kat-navi__liste::-webkit-scrollbar {
+    display: none;
+  }
+
+  .kat-navi__item {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+  }
+
+  /* Tippfläche >= 44 px hoch (Apple HIG) */
+  .kat-navi__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 var(--abstand-m);
+    border-radius: var(--radius-pill);
+    background-color: color-mix(in srgb, var(--farbe-schwarz) 6%, transparent);
+    color: var(--farbe-leiste-text);
+    font-family: var(--schrift-basis);
+    font-weight: var(--gewicht-fett);
+    font-size: var(--text-m);
+    line-height: 1.2;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background-color var(--dauer-kurz) ease,
+      color var(--dauer-kurz) ease,
+      transform 100ms ease,
+      opacity 100ms ease;
+  }
+
+  .kat-navi__link:active {
+    transform: scale(0.97);
+    opacity: 0.85;
+  }
+
+  .kat-navi__link--aktiv {
+    background-color: var(--farbe-rot);
+    color: var(--farbe-text-hell);
+  }
+
+  @media (hover: hover) {
+    .kat-navi__link:not(.kat-navi__link--aktiv):hover {
+      background-color: color-mix(in srgb, var(--farbe-schwarz) 12%, transparent);
+    }
+
+    .kat-navi__link--aktiv:hover {
+      background-color: var(--farbe-rot-dunkel);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .kat-navi__liste {
+      justify-content: center;
+      gap: var(--abstand-s);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .kat-navi__link {
+      transition: none;
+    }
+  }
+</style>

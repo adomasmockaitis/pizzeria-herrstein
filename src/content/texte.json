@@ -170,5 +170,23 @@
     "whatsappAriaLabel": "Per WhatsApp schreiben (öffnet in neuem Tab)",
     "karteButton": "Auf Karte anzeigen",
     "karteAriaLabel": "Standort auf Google Maps anzeigen (öffnet in neuem Tab)"
+  },
+  "speisekarte": {
+    "metaTitel": "Speisekarte – {name}",
+    "metaBeschreibung": "Unsere Speisekarte: Vorspeisen, frische Salate, Kindermenü, Pizza, Nudelgerichte und Fleischgerichte – zum Liefern oder Abholen in Herrstein.",
+    "zurueck": "Zurück",
+    "zurueckAriaLabel": "Zurück zur Startseite",
+    "ueberschrift": "Speisekarte",
+    "kategorieNaviLabel": "Kategorien der Speisekarte",
+    "vegetarischLabel": "vegetarisch",
+    "unsicherLabel": "Angabe unsicher",
+    "preisNichtAngegeben": "Preis nicht angegeben",
+    "legendeUeberschrift": "Zusatzstoffe & Allergene",
+    "zusatzstoffeTitel": "Zusatzstoffe",
+    "allergeneTitel": "Allergene",
+    "legendeUnsicherHinweis": "Hinweis: Die Angaben zu Zusatzstoffen und Allergenen stammen aus einer älteren Vorlage und müssen noch vom Inhaber bestätigt werden.",
+    "standHinweis": "Stand: {stand}. Preise und Angebot können abweichen.",
+    "standFallback": "Preise und Angebot können abweichen.",
+    "personalHinweis": "Bei Fragen zu Allergenen oder Zusatzstoffen sprich uns einfach an oder ruf uns an – wir helfen dir gerne weiter."
   }
 }

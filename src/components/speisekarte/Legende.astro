@@ -1,0 +1,182 @@
+---
+// Allergen- und Zusatzstoff-Legende sowie Stand- und Personal-Hinweis am Ende der Speisekarte
+import texte from '../../content/texte.json';
+import {
+  formatiereStand,
+  type SpeisekarteLegende,
+} from '../../scripts/speisekarte-typen';
+
+interface Props {
+  legende: SpeisekarteLegende;
+  stand: string;
+}
+
+const { legende, stand } = Astro.props;
+
+const hatZusatzstoffe = legende.zusatzstoffe.length > 0;
+const hatAllergene = legende.allergene.length > 0;
+const zeigeUnsicherHinweis = legende.unsicher || (!hatZusatzstoffe && !hatAllergene);
+
+const formatierterStand = formatiereStand(stand);
+const standText = formatierterStand
+  ? texte.speisekarte.standHinweis.replace('{stand}', formatierterStand)
+  : texte.speisekarte.standFallback;
+---
+
+<section class="legende" aria-labelledby="legende-titel">
+  <div class="container">
+    <div class="legende__box">
+      <h2 id="legende-titel" class="legende__titel">
+        {texte.speisekarte.legendeUeberschrift}
+      </h2>
+
+      {zeigeUnsicherHinweis && (
+        <p class="legende__hinweis" role="note">
+          {texte.speisekarte.legendeUnsicherHinweis}
+        </p>
+      )}
+
+      {(hatZusatzstoffe || hatAllergene) && (
+        <div class="legende__spalten">
+          {hatZusatzstoffe && (
+            <div class="legende__gruppe">
+              <h3 class="legende__untertitel">{texte.speisekarte.zusatzstoffeTitel}</h3>
+              <dl class="legende__liste">
+                {legende.zusatzstoffe.map((eintrag) => (
+                  <div class="legende__eintrag">
+                    <dt class="legende__kuerzel">{eintrag.kuerzel}</dt>
+                    <dd class="legende__text">{eintrag.text}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          )}
+
+          {hatAllergene && (
+            <div class="legende__gruppe">
+              <h3 class="legende__untertitel">{texte.speisekarte.allergeneTitel}</h3>
+              <dl class="legende__liste">
+                {legende.allergene.map((eintrag) => (
+                  <div class="legende__eintrag">
+                    <dt class="legende__kuerzel">{eintrag.kuerzel}</dt>
+                    <dd class="legende__text">{eintrag.text}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          )}
+        </div>
+      )}
+
+      <div class="legende__fuss">
+        <p class="legende__stand">{standText}</p>
+        <p class="legende__personal">{texte.speisekarte.personalHinweis}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .legende {
+    margin-top: var(--abstand-sektion);
+  }
+
+  .legende__box {
+    border-radius: var(--radius-karte);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background-color: color-mix(in srgb, var(--farbe-schwarz) 3%, var(--farbe-offwhite));
+    padding: var(--abstand-l);
+  }
+
+  @media (min-width: 768px) {
+    .legende__box {
+      padding: var(--abstand-xl);
+    }
+  }
+
+  .legende__titel {
+    font-family: var(--schrift-basis);
+    font-weight: var(--gewicht-fett);
+    font-size: var(--text-xl);
+    line-height: var(--zeilenhoehe-eng);
+    margin-bottom: var(--abstand-m);
+  }
+
+  .legende__hinweis {
+    padding: var(--abstand-s) var(--abstand-m);
+    margin-bottom: var(--abstand-l);
+    border-left: 4px solid var(--farbe-rot);
+    border-radius: 0 8px 8px 0;
+    background-color: color-mix(in srgb, var(--farbe-rot) 7%, var(--farbe-offwhite));
+    font-size: var(--text-m);
+    line-height: var(--zeilenhoehe);
+    max-width: none;
+  }
+
+  .legende__spalten {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--abstand-xl);
+  }
+
+  @media (min-width: 768px) {
+    .legende__spalten {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--abstand-xl);
+    }
+  }
+
+  .legende__untertitel {
+    font-family: var(--schrift-basis);
+    font-weight: var(--gewicht-fett);
+    font-size: var(--text-l);
+    line-height: var(--zeilenhoehe-eng);
+    margin-bottom: var(--abstand-s);
+  }
+
+  .legende__liste {
+    margin: 0;
+    display: grid;
+    gap: var(--abstand-xs);
+  }
+
+  .legende__eintrag {
+    display: grid;
+    grid-template-columns: minmax(2.5rem, auto) minmax(0, 1fr);
+    gap: var(--abstand-xs);
+    align-items: baseline;
+    font-size: var(--text-m);
+    line-height: var(--zeilenhoehe);
+  }
+
+  .legende__kuerzel {
+    font-weight: var(--gewicht-fett);
+    color: var(--farbe-rot);
+  }
+
+  .legende__text {
+    margin: 0;
+    color: var(--farbe-text);
+  }
+
+  .legende__fuss {
+    margin-top: var(--abstand-l);
+    padding-top: var(--abstand-m);
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-direction: column;
+    gap: var(--abstand-xs);
+  }
+
+  .legende__stand,
+  .legende__personal {
+    font-size: var(--text-m);
+    color: color-mix(in srgb, var(--farbe-text) 80%, transparent);
+    max-width: none;
+  }
+
+  .legende__stand {
+    font-weight: var(--gewicht-fett);
+    color: var(--farbe-text);
+  }
+</style>

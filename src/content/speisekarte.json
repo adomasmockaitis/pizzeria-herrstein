@@ -1,202 +1,1696 @@
 {
-  "stand": null,
+  "stand": "2024-01-01",
+  "quelle": "Flyer 'Lieferservice, gültig ab 01.01.2024' (Fotos aus Google-Bewertungen) + Figma",
   "hinweis": "Preise und Angebot können abweichen.",
+  "legende": {
+    "zusatzstoffe": [
+      { "kuerzel": "1", "text": "mit Farbstoff" },
+      { "kuerzel": "2", "text": "mit Konservierungsstoff" },
+      { "kuerzel": "3", "text": "mit Phosphat" },
+      { "kuerzel": "4", "text": "mit Antioxidationsmittel" },
+      { "kuerzel": "5", "text": "mit Geschmacksverstärker" },
+      { "kuerzel": "6", "text": "geschwefelt" },
+      { "kuerzel": "7", "text": "geschwärzt" },
+      { "kuerzel": "8", "text": "gewachst" },
+      { "kuerzel": "9", "text": "mit Süßungsmittel" },
+      { "kuerzel": "10", "text": "[unleserlich]" },
+      { "kuerzel": "11", "text": "[unleserlich]" },
+      { "kuerzel": "12", "text": "[unleserlich]" },
+      { "kuerzel": "13", "text": "Alkohol" }
+    ],
+    "allergene": [
+      { "kuerzel": "A", "text": "Glutenhaltiges Getreide (Weizen 1, Roggen 2, Gerste 3, Hafer 4, Dinkel 5, Kamut 6)" },
+      { "kuerzel": "A1", "text": "Weizen (glutenhaltiges Getreide)" },
+      { "kuerzel": "A2", "text": "Roggen (glutenhaltiges Getreide)" },
+      { "kuerzel": "A3", "text": "Gerste (glutenhaltiges Getreide)" },
+      { "kuerzel": "A4", "text": "Hafer (glutenhaltiges Getreide)" },
+      { "kuerzel": "A5", "text": "Dinkel (glutenhaltiges Getreide)" },
+      { "kuerzel": "A6", "text": "Kamut (glutenhaltiges Getreide)" },
+      { "kuerzel": "B", "text": "Fisch" },
+      { "kuerzel": "C", "text": "Krebstiere" },
+      { "kuerzel": "D", "text": "Schwefeldioxid und Sulfite" },
+      { "kuerzel": "E", "text": "Sellerie" },
+      { "kuerzel": "F", "text": "Milch und Laktose" },
+      { "kuerzel": "G", "text": "Sesamsamen" },
+      { "kuerzel": "H", "text": "Schalenfrüchte (Mandel 1, Haselnuss 2, Walnuss 3, Cashew 4, Pekanuss 5, Paranuss 6, Pistazie 7, Macadamianuss 8, Queenslandnuss 9) [teilweise unleserlich]" },
+      { "kuerzel": "I", "text": "[unleserlich]" },
+      { "kuerzel": "J", "text": "[unleserlich]" },
+      { "kuerzel": "K", "text": "Senf" },
+      { "kuerzel": "L", "text": "Soja/Sojabohne" },
+      { "kuerzel": "M", "text": "Weichtiere" },
+      { "kuerzel": "N", "text": "[unleserlich]" }
+    ],
+    "unsicher": true
+  },
   "kategorien": [
     {
       "id": "vorspeisen",
       "name": "Vorspeisen",
-      "gerichte": [
+      "hinweis": null,
+      "abschnitte": [
         {
-          "name": "[Platzhalter] Vorspeise 1",
-          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
-          "preis": null,
-          "allergene": [],
-          "zusatzstoffe": [],
-          "vegetarisch": false,
-          "platzhalter": true
-        },
-        {
-          "name": "[Platzhalter] Vorspeise 2",
-          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
-          "preis": null,
-          "allergene": [],
-          "zusatzstoffe": [],
-          "vegetarisch": true,
-          "platzhalter": true
-        },
-        {
-          "name": "[Platzhalter] Vorspeise 3",
-          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
-          "preis": null,
-          "allergene": [],
-          "zusatzstoffe": [],
-          "vegetarisch": false,
-          "platzhalter": true
+          "titel": null,
+          "hinweis": null,
+          "gerichte": [
+            {
+              "name": "Shrimps Cocktail",
+              "zusatz": null,
+              "beschreibung": "dazu Toast",
+              "preis": 14,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": ["1", "2", "13", "A1", "B", "C", "I", "K", "F"],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Carpaccio",
+              "zusatz": null,
+              "beschreibung": "Rinderfilet, Parmesan, Olivenöl, Champignons, Zitronensoße",
+              "preis": 15,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Caprese",
+              "zusatz": null,
+              "beschreibung": "Tomaten, Mozzarella",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": ["F"],
+              "vegetarisch": true,
+              "unsicher": []
+            },
+            {
+              "name": "Bruschetta Classica",
+              "zusatz": null,
+              "beschreibung": "mit Tomatenscheiben, Mozzarella, Knoblauch",
+              "preis": 7,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Kräuterbutter-Toast",
+              "zusatz": "3 Stück",
+              "beschreibung": null,
+              "preis": 4,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Toast mit Käse",
+              "zusatz": "3 Stück",
+              "beschreibung": null,
+              "preis": 5,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Pizzabrot",
+              "zusatz": null,
+              "beschreibung": "mit Olivenöl und Oregano",
+              "preis": 6,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Pizzabrot Speziale",
+              "zusatz": null,
+              "beschreibung": "mit Mozzarella, frischen Tomaten",
+              "preis": 8,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": ["1", "A1", "F", "I"],
+              "vegetarisch": true,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Panini",
+              "zusatz": "10 Stück",
+              "beschreibung": "mit Käse, Formfleischvorderschinken und Knoblauchsoße",
+              "preis": 11,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Knoblauchsoße oder Salatsoße",
+              "zusatz": null,
+              "beschreibung": null,
+              "preis": 2,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Cocktailsoße",
+              "zusatz": null,
+              "beschreibung": null,
+              "preis": 3,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": ["kennzeichnung"]
+            }
+          ]
         }
       ]
     },
     {
       "id": "salat",
       "name": "Salat",
-      "gerichte": [
+      "hinweis": "Salatsauce nach Wahl: Cremesoße, Cocktailsoße, Essig und Öl",
+      "abschnitte": [
         {
-          "name": "[Platzhalter] Salat 1",
-          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
-          "preis": null,
-          "allergene": [],
-          "zusatzstoffe": [],
-          "vegetarisch": true,
-          "platzhalter": true
-        },
-        {
-          "name": "[Platzhalter] Salat 2",
-          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
-          "preis": null,
-          "allergene": [],
-          "zusatzstoffe": [],
-          "vegetarisch": false,
-          "platzhalter": true
-        },
-        {
-          "name": "[Platzhalter] Salat 3",
-          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
-          "preis": null,
-          "allergene": [],
-          "zusatzstoffe": [],
-          "vegetarisch": true,
-          "platzhalter": true
+          "titel": null,
+          "hinweis": null,
+          "gerichte": [
+            {
+              "name": "Gemischter Salat",
+              "zusatz": null,
+              "beschreibung": "gemischter Salat der Saison, Tomaten, Gurken, Zwiebeln und Karotten",
+              "preis": 9,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": []
+            },
+            {
+              "name": "Spezial Salat",
+              "zusatz": null,
+              "beschreibung": "gemischter Salat mit Thunfisch und Shrimps",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Italienischer Salat",
+              "zusatz": null,
+              "beschreibung": "gemischter Salat mit Formfleischvorderschinken, Käse, Eiern, Tomaten, Gurken, Zwiebeln und Karotten",
+              "preis": 10,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Italienischer Salat mit Thunfisch",
+              "zusatz": null,
+              "beschreibung": "gemischter Salat mit Käse, Tomaten, Gurken, Eiern, Thunfisch, Zwiebeln, Formfleischvorderschinken und Karotten",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Salat Contadino",
+              "zusatz": null,
+              "beschreibung": "gemischter Salat mit Formfleischvorderschinken, Käse, Tomaten, Gurken, Eiern, Thunfisch, Zwiebeln, Karotten und Schafskäse",
+              "preis": 13,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Salat Hawaii",
+              "zusatz": null,
+              "beschreibung": "gemischter Salat mit Ananas, Shrimps, Tomaten, Gurken, Karotten",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Salat di Mare",
+              "zusatz": null,
+              "beschreibung": "mit frischen Meeresfrüchten",
+              "preis": 13,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Salat „EFFGEN“",
+              "zusatz": null,
+              "beschreibung": "gemischter Salat mit Käse, Tomaten, Gurken, Zwiebeln, Karotten gebratenen Champignons und Rindfleisch",
+              "preis": 15,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Beilagensalat",
+              "zusatz": null,
+              "beschreibung": "Gemischter Salat, Tomaten, Gurken, Zwiebeln, Karotten",
+              "preis": 7,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": []
+            },
+            {
+              "name": "Grüner Salat",
+              "zusatz": null,
+              "beschreibung": null,
+              "preis": 7,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": []
+            },
+            {
+              "name": "Karottensalat",
+              "zusatz": null,
+              "beschreibung": null,
+              "preis": 7,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": []
+            }
+          ]
         }
       ]
     },
     {
       "id": "kindermenue",
       "name": "Kindermenü",
-      "gerichte": [
+      "hinweis": null,
+      "abschnitte": [
         {
-          "name": "[Platzhalter] Kindermenü 1",
-          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
-          "preis": null,
-          "allergene": [],
-          "zusatzstoffe": [],
-          "vegetarisch": false,
-          "platzhalter": true
-        },
-        {
-          "name": "[Platzhalter] Kindermenü 2",
-          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
-          "preis": null,
-          "allergene": [],
-          "zusatzstoffe": [],
-          "vegetarisch": true,
-          "platzhalter": true
-        },
-        {
-          "name": "[Platzhalter] Kindermenü 3",
-          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
-          "preis": null,
-          "allergene": [],
-          "zusatzstoffe": [],
-          "vegetarisch": false,
-          "platzhalter": true
+          "titel": null,
+          "hinweis": null,
+          "gerichte": [
+            {
+              "name": "Spaghetti Bolognese",
+              "zusatz": null,
+              "beschreibung": null,
+              "preis": 7,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Mini-Pizza Salami",
+              "zusatz": null,
+              "beschreibung": null,
+              "preis": 8,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Schweineschnitzel „Wiener Art“",
+              "zusatz": null,
+              "beschreibung": "mit Pommes Frites",
+              "preis": 10,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Schweineschnitzel „Jäger Art“",
+              "zusatz": null,
+              "beschreibung": "mit Champignons und Pommes Frites",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Schweineschnitzel in Rahmsoße",
+              "zusatz": null,
+              "beschreibung": "mit Champignons und Pommes Frites",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Chicken Nuggets",
+              "zusatz": "10 Stück",
+              "beschreibung": "mit Pommes Frites",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Pommes Frites",
+              "zusatz": null,
+              "beschreibung": null,
+              "preis": 5,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": []
+            },
+            {
+              "name": "Kroketten",
+              "zusatz": null,
+              "beschreibung": null,
+              "preis": 5,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": []
+            }
+          ]
         }
       ]
     },
     {
       "id": "pizza",
       "name": "Pizza",
-      "gerichte": [
+      "groessen": {
+        "klein": "ca. 26 cm",
+        "gross": "ca. 30 cm"
+      },
+      "hinweis": "Aufpreis je Zutat: 1,00 € (Paprika, grüne Peperoni, Zwiebeln, Käse, Ananas, Spinat, Oliven, Knoblauch, Champignons, Ei, Gurken, Tomaten, Peperoniwurst, Salami, Formfleischvorderschinken, Spiegelei, Kapern, Artischocken, Gorgonzola, Mozzarella, Brokkoli, Hackfleischsoße, Schafskäse, Hackfleisch) · 2,00 € (Lachs, Steinpilze, Shrimps, Thunfisch, Meeresfrüchte, Parmesan, Sardellen)",
+      "abschnitte": [
         {
-          "name": "[Platzhalter] Pizza Margherita",
-          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
-          "preis": null,
-          "allergene": [],
-          "zusatzstoffe": [],
-          "vegetarisch": true,
-          "platzhalter": true
+          "titel": "Pizza",
+          "hinweis": null,
+          "gerichte": [
+            {
+              "name": "Alaska",
+              "zusatz": null,
+              "beschreibung": "Käse, Lachs, Spinat, Knoblauch und Sahne",
+              "preis": null,
+              "preisKlein": 11,
+              "preisGross": 12,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Alla Chef",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Salami, Peperoniwurst, Champignons, Formfleischvorderschinken, Hackfleisch",
+              "preis": null,
+              "preisKlein": 11,
+              "preisGross": 12,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "alla Kim",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Gorgonzola, Champignons, Peperoniwurst, Parmesankäse",
+              "preis": null,
+              "preisKlein": 10,
+              "preisGross": 11,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Amerikana",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Hackfleisch, Zwiebeln",
+              "preis": null,
+              "preisKlein": 10,
+              "preisGross": 11,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Bologna",
+              "zusatz": null,
+              "beschreibung": "Käse, Hackfleischsauce",
+              "preis": null,
+              "preisKlein": 9,
+              "preisGross": 10,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Calzone",
+              "zusatz": null,
+              "beschreibung": "gefüllt mit Tomaten, Käse, Salami, Peperoniwurst, Champignons, mit Hackfleischsoße übergossen",
+              "preis": null,
+              "preisKlein": 12,
+              "preisGross": 13,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Campagnola",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Salami, Peperoniwurst, Zwiebeln, Formfleischvorderschinken",
+              "preis": null,
+              "preisKlein": 10,
+              "preisGross": 11,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Capricciosa",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Formfleischvorderschinken, Champignons, Artischocken",
+              "preis": null,
+              "preisKlein": 10,
+              "preisGross": 11,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "della Stagione",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, frische Tomaten, Champignons, Mozzarella",
+              "preis": null,
+              "preisKlein": 10,
+              "preisGross": 11,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Diavolo",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Salami, Peperoniwurst, Champignons, Paprika, scharf",
+              "preis": null,
+              "preisKlein": 11,
+              "preisGross": 12,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "F.D.M.",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Meeresfrüchte",
+              "preis": null,
+              "preisKlein": 11,
+              "preisGross": 12,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Fabio",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Salami, Peperoniwurst, Thunfisch, Hackfleisch",
+              "preis": null,
+              "preisKlein": 11,
+              "preisGross": 12,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Firenze",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Shrimps, grüne Peperoni, Peperoniwurst, Champignons, Mozzarella",
+              "preis": null,
+              "preisKlein": 11,
+              "preisGross": 12,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Garda",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Peperoniwurst, Brokkoli, Mozzarella, Knoblauch",
+              "preis": null,
+              "preisKlein": 10,
+              "preisGross": 11,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Gerold",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Peperoniwurst, Champignons, Mozzarella, scharf",
+              "preis": null,
+              "preisKlein": 10,
+              "preisGross": 11,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Grandiosa",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Peperoniwurst, Thunfisch, Zwiebeln",
+              "preis": null,
+              "preisKlein": 11,
+              "preisGross": 12,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Hawaii",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Formfleischvorderschinken, Ananas",
+              "preis": null,
+              "preisKlein": 10,
+              "preisGross": 11,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Italia",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Formfleischvorderschinken, Salami, Champignons, Peperoniwurst",
+              "preis": null,
+              "preisKlein": 11,
+              "preisGross": 12,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Katrin",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Salami, Zwiebeln, Knoblauch",
+              "preis": null,
+              "preisKlein": 10,
+              "preisGross": 11,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Klaus",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Peperoniwurst, frische Tomaten, Knoblauch, Zwiebeln",
+              "preis": null,
+              "preisKlein": 10,
+              "preisGross": 11,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Lachs",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Mozzarella, frische Tomaten, Lachs",
+              "preis": null,
+              "preisKlein": 11,
+              "preisGross": 12,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "La Casa",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Salami, Peperoniwurst, Formfleischvorderschinken, Champignons, Zwiebeln",
+              "preis": null,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["preisKlein", "preisGross", "kennzeichnung"]
+            },
+            {
+              "name": "Mafiosa",
+              "zusatz": null,
+              "beschreibung": "Hackfleischsoße, Käse, Peperoniwurst, Zwiebeln",
+              "preis": null,
+              "preisKlein": 10,
+              "preisGross": 11,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Mare e Monti",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Champignons, Shrimps, Formfleischvorderschinken",
+              "preis": null,
+              "preisKlein": 11,
+              "preisGross": 12,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Margarita",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse",
+              "preis": null,
+              "preisKlein": 9,
+              "preisGross": 10,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Mozzarella",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Mozzarella",
+              "preis": null,
+              "preisKlein": 9,
+              "preisGross": 10,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Normale",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Salami, Champignons",
+              "preis": null,
+              "preisKlein": 9,
+              "preisGross": 10,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Pasta",
+              "zusatz": null,
+              "beschreibung": "Käse, Spaghetti, Bolognesesoße",
+              "preis": null,
+              "preisKlein": 10,
+              "preisGross": 11,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Peperoniwurst",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Peperoniwurst",
+              "preis": null,
+              "preisKlein": 10,
+              "preisGross": 11,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Pico",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Salami, Peperoniwurst, Hackfleisch, Formfleischvorderschinken, Zwiebeln, Champignons",
+              "preis": null,
+              "preisKlein": 11,
+              "preisGross": 12,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Quattro Formaggi",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Gorgonzola, Edamer, Mozzarella, Gouda",
+              "preis": null,
+              "preisKlein": 10,
+              "preisGross": 11,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Quattro Stagione",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Salami, Paprika, Formfleischvorderschinken, Champignons",
+              "preis": null,
+              "preisKlein": 10,
+              "preisGross": 11,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Rango",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Salami, Gorgonzola, Hackfleisch",
+              "preis": null,
+              "preisKlein": 10,
+              "preisGross": 11,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Sofia Loren",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Salami, Champignons, Formfleischvorderschinken, zwei Spiegeleier",
+              "preis": null,
+              "preisKlein": 11,
+              "preisGross": 12,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Sorrento",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Salami, Peperoniwurst, Thunfisch, Sardellen, Kapern, Zwiebeln",
+              "preis": null,
+              "preisKlein": 11,
+              "preisGross": 12,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Salami",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Salami",
+              "preis": null,
+              "preisKlein": 10,
+              "preisGross": 11,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Schinken",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Formfleischvorderschinken",
+              "preis": null,
+              "preisKlein": 10,
+              "preisGross": 11,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Schmidt",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Peperoniwurst, Champignons, Zwiebeln, Mozzarella, Knoblauch, Hackfleisch",
+              "preis": null,
+              "preisKlein": 11,
+              "preisGross": 12,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Sole Mio",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Salami, Formfleischvorderschinken, Peperoniwurst, gekochtes Ei",
+              "preis": null,
+              "preisKlein": 10,
+              "preisGross": 11,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Speziale",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Salami, Peperoniwurst, Formfleischvorderschinken, Zwiebeln, Hackfleisch",
+              "preis": null,
+              "preisKlein": 11,
+              "preisGross": 12,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Tonno Cipolle",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Thunfisch, Zwiebeln",
+              "preis": null,
+              "preisKlein": 11,
+              "preisGross": 12,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Tris",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Salami, Champignons, Peperoniwurst",
+              "preis": null,
+              "preisKlein": 10,
+              "preisGross": 11,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Vegetale",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Champignons, Paprika, Zwiebeln, Artischocken, grüne Peperoni",
+              "preis": null,
+              "preisKlein": 11,
+              "preisGross": 12,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Venezia",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Formfleischvorderschinken, Pommes Frites",
+              "preis": null,
+              "preisKlein": 11,
+              "preisGross": 12,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Vesuvio",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Salami, Peperoniwurst, Formfleischvorderschinken, ein Spiegelei",
+              "preis": null,
+              "preisKlein": 11,
+              "preisGross": 12,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Vulcano",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Salami, Paprika, gekochte Eier, Peperoniwurst, Champignons, grüne Peperoni",
+              "preis": null,
+              "preisKlein": 11,
+              "preisGross": 12,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Werzbach",
+              "zusatz": null,
+              "beschreibung": "Tomatensoße, Käse, Peperoniwurst, Champignons, Tomatenscheiben, Hackfleisch, Mozzarella",
+              "preis": null,
+              "preisKlein": 11,
+              "preisGross": 12,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            }
+          ]
         },
         {
-          "name": "[Platzhalter] Pizza Salami",
-          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
-          "preis": null,
-          "allergene": [],
-          "zusatzstoffe": [],
-          "vegetarisch": false,
-          "platzhalter": true
-        },
-        {
-          "name": "[Platzhalter] Pizza Speziale",
-          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
-          "preis": null,
-          "allergene": [],
-          "zusatzstoffe": [],
-          "vegetarisch": false,
-          "platzhalter": true
+          "titel": "Jumbo-Pizza",
+          "hinweis": "ø ca. 50 cm",
+          "gerichte": [
+            {
+              "name": "Jumbo Pizza Margarita",
+              "zusatz": "ø ca. 50 cm",
+              "beschreibung": null,
+              "preis": 25,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": []
+            },
+            {
+              "name": "Jumbo Pizza Salami",
+              "zusatz": "ø ca. 50 cm",
+              "beschreibung": null,
+              "preis": 30,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": []
+            },
+            {
+              "name": "Jumbo Pizza Speciale",
+              "zusatz": "ø ca. 50 cm",
+              "beschreibung": null,
+              "preis": 35,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": []
+            },
+            {
+              "name": "Jumbo Pizza F.D.M.",
+              "zusatz": "ø ca. 50 cm",
+              "beschreibung": null,
+              "preis": 40,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": []
+            },
+            {
+              "name": "Jumbo Pizza Tonno Cipolle",
+              "zusatz": "ø ca. 50 cm",
+              "beschreibung": null,
+              "preis": 40,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": []
+            }
+          ]
         }
       ]
     },
     {
       "id": "nudeln",
       "name": "Nudeln",
-      "gerichte": [
+      "hinweis": null,
+      "abschnitte": [
         {
-          "name": "[Platzhalter] Nudeln 1",
-          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
-          "preis": null,
-          "allergene": [],
-          "zusatzstoffe": [],
-          "vegetarisch": true,
-          "platzhalter": true
+          "titel": "Nudeln",
+          "hinweis": null,
+          "gerichte": [
+            {
+              "name": "Spaghetti \"Bolognese\"",
+              "zusatz": null,
+              "beschreibung": "mit Hackfleischsoße",
+              "preis": 10,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Spaghetti \"Napoli\"",
+              "zusatz": null,
+              "beschreibung": "mit Tomatensoße",
+              "preis": 9,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Spaghetti \"Carbonara\"",
+              "zusatz": null,
+              "beschreibung": "mit Speck, Sahne, Eier",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Spaghetti \"aglio, olio, peperoncino\"",
+              "zusatz": null,
+              "beschreibung": "mit Olivenöl, Knoblauch, scharf",
+              "preis": 10,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Spaghetti \"alla Chitarra\"",
+              "zusatz": null,
+              "beschreibung": "Hackfleischsoße, Champignons, Pesto",
+              "preis": 11,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Spaghetti \"F.D.M.\"",
+              "zusatz": null,
+              "beschreibung": "mit Meeresfrüchten, Weißweinsoße, Tomatensoße",
+              "preis": 13,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Spaghetti \"Herrstein\"",
+              "zusatz": null,
+              "beschreibung": "mit Rindfleisch, Radicchio Rosso, Kapern, Knoblauch, Tomatensoße, Parmesan, Petersilie",
+              "preis": 14,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Spaghetti \"alla Haus\"",
+              "zusatz": null,
+              "beschreibung": "mit Formfleischvorderschinken, Champignons, Erbsen, Tomaten, Hackfleischsoße, Sahne",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Spaghetti \"Puttanesca\"",
+              "zusatz": null,
+              "beschreibung": "mit Kapern, Knoblauch, Sardellen, Oliven, Thunfisch, Weißwein, Tomatensoße, Petersilie",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Spaghetti \"Lachs\"",
+              "zusatz": null,
+              "beschreibung": "mit Knoblauch, Sahnesoße, Lachs, Petersilie",
+              "preis": 13,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Spaghetti \"Shrimps\"",
+              "zusatz": null,
+              "beschreibung": "mit Shrimps, Knoblauch, Weißwein, Tomatensoße, Petersilie",
+              "preis": 13,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Spaghetti \"Amatriciana\"",
+              "zusatz": null,
+              "beschreibung": "mit Zwiebeln, Knoblauch, Speck, Tomatensoße, Petersilie, etwas scharf",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Spaghetti \"Sirmione\"",
+              "zusatz": null,
+              "beschreibung": "mit Lachs, Brokkoli, Knoblauch, Sahnesoße",
+              "preis": 13,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Tagliatelle mit Steinpilzen",
+              "zusatz": null,
+              "beschreibung": "in Steinpilzsoße",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Tagliatelle \"alla Peperina\"",
+              "zusatz": null,
+              "beschreibung": "mit Champignons, Hackfleisch, Sahne, etwas scharf",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Tagliatelle \"Bolognese\"",
+              "zusatz": null,
+              "beschreibung": "mit Hackfleischsoße",
+              "preis": 10,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Tagliatelle \"Napoli\"",
+              "zusatz": null,
+              "beschreibung": "mit Tomatensoße",
+              "preis": 9,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Tagliatelle \"Sorentina\"",
+              "zusatz": null,
+              "beschreibung": "mit Tomatensoße, Mozzarella, Basilikum",
+              "preis": 11,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Tagliatelle \"alla Haus\"",
+              "zusatz": null,
+              "beschreibung": "mit Formfleischvorderschinken, Champignons, Erbsen, Tomaten, Hackfleischsoße, Sahne",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Tagliatelle \"Mare e Monti\"",
+              "zusatz": null,
+              "beschreibung": "mit Lachs, Shrimps, Sahnesoße, Weißweinsoße, Knoblauch, Steinpilzen",
+              "preis": 13,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Pennette \"Arrabbiata\"",
+              "zusatz": null,
+              "beschreibung": "mit Tomatensoße, Knoblauch, Olivenöl, scharf",
+              "preis": 10,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Pennette \"Bolognese\"",
+              "zusatz": null,
+              "beschreibung": "mit Hackfleischsoße",
+              "preis": 10,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Pennette \"Napoli\"",
+              "zusatz": null,
+              "beschreibung": "mit Tomatensoße",
+              "preis": 9,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Pennette \"alla Haus\"",
+              "zusatz": null,
+              "beschreibung": "mit Formfleischvorderschinken, Champignons, Erbsen, Tomaten, Hackfleischsoße, Sahne",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Pennette \"Quattro Formaggi\"",
+              "zusatz": null,
+              "beschreibung": "mit Gorgonzola, Edamer, Mozzarella, Gouda",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Pennette \"Rio\"",
+              "zusatz": null,
+              "beschreibung": "mit Schweinefleischstreifen, Knoblauch, Tomatensoße, Weißweinsoße, scharf",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Pennette \"al Gorgonzola\"",
+              "zusatz": null,
+              "beschreibung": "mit Gorgonzolasoße, Brokkoli",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Pennette \"alla Flippo\"",
+              "zusatz": null,
+              "beschreibung": "mit Schweinefleischstreifen, Champignons, Erbsen, Tomaten, Sahnesoße",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Tortellini \"alla Panna\"",
+              "zusatz": null,
+              "beschreibung": "mit Formfleischvorderschinken, Sahnesoße",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Tortellini \"Roma\"",
+              "zusatz": null,
+              "beschreibung": "mit Gorgonzola, Champignons, Formfleischvorderschinken, Tomaten-Sahnesoße",
+              "preis": 13,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Ravioli \"Ricotta & Spinat\"",
+              "zusatz": null,
+              "beschreibung": "mit Tomaten, Spinat, Sahnesoße",
+              "preis": 14,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Ravioli \"Steinpilze\"",
+              "zusatz": null,
+              "beschreibung": "mit Steipilzsoße",
+              "preis": 14,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": ["kennzeichnung"]
+            }
+          ]
         },
         {
-          "name": "[Platzhalter] Nudeln 2",
-          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
-          "preis": null,
-          "allergene": [],
-          "zusatzstoffe": [],
-          "vegetarisch": false,
-          "platzhalter": true
-        },
-        {
-          "name": "[Platzhalter] Nudeln 3",
-          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
-          "preis": null,
-          "allergene": [],
-          "zusatzstoffe": [],
-          "vegetarisch": false,
-          "platzhalter": true
+          "titel": "Nudeln überbacken",
+          "hinweis": null,
+          "gerichte": [
+            {
+              "name": "Lasagne „al Forno“",
+              "zusatz": null,
+              "beschreibung": "mit Käse, Bechamel- und Hackfleischsoße",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Pennette „al Forno“",
+              "zusatz": null,
+              "beschreibung": "mit Käse, Bechamel- und Hackfleischsoße",
+              "preis": 11,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Pennette „alla Chef“",
+              "zusatz": null,
+              "beschreibung": "mit Sahnesoße, Formfleischvorderschinken, Champignons, Käse",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Pennette „alla Verona“",
+              "zusatz": null,
+              "beschreibung": "mit Sahnesoße, Speck, Radicchio Rosso, Käse",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Tortellini „al Forno“",
+              "zusatz": null,
+              "beschreibung": "mit Käse, Bechamel- und Hackfleischsoße",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Tortellini \"alla Panna\"",
+              "zusatz": null,
+              "beschreibung": "mit Formfleischvorderschinken, Sahnesoße, Käse",
+              "preis": 13,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Combinazione „al Forno“",
+              "zusatz": null,
+              "beschreibung": "mit drei verschiedenen Nudeln, Käse, Bechamel- und Hackfleischsoße",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Cannelloni „al Forno“",
+              "zusatz": null,
+              "beschreibung": "mit Käse, Bechamel- und Hackfleischsoße",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Käsespätzle",
+              "zusatz": null,
+              "beschreibung": "mit Röstzwiebeln, Petersilie, Käse",
+              "preis": 12,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": true,
+              "unsicher": ["kennzeichnung"]
+            }
+          ]
         }
       ]
     },
     {
       "id": "fleischgerichte",
       "name": "Fleischgerichte",
-      "gerichte": [
+      "hinweis": "Alle Fleischgerichte werden mit Pommes Frites oder Kroketten und Salat serviert.",
+      "abschnitte": [
         {
-          "name": "[Platzhalter] Fleischgericht 1",
-          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
-          "preis": null,
-          "allergene": [],
-          "zusatzstoffe": [],
-          "vegetarisch": false,
-          "platzhalter": true
+          "titel": "vom Schwein",
+          "hinweis": null,
+          "gerichte": [
+            {
+              "name": "Schnitzel „Wiener Art“",
+              "zusatz": null,
+              "beschreibung": "paniert",
+              "preis": 15,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Schnitzel „Jäger Art“",
+              "zusatz": null,
+              "beschreibung": "paniert, mit Jägersoße",
+              "preis": 18,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Schnitzel mit Champignonsoße",
+              "zusatz": null,
+              "beschreibung": "paniert",
+              "preis": 18,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Schnitzel „Ungarischer Art“",
+              "zusatz": null,
+              "beschreibung": "paniert, mit Soße ungarischer Art",
+              "preis": 18,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Schnitzel mit Zwiebeln",
+              "zusatz": null,
+              "beschreibung": "paniert",
+              "preis": 17,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Parmesanschnitzel",
+              "zusatz": null,
+              "beschreibung": "paniert, mit Hackfleischsoße und Käse überbacken",
+              "preis": 18,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Schnitzel Hawaii",
+              "zusatz": null,
+              "beschreibung": "paniert, Formfleischvorderschinken, Ananas, Rahmsoße, mit Käse überbacken",
+              "preis": 18,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Schnitzel Brokkoli",
+              "zusatz": null,
+              "beschreibung": "paniert, Brokkoli, Sahnesoße, mit Käse überbacken",
+              "preis": 18,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": ["2", "A1", "F", "I"],
+              "vegetarisch": false,
+              "unsicher": []
+            },
+            {
+              "name": "Cordon Bleu",
+              "zusatz": null,
+              "beschreibung": "paniert, gefüllt mit Käse und Formfleischvorderschinken",
+              "preis": 17,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Cordon Bleu „Jäger Art“",
+              "zusatz": null,
+              "beschreibung": "paniert, gefüllt mit Käse und Formfleischvorderschinken, mit Jägersoße",
+              "preis": 18,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Cordon Bleu „Bolognese“",
+              "zusatz": null,
+              "beschreibung": "paniert, gefüllt mit Käse und Formfleischvorderschinken, mit Hackfleischsoße",
+              "preis": 18,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Scaloppina „Vino Bianco“",
+              "zusatz": null,
+              "beschreibung": "Schweinesteak in Weißweinsoße",
+              "preis": 18,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Saltinbocca „alla Romana“",
+              "zusatz": null,
+              "beschreibung": "Schweinesteak mit Serano Schinken, Salbei, in Weißweinsoße",
+              "preis": 18,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            }
+          ]
         },
         {
-          "name": "[Platzhalter] Fleischgericht 2",
-          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
-          "preis": null,
-          "allergene": [],
-          "zusatzstoffe": [],
-          "vegetarisch": false,
-          "platzhalter": true
-        },
-        {
-          "name": "[Platzhalter] Fleischgericht 3",
-          "beschreibung": "Platzhalter – echte Daten folgen in Phase 5.",
-          "preis": null,
-          "allergene": [],
-          "zusatzstoffe": [],
-          "vegetarisch": false,
-          "platzhalter": true
+          "titel": "vom Rind",
+          "hinweis": "ca. 300 g",
+          "gerichte": [
+            {
+              "name": "Rumpsteak Natur",
+              "zusatz": null,
+              "beschreibung": null,
+              "preis": 21,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": []
+            },
+            {
+              "name": "Rumpsteak mit Zwiebeln",
+              "zusatz": null,
+              "beschreibung": null,
+              "preis": 23,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": []
+            },
+            {
+              "name": "Rumpsteak mit Pfeffersoße",
+              "zusatz": null,
+              "beschreibung": null,
+              "preis": 23,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Rumpsteak mit Kräuterbutter",
+              "zusatz": null,
+              "beschreibung": null,
+              "preis": 22,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": ["kennzeichnung"]
+            },
+            {
+              "name": "Rumpsteak mit Zwiebeln u. Champignons",
+              "zusatz": null,
+              "beschreibung": null,
+              "preis": 23,
+              "preisKlein": null,
+              "preisGross": null,
+              "kennzeichnung": [],
+              "vegetarisch": false,
+              "unsicher": []
+            }
+          ]
         }
       ]
     }

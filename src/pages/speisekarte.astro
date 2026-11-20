@@ -1,0 +1,174 @@
+---
+// Speisekarte: Seitenkopf, sticky Kategorie-Navigation, Kategorie-Karten und Allergen-Legende
+import BaseLayout from '../layouts/BaseLayout.astro';
+import KategorieNavi from '../components/speisekarte/KategorieNavi.astro';
+import KategorieKarte from '../components/speisekarte/KategorieKarte.astro';
+import Legende from '../components/speisekarte/Legende.astro';
+import kontakt from '../content/kontakt.json';
+import texte from '../content/texte.json';
+import speisekarteRoh from '../content/speisekarte.json';
+import type { SpeisekarteDaten } from '../scripts/speisekarte-typen';
+
+const speisekarte: SpeisekarteDaten = speisekarteRoh;
+
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+
+const titel = texte.speisekarte.metaTitel.replace('{name}', kontakt.name);
+const naviKategorien = speisekarte.kategorien.map((kat) => ({
+  id: kat.id,
+  name: kat.name,
+}));
+---
+
+<BaseLayout
+  title={titel}
+  description={texte.speisekarte.metaBeschreibung}
+  headerTransparent={false}
+  aktiv="speisekarte"
+>
+  <header class="seitenkopf">
+    <div class="container seitenkopf__inhalt">
+      <a
+        href={base}
+        class="zurueck-link auf-rot"
+        aria-label={texte.speisekarte.zurueckAriaLabel}
+      >
+        <svg
+          class="zurueck-link__pfeil"
+          viewBox="0 0 16 16"
+          width="14"
+          height="14"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M10.5 3.5 6 8l4.5 4.5"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <span>{texte.speisekarte.zurueck}</span>
+      </a>
+
+      <h1 class="seitenkopf__titel">{texte.speisekarte.ueberschrift}</h1>
+    </div>
+  </header>
+
+  <KategorieNavi kategorien={naviKategorien} />
+
+  <div class="speisekarte-inhalt">
+    {speisekarte.kategorien.map((kategorie, index) => (
+      <KategorieKarte
+        kategorie={kategorie}
+        farbe={index % 2 === 0 ? 'rot' : 'gruen'}
+      />
+    ))}
+
+    <Legende legende={speisekarte.legende} stand={speisekarte.stand} />
+  </div>
+</BaseLayout>
+
+<style>
+  .seitenkopf {
+    padding-top: var(--abstand-l);
+    padding-bottom: var(--abstand-m);
+  }
+
+  .seitenkopf__inhalt {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--abstand-m);
+  }
+
+  /* Zurück-Pill wie in Figma, mobil mindestens 44 px hoch (Apple HIG) */
+  .zurueck-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    min-height: 2.75rem;
+    padding: 0 var(--abstand-m);
+    border-radius: var(--radius-pill);
+    background-color: var(--farbe-rot);
+    color: var(--farbe-text-hell);
+    font-family: var(--schrift-basis);
+    font-weight: var(--gewicht-fett);
+    font-size: var(--text-m);
+    line-height: 1.2;
+    text-decoration: none;
+    transition:
+      background-color var(--dauer-kurz) ease,
+      transform 100ms ease,
+      opacity 100ms ease;
+  }
+
+  .zurueck-link:active {
+    transform: scale(0.97);
+    opacity: 0.85;
+  }
+
+  @media (min-width: 768px) and (pointer: fine) {
+    .zurueck-link {
+      min-height: 2.25rem;
+    }
+  }
+
+  @media (hover: hover) {
+    .zurueck-link:hover {
+      background-color: var(--farbe-rot-dunkel);
+    }
+  }
+
+  .zurueck-link__pfeil {
+    flex-shrink: 0;
+  }
+
+  .seitenkopf__titel {
+    font-family: var(--schrift-basis);
+    font-weight: var(--gewicht-fett);
+    font-size: clamp(1.75rem, 1.3rem + 1.5vw, 2.5rem);
+    line-height: var(--zeilenhoehe-eng);
+    color: var(--farbe-text);
+  }
+
+  .speisekarte-inhalt {
+    padding-top: var(--abstand-xl);
+    padding-bottom: var(--abstand-2xl);
+  }
+
+  @media (min-width: 1024px) {
+    .seitenkopf {
+      padding-top: var(--abstand-xl);
+      padding-bottom: var(--abstand-l);
+    }
+
+    .seitenkopf__inhalt {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+    }
+
+    .zurueck-link {
+      justify-self: start;
+    }
+
+    .seitenkopf__titel {
+      justify-self: center;
+      text-align: center;
+    }
+
+    .speisekarte-inhalt {
+      padding-top: var(--abstand-2xl);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .zurueck-link {
+      transition: none;
+    }
+  }
+</style>
