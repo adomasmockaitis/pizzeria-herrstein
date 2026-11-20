@@ -13,6 +13,8 @@ interface Props {
   title: string;
   description?: string;
   headerTransparent?: boolean;
+  headerVariante?: 'standard' | 'unterseite';
+  headerTitel?: string;
   aktiv?: 'home' | 'speisekarte' | string;
 }
 
@@ -20,6 +22,8 @@ const {
   title,
   description = '',
   headerTransparent = false,
+  headerVariante = 'standard',
+  headerTitel = '',
   aktiv = '',
 } = Astro.props;
 
@@ -65,7 +69,12 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
       ]}
       data-header-anker
     >
-      <Header transparent={headerTransparent} aktiv={aktiv} />
+      <Header
+        transparent={headerTransparent}
+        aktiv={aktiv}
+        variante={headerVariante}
+        unterseiteTitel={headerTitel}
+      />
     </div>
 
     <main id="inhalt" tabindex="-1">

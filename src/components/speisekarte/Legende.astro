@@ -78,19 +78,28 @@ const standText = formatierterStand
 
 <style>
   .legende {
-    margin-top: var(--abstand-sektion);
+    margin-top: var(--abstand-2xl);
   }
 
   .legende__box {
-    border-radius: var(--radius-karte);
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    background-color: color-mix(in srgb, var(--farbe-schwarz) 3%, var(--farbe-offwhite));
-    padding: var(--abstand-l);
+    --karte-innen: var(--abstand-m);
+    padding: var(--karte-innen);
+    border-radius: calc(var(--karte-innen) + var(--radius-innen));
+    background-color: var(--farbe-weiss);
+    box-shadow:
+      0 0 0 1px var(--farbe-haarlinie),
+      var(--schatten-liste);
   }
 
   @media (min-width: 768px) {
     .legende__box {
-      padding: var(--abstand-xl);
+      --karte-innen: var(--abstand-l);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .legende__box {
+      --karte-innen: 1.75rem;
     }
   }
 
@@ -99,17 +108,19 @@ const standText = formatierterStand
     font-weight: var(--gewicht-fett);
     font-size: var(--text-xl);
     line-height: var(--zeilenhoehe-eng);
+    color: var(--farbe-leiste-text);
     margin-bottom: var(--abstand-m);
   }
 
   .legende__hinweis {
     padding: var(--abstand-s) var(--abstand-m);
     margin-bottom: var(--abstand-l);
-    border-left: 4px solid var(--farbe-rot);
-    border-radius: 0 8px 8px 0;
-    background-color: color-mix(in srgb, var(--farbe-rot) 7%, var(--farbe-offwhite));
+    border-left: 3px solid var(--farbe-rot);
+    border-radius: 0 var(--radius-innen) var(--radius-innen) 0;
+    background-color: color-mix(in srgb, var(--farbe-rot) 6%, var(--farbe-offwhite));
     font-size: var(--text-m);
     line-height: var(--zeilenhoehe);
+    color: var(--farbe-leiste-text);
     max-width: none;
   }
 
@@ -129,8 +140,11 @@ const standText = formatierterStand
   .legende__untertitel {
     font-family: var(--schrift-basis);
     font-weight: var(--gewicht-fett);
-    font-size: var(--text-l);
-    line-height: var(--zeilenhoehe-eng);
+    font-size: 0.9375rem;
+    line-height: 1.25;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--farbe-text-sekundaer);
     margin-bottom: var(--abstand-s);
   }
 
@@ -142,7 +156,7 @@ const standText = formatierterStand
 
   .legende__eintrag {
     display: grid;
-    grid-template-columns: minmax(2.5rem, auto) minmax(0, 1fr);
+    grid-template-columns: minmax(2.25rem, auto) minmax(0, 1fr);
     gap: var(--abstand-xs);
     align-items: baseline;
     font-size: var(--text-m);
@@ -156,13 +170,13 @@ const standText = formatierterStand
 
   .legende__text {
     margin: 0;
-    color: var(--farbe-text);
+    color: var(--farbe-text-sekundaer);
   }
 
   .legende__fuss {
     margin-top: var(--abstand-l);
     padding-top: var(--abstand-m);
-    border-top: 1px solid rgba(0, 0, 0, 0.12);
+    border-top: 1px solid var(--farbe-haarlinie);
     display: flex;
     flex-direction: column;
     gap: var(--abstand-xs);
@@ -171,12 +185,12 @@ const standText = formatierterStand
   .legende__stand,
   .legende__personal {
     font-size: var(--text-m);
-    color: color-mix(in srgb, var(--farbe-text) 80%, transparent);
+    color: var(--farbe-text-sekundaer);
     max-width: none;
   }
 
   .legende__stand {
     font-weight: var(--gewicht-fett);
-    color: var(--farbe-text);
+    color: var(--farbe-leiste-text);
   }
 </style>
