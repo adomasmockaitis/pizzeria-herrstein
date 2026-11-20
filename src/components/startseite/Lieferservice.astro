@@ -281,52 +281,40 @@ const { bestellinfoPunkte } = texte.lieferservice;
       pointer-events: none;
     }
 
+    /* Gespiegelt, damit die Schrift lesbar ist. Kein overflow: hidden – der weiche Schatten
+       ist Teil des (auf Inhalt + Schatten zugeschnittenen) Bildes und darf nicht abgeschnitten werden. */
     .lieferservice__mockup-spiegel {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
       transform: scaleX(-1);
+    }
+
+    .lieferservice__karton-bild,
+    .lieferservice__tuete-bild {
+      display: block;
+      width: 100%;
+      height: auto;
     }
 
     .lieferservice__karton {
       --karton-w: clamp(260px, 23vw, 440px);
       width: var(--karton-w);
-      aspect-ratio: 585 / 395;
-      top: -2rem;
-      right: calc(var(--karton-w) * -0.66);
+      top: -3rem;
+      right: max(calc(var(--karton-w) * -0.62), calc((100vw - 100%) / -2 + 1rem));
     }
 
-    .lieferservice__karton-bild {
-      position: absolute;
-      max-width: none;
-      width: 136.43%;
-      height: 151.52%;
-      left: -13.47%;
-      top: -32.17%;
+    /* Tüte nur, wenn links neben den Karten genug Platz ist – sonst würde sie die Icons verdecken */
+    @media (max-width: 1759px) {
+      .lieferservice__tuete {
+        display: none;
+      }
     }
 
     .lieferservice__tuete {
-      --tuete-w: clamp(220px, 18vw, 340px);
+      /* So breit wie der freie Rand links neben den Karten (+ kleine Überlappung), max. 440px */
+      --tuete-w: clamp(220px, calc((100vw - var(--container-max)) / 2 + var(--container-rand) + 0.5rem), 440px);
       width: var(--tuete-w);
-      aspect-ratio: 613 / 460;
-      bottom: -1.75rem;
-      left: calc(var(--tuete-w) * -0.82);
-    }
-
-    .lieferservice__tuete-bild {
-      position: absolute;
-      max-width: none;
-      width: 129.07%;
-      height: 129.14%;
-      left: -34.62%;
-      top: -17.69%;
-    }
-  }
-
-  @media (min-width: 1440px) {
-    .lieferservice__tuete {
-      left: calc(var(--tuete-w) * -0.78);
+      bottom: -3rem;
+      /* ragt nur 1.5rem über die Kartenkante – die Icons bleiben frei */
+      left: calc(var(--tuete-w) * -1 + 1.5rem);
     }
   }
 

@@ -7,6 +7,7 @@ import kontakt from '../../content/kontakt.json';
 import lieferzonen from '../../content/lieferzonen.json';
 import texte from '../../content/texte.json';
 import lupeIcon from '../../assets/icons/lupe.png';
+import lieferautoMockup from '../../assets/mockups/lieferauto.webp';
 
 const sichtbareZonen = lieferzonen.zonen.filter((zone) => zone.sichtbar);
 ---
@@ -64,6 +65,19 @@ const sichtbareZonen = lieferzonen.zonen.filter((zone) => zone.sichtbar);
 
     <p class="visually-hidden" role="status" aria-live="polite" data-suche-status></p>
 
+    <div class="lieferkosten__zonen">
+      <!-- Deko-Lieferauto (nur >= 1024px): steht wie in Figma links unten an der letzten Zonen-Karte -->
+      <div class="lieferkosten__auto" aria-hidden="true">
+        <Image
+          src={lieferautoMockup}
+          alt=""
+          widths={[360, 560, 960]}
+          sizes="(min-width: 1024px) 440px, 0px"
+          loading="lazy"
+          class="lieferkosten__auto-bild"
+        />
+      </div>
+
     <div class="lieferkosten__grid" data-zonen-grid>
       {sichtbareZonen.map((zone, index) => {
         const farbe = index % 2 === 0 ? 'gruen' : 'rot';
@@ -91,6 +105,8 @@ const sichtbareZonen = lieferzonen.zonen.filter((zone) => zone.sichtbar);
           </Karte>
         );
       })}
+    </div>
+
     </div>
 
     <div class="lieferkosten__leer" hidden data-zonen-leer>
@@ -293,6 +309,10 @@ const sichtbareZonen = lieferzonen.zonen.filter((zone) => zone.sichtbar);
   .lieferkosten {
     padding-top: var(--abstand-l);
     margin-top: calc(var(--abstand-sektion) - var(--abstand-l));
+    /* Deko-Auto darf nicht seitlich aus dem Bildschirm ragen (kein horizontales Scrollen) */
+    overflow-x: clip;
+    /* Platz unter dem Raster, damit das überstehende Auto nicht in den nächsten Abschnitt ragt */
+    padding-bottom: var(--abstand-xl);
   }
 
   .lieferkosten__kopf {
@@ -381,6 +401,52 @@ const sichtbareZonen = lieferzonen.zonen.filter((zone) => zone.sichtbar);
   }
 
   /* Zonen-Raster: mobil kompakte Liste, ab Tablet 2 Spalten */
+  /* Wrapper für Zonen-Raster + Deko-Auto */
+  .lieferkosten__zonen {
+    position: relative;
+  }
+
+  .lieferkosten__auto {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .lieferkosten__auto {
+      --auto-w: clamp(280px, 24vw, 440px);
+      display: block;
+      position: absolute;
+      z-index: 2;
+      width: var(--auto-w);
+      /* überlappt nur die linke untere Ecke der letzten Karte (Figma) */
+      /* (100vw - 100%) / 2 = freier Rand links neben dem Raster; nie über den Bildschirmrand hinaus */
+      left: max(calc(var(--auto-w) * -0.68), calc((100vw - 100%) / -2 + 1rem));
+      bottom: calc(var(--auto-w) * -0.3);
+      pointer-events: none;
+    }
+
+    .lieferkosten {
+      padding-bottom: clamp(6rem, 9vw, 9rem);
+    }
+
+    .lieferkosten__auto-bild {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    /* Auto nur, wenn links neben dem Raster genug Platz ist – sonst würde es Text verdecken */
+    @media (max-width: 1599px) {
+      .lieferkosten__auto {
+        display: none;
+      }
+    }
+
+    /* Während einer Suche ändert sich das Raster – Auto dann ausblenden */
+    .lieferkosten__zonen:has(:global(.zone-karte[hidden])) .lieferkosten__auto {
+      display: none;
+    }
+  }
+
   .lieferkosten__grid {
     display: grid;
     grid-template-columns: 1fr;

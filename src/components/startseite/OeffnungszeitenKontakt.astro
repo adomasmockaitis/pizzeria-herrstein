@@ -1,13 +1,11 @@
 ---
-// Abschnitt "Öffnungszeiten & Kontakt" mit Live-Status-Badge, Kontaktdaten und Lieferauto-Mockup
-import { Image } from 'astro:assets';
+// Abschnitt "Öffnungszeiten & Kontakt" mit Live-Status-Badge und Kontaktdaten
 import Button from '../Button.astro';
 import Karte from '../Karte.astro';
 import { gruppiereOeffnungszeiten } from '../../scripts/oeffnungsstatus';
 import kontakt from '../../content/kontakt.json';
 import oeffnungszeiten from '../../content/oeffnungszeiten.json';
 import texte from '../../content/texte.json';
-import lieferautoMockup from '../../assets/mockups/lieferauto.webp';
 
 const { offeneGruppen, ruhetage } = gruppiereOeffnungszeiten(oeffnungszeiten.tage);
 const oeffnungsTexte = texte.oeffnungszeitenKontakt;
@@ -15,18 +13,6 @@ const oeffnungsTexte = texte.oeffnungszeitenKontakt;
 
 <section class="ok" aria-labelledby="oeffnungszeiten-kontakt-titel">
   <div class="ok__kopf">
-    <!-- Deko-Lieferauto nur >= 1024px, ragt links über dem Öffnungszeiten-Abschnitt ins Bild -->
-    <div class="ok__auto" aria-hidden="true">
-      <Image
-        src={lieferautoMockup}
-        alt=""
-        widths={[360, 560, 960]}
-        sizes="(min-width: 1024px) 480px, 0px"
-        loading="lazy"
-        class="ok__auto-bild"
-      />
-    </div>
-
     <div class="container">
       <h2 id="oeffnungszeiten-kontakt-titel" class="sektion-titel">
         {oeffnungsTexte.ueberschrift}
@@ -176,32 +162,6 @@ const oeffnungsTexte = texte.oeffnungszeitenKontakt;
   .ok__kopf {
     position: relative;
     padding-bottom: var(--abstand-xl);
-  }
-
-  .ok__auto {
-    display: none;
-  }
-
-  @media (min-width: 1024px) {
-    .ok__auto {
-      display: block;
-      position: absolute;
-      left: clamp(1rem, 4vw, 5.5rem);
-      bottom: 0.25rem;
-      width: clamp(250px, 25vw, 480px);
-      aspect-ratio: 1400 / 680;
-      overflow: hidden;
-      transform: rotate(-0.73deg);
-      pointer-events: none;
-      z-index: 2;
-    }
-
-    .ok__auto-bild {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center 55%;
-    }
   }
 
   .ok__grid {
