@@ -60,6 +60,8 @@ function initEinblenden() {
     }
   }
 
+  // Vom Seitenübergang (Inline-Skript in BaseLayout) gesetzt, wenn mit Anker (#pizza) angekommen
+  if ((window as Window & { __einblendenSofort?: boolean }).__einblendenSofort) zeigeAlleSofort();
   window.addEventListener('einblenden:sofort', zeigeAlleSofort);
   window.addEventListener('speisekarte:ankersprung', zeigeAlleSofort);
   window.addEventListener('speisekarte:filter', zeigeAlleSofort);

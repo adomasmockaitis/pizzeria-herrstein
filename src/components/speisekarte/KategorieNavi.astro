@@ -27,6 +27,7 @@ const { kategorien } = Astro.props;
                 class:list={['kat-navi__link', index === 0 && 'kat-navi__link--aktiv auf-rot']}
                 aria-current={index === 0 ? 'true' : undefined}
                 data-kat-link={kategorie.id}
+                data-farbe={index % 2 === 0 ? 'rot' : 'gruen'}
               >
                 {kategorie.name}
               </a>
@@ -171,6 +172,11 @@ const { kategorien } = Astro.props;
       for (const link of links) {
         const istAktiv = link.dataset.katLink === id;
         link.classList.toggle('kat-navi__link--aktiv', istAktiv);
+        if (istAktiv) {
+          // Indikator in der Kategoriefarbe (Rot/Grün wie die Abschnitte)
+          indikator.style.backgroundColor =
+            link.dataset.farbe === 'gruen' ? 'var(--farbe-gruen)' : 'var(--farbe-rot)';
+        }
         link.classList.toggle('auf-rot', istAktiv);
         if (istAktiv) {
           link.setAttribute('aria-current', 'true');
@@ -275,7 +281,7 @@ const { kategorien } = Astro.props;
     top: var(--nav-hoehe);
     z-index: 40;
     height: var(--katnavi-hoehe);
-    background-color: color-mix(in srgb, var(--farbe-offwhite) 80%, transparent);
+    background-color: var(--farbe-offwhite); /* deckend: nichts scheint durch (Nutzerwunsch) */
     -webkit-backdrop-filter: saturate(180%) blur(20px);
     backdrop-filter: saturate(180%) blur(20px);
     border-top: 0.5px solid var(--farbe-haarlinie);
@@ -342,6 +348,7 @@ const { kategorien } = Astro.props;
     pointer-events: none;
     transform-origin: left center;
     will-change: transform;
+      transition: background-color 300ms var(--kurve-ios);
   }
 
   .kat-navi__indikator[hidden] {
@@ -386,6 +393,10 @@ const { kategorien } = Astro.props;
       color 200ms var(--kurve-ein),
       transform 100ms ease,
       opacity 100ms ease;
+  }
+
+  .kat-navi__link--aktiv[data-farbe='gruen'] {
+    background-color: var(--farbe-gruen);
   }
 
   .kat-navi__link--aktiv {

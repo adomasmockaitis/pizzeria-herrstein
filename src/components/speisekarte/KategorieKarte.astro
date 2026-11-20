@@ -20,7 +20,7 @@ const istLangerHinweis = Boolean(kategorie.hinweis && kategorie.hinweis.length >
 
 <section
   id={kategorie.id}
-  class="kategorie-sektion"
+  class:list={['kategorie-sektion', `kategorie-sektion--${farbe}`]}
   aria-labelledby={titelId}
   data-kategorie-sektion={kategorie.id}
 >
@@ -284,6 +284,15 @@ const istLangerHinweis = Boolean(kategorie.hinweis && kategorie.hinweis.length >
     margin-top: var(--abstand-xl);
   }
 
+  /* Kategoriefarbe (Rot/Grün im Wechsel) für Kopf-Balken und Preise */
+  .kategorie-sektion {
+    --kategorie-akzent: var(--farbe-rot);
+  }
+
+  .kategorie-sektion--gruen {
+    --kategorie-akzent: var(--farbe-gruen);
+  }
+
   .kategorie-sektion__sentinel {
     height: 1px;
     margin-bottom: -1px;
@@ -297,7 +306,7 @@ const istLangerHinweis = Boolean(kategorie.hinweis && kategorie.hinweis.length >
     z-index: 20;
     padding-block: 0.625rem;
     margin-bottom: var(--abstand-xs);
-    background-color: color-mix(in srgb, var(--farbe-offwhite) 86%, transparent);
+    background-color: var(--farbe-offwhite); /* deckend: nichts scheint durch (Nutzerwunsch) */
     -webkit-backdrop-filter: saturate(180%) blur(18px);
     backdrop-filter: saturate(180%) blur(18px);
     border-bottom: 0.5px solid transparent;
@@ -329,11 +338,20 @@ const istLangerHinweis = Boolean(kategorie.hinweis && kategorie.hinweis.length >
     box-shadow: var(--schatten-sticky);
   }
 
+  /* Farbiger Kopf-Balken wie die roten/grünen Karten der Startseite */
   .kategorie-sektion__kopf-innen {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    padding-inline: var(--liste-innen);
+    padding: 0.75rem var(--liste-innen);
+    border-radius: var(--radius-innen);
+    background-color: var(--kategorie-akzent);
+    color: var(--farbe-offwhite);
+  }
+
+  .kategorie-sektion__kopf :global(.abschnitt-titel) {
+    color: var(--farbe-offwhite);
+    --akzent-farbe: color-mix(in srgb, var(--farbe-offwhite) 70%, transparent);
   }
 
   .kategorie-sektion__kopf-innen--groessen {
@@ -352,7 +370,7 @@ const istLangerHinweis = Boolean(kategorie.hinweis && kategorie.hinweis.length >
     font-size: var(--text-xs);
     font-weight: var(--gewicht-fett);
     line-height: 1.2;
-    color: var(--farbe-text-sekundaer);
+    color: color-mix(in srgb, var(--farbe-offwhite) 90%, transparent);
     white-space: nowrap;
   }
 
@@ -556,7 +574,7 @@ const istLangerHinweis = Boolean(kategorie.hinweis && kategorie.hinweis.length >
     text-align: right;
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
-    color: var(--farbe-leiste-text);
+    color: var(--kategorie-akzent);
   }
 
   .gericht__preis--einzel {

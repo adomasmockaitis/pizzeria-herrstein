@@ -50,6 +50,58 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
     <link rel="icon" href={`${base}favicon.ico`} sizes="32x32" />
     <meta name="theme-color" content="#c40010" />
     <script is:inline>document.documentElement.classList.add('js');</script>
+    <!-- Seitenübergänge: Rendern warten, bis der Inhalt geparst ist, damit das Morph-Ziel existiert -->
+    <link rel="expect" href="#vt-bereit" blocking="render" />
+    <!--
+      Seitenübergang auf der NEUEN Seite (pagereveal). Muss ein klassisches Inline-Skript im <head> sein:
+      pagereveal feuert vor dem ersten Rendern – ein Modul-Skript (type=module, verzögert) käme zu spät,
+      dann fällt der Browser auf Überblenden zurück. Gegenstück (Klick + pageswap): scripts/seitenuebergang.ts
+    -->
+    <script is:inline define:vars={{ vtBase: base }}>
+      (function () {
+        var SCHLUESSEL = 'pizzeria-vt';
+        var MORPH = 'kategorie-morph';
+        function pfad(u) { try { var p = new URL(u, location.href).pathname.replace(/\/+$/, ''); return p || '/'; } catch (e) { return ''; } }
+        var basis = (vtBase || '/').replace(/\/+$/, '') || '/';
+        function istKarte(u) { return !!u && pfad(u).slice(-12) === '/speisekarte'; }
+        function istStart(u) { return !!u && pfad(u) === basis; }
+        function lese() {
+          try { var d = JSON.parse(sessionStorage.getItem(SCHLUESSEL) || 'null'); sessionStorage.removeItem(SCHLUESSEL);
+            return d && Date.now() - d.ts < 4000 ? d : null; } catch (e) { return null; }
+        }
+        function aufraeumen() {
+          var el = document.querySelectorAll('[data-vt-morph]');
+          for (var i = 0; i < el.length; i++) { el[i].style.viewTransitionName = ''; el[i].removeAttribute('data-vt-morph'); }
+        }
+        window.addEventListener('pagereveal', function (e) {
+          var vt = e.viewTransition;
+          var gespeichert = lese();
+          if (!vt) return;
+          var act = window.navigation && window.navigation.activation;
+          var von = act && act.from && act.from.url;
+          var hier = location.href;
+          if (istKarte(hier)) {
+            if (location.hash) window.__einblendenSofort = true;
+            if (gespeichert && gespeichert.typ === 'morph' && gespeichert.katId) {
+              var sek = document.querySelector('[data-kategorie-sektion="' + gespeichert.katId + '"]');
+              var block = sek && sek.querySelector('[data-kategorie-block]');
+              if (block && !sek.hidden) {
+                sek.scrollIntoView({ behavior: 'instant', block: 'start' });
+                block.style.viewTransitionName = MORPH;
+                block.setAttribute('data-vt-morph', '1');
+                vt.types.add('morph');
+                vt.finished.finally(aufraeumen);
+                return;
+              }
+            }
+            if (!von || istStart(von) || (gespeichert && gespeichert.typ === 'vor')) vt.types.add('vor');
+          } else if (istStart(hier)) {
+            if ((von && istKarte(von)) || (gespeichert && gespeichert.typ === 'zurueck')) vt.types.add('zurueck');
+          }
+          vt.finished.finally(aufraeumen);
+        });
+      })();
+    </script>
     <script>
       import '../scripts/scroll-zustand.ts';
       import '../scripts/einblenden.ts';
@@ -82,6 +134,8 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
     <main id="inhalt" tabindex="-1">
       <slot />
     </main>
+
+    <div id="vt-bereit" hidden></div>
 
     <Footer />
     <MobileAktionsleiste />
