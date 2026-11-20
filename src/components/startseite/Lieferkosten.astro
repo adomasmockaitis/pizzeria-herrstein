@@ -376,10 +376,27 @@ const sichtbareZonen = lieferzonen.zonen.filter((zone) => zone.sichtbar);
       );
     };
 
+    // Farben immer nach SICHTBARER Reihenfolge: 1. grün, 2. rot, 3. grün … (Desktop: links grün, rechts rot).
+    // Das Preis-Badge bekommt jeweils die Gegenfarbe.
+    const faerbeNachReihenfolge = () => {
+      let n = 0;
+      for (const e of karten) {
+        if (e.karte.hidden) continue;
+        const gruen = n % 2 === 0;
+        e.karte.classList.toggle('karte--gruen', gruen);
+        e.karte.classList.toggle('karte--rot', !gruen);
+        const preis = e.karte.querySelector('.zone-karte__preis');
+        preis?.classList.toggle('zone-karte__preis--rot', gruen);
+        preis?.classList.toggle('zone-karte__preis--gruen', !gruen);
+        n++;
+      }
+    };
+
     const wendeSofortAn = () => {
       leerAnimation?.cancel();
       leerAnimation = undefined;
       for (const e of karten) e.karte.hidden = !e.passt;
+      faerbeNachReihenfolge();
       leerBox.hidden = !leerSoll;
     };
 
@@ -410,6 +427,7 @@ const sichtbareZonen = lieferzonen.zonen.filter((zone) => zone.sichtbar);
       const davor = merke();
       stoppeAnimationen();
       for (const e of karten) e.karte.hidden = !e.passt;
+      faerbeNachReihenfolge();
       if (leerSoll) zeigeLeerBox();
       bewegeVon(davor, einblenden);
     };
@@ -671,6 +689,19 @@ const sichtbareZonen = lieferzonen.zonen.filter((zone) => zone.sichtbar);
     max-width: none;
     font-size: var(--text-s);
     line-height: var(--zeilenhoehe);
+  }
+
+  /* Farbwechsel, wenn eine Karte bei der Suche die Spalte wechselt */
+  .lieferkosten__grid :global(.zone-karte),
+  .zone-karte__preis {
+    transition: background-color 280ms ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lieferkosten__grid :global(.zone-karte),
+    .zone-karte__preis {
+      transition: none;
+    }
   }
 
   .zone-karte__preis {
