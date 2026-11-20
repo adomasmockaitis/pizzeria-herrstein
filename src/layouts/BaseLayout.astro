@@ -2,6 +2,7 @@
 // Basis-Seitenlayout für alle Seiten der Website
 import '../styles/global.css';
 import { DEMO_MODE } from '../config';
+import texte from '../content/texte.json';
 import DemoBalken from '../components/DemoBalken.astro';
 import HinweisBanner from '../components/HinweisBanner.astro';
 import Header from '../components/Header.astro';
@@ -51,7 +52,7 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
     <slot name="head" />
   </head>
   <body>
-    <a class="skip-link auf-rot" href="#inhalt">Zum Inhalt springen</a>
+    <a class="skip-link auf-rot" href="#inhalt">{texte.layout.skipLink}</a>
 
     <DemoBalken />
     <HinweisBanner />

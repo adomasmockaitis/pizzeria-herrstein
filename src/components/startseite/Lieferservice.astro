@@ -17,7 +17,10 @@ import uhrIcon from '../../assets/icons/uhr.png';
 import pizzakartonMockup from '../../assets/mockups/pizzakarton.webp';
 import papiertueteMockup from '../../assets/mockups/papiertuete.webp';
 
-const oeffnungszeitenZeilen = formatiereOeffnungszeitenKurz(oeffnungszeiten.tage);
+const oeffnungszeitenZeilen = formatiereOeffnungszeitenKurz(
+  oeffnungszeiten.tage,
+  texte.oeffnungsstatus,
+);
 const { bestellinfoPunkte } = texte.lieferservice;
 ---
 

@@ -2,11 +2,12 @@
 // Schwebende Schnellkontakt-Leiste (iOS-Toolbar) am unteren Bildschirmrand (nur < 768px sichtbar)
 import { Image } from 'astro:assets';
 import kontakt from '../content/kontakt.json';
+import texte from '../content/texte.json';
 import telefonIcon from '../assets/icons/telefon.png';
 import whatsappIcon from '../assets/icons/whatsapp.png';
 ---
 
-<aside class="aktionsleiste" aria-label="Schnellkontakt">
+<aside class="aktionsleiste" aria-label={texte.mobileLeiste.ariaLabel}>
   <a href={kontakt.telefon.link} class="aktionsleiste__btn aktionsleiste__btn--rot">
     <Image
       src={telefonIcon}
@@ -16,7 +17,7 @@ import whatsappIcon from '../assets/icons/whatsapp.png';
       class="aktionsleiste__icon"
       aria-hidden="true"
     />
-    <span>Anrufen</span>
+    <span>{texte.mobileLeiste.anrufen}</span>
   </a>
 
   <a
@@ -24,6 +25,7 @@ import whatsappIcon from '../assets/icons/whatsapp.png';
     class="aktionsleiste__btn aktionsleiste__btn--gruen"
     target="_blank"
     rel="noopener noreferrer"
+    aria-label={texte.mobileLeiste.whatsappAriaLabel}
   >
     <Image
       src={whatsappIcon}
@@ -33,7 +35,7 @@ import whatsappIcon from '../assets/icons/whatsapp.png';
       class="aktionsleiste__icon"
       aria-hidden="true"
     />
-    <span>WhatsApp</span>
+    <span>{texte.mobileLeiste.whatsapp}</span>
   </a>
 </aside>
 

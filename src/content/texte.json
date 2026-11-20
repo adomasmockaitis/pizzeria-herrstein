@@ -1,64 +1,104 @@
 {
-  "_hinweis": "Figma-Entwürfe, werden in Phase 4 überarbeitet",
+  "_hinweis": "Zentrale Textdatei (Deutsch) – freigegebene Texte (Phase 4) und Grundlage für Mehrsprachigkeit (Phase 7)",
   "meta": {
-    "beschreibung": "Pizzeria Turnhalle Herrstein – Authentische italienische Küche, perfekt für Lieferung und Abholung in Herrstein und Umgebung."
+    "beschreibung": "Pizzeria Turnhalle Herrstein: Pizza, Pasta, Salate & Fleischgerichte zu fairen Preisen – zum Liefern oder Abholen in Herrstein und Umgebung."
+  },
+  "layout": {
+    "skipLink": "Zum Inhalt springen"
   },
   "navigation": [
-    { "label": "Home", "href": "#top" },
+    { "label": "Startseite", "href": "#top" },
     { "label": "Speisekarte", "href": "/speisekarte" },
     { "label": "Lieferservice", "href": "#lieferservice" },
     { "label": "Öffnungszeiten", "href": "#oeffnungszeiten" },
     { "label": "Kontakt", "href": "#kontakt" }
   ],
+  "header": {
+    "logoAlt": "{name} – Startseite",
+    "navigationLabel": "Hauptnavigation",
+    "menueOeffnen": "Menü öffnen",
+    "menueSchliessen": "Menü schließen",
+    "menueDialogLabel": "Menü",
+    "anrufen": "Anrufen",
+    "whatsappButton": "Per WhatsApp schreiben",
+    "whatsappAriaLabel": "Per WhatsApp schreiben (öffnet in neuem Tab)",
+    "kurzinfoOffen": "{tage} {zeiten} Uhr",
+    "kurzinfoRuhetag": "{tage} Ruhetag"
+  },
+  "footer": {
+    "logoAlt": "{name} – Startseite",
+    "navigationLabel": "Fußnavigation",
+    "rechte": "Alle Rechte vorbehalten.",
+    "credit": "Website von Adomas Mockaitis",
+    "impressum": "Impressum",
+    "datenschutz": "Datenschutz",
+    "fotonachweis": "Fotos: Ivan Torres, Inna Gurina, Oksana Simanovscaia, mk. s, behrouz sasani (Unsplash)"
+  },
+  "mobileLeiste": {
+    "ariaLabel": "Schnellkontakt",
+    "anrufen": "Anrufen",
+    "whatsapp": "WhatsApp",
+    "whatsappAriaLabel": "Per WhatsApp schreiben (öffnet in neuem Tab)"
+  },
+  "oeffnungsstatus": {
+    "jetztGeoeffnet": "Jetzt geöffnet · bis {bis} Uhr",
+    "oeffnetHeute": "Geschlossen · öffnet heute {von} Uhr",
+    "oeffnetTag": "Geschlossen · öffnet {tag} {von} Uhr",
+    "geschlossenMitHinweis": "Geschlossen · {text}",
+    "geschlossen": "Geschlossen",
+    "derzeitGeschlossen": "Derzeit geschlossen",
+    "tageBereich": "{von} bis {bis}:",
+    "zeitspanneKurz": "{von}–{bis} Uhr"
+  },
   "hero": {
     "headline": "Frisch. Heiß. Direkt zu dir.",
-    "subline": "Authentische italienische Küche – perfekt für Lieferung und Abholung",
-    "buttonPrimaer": "Jetzt bestellen",
+    "subline": "Italienische Küche mit vollem Geschmack – zum Liefern oder Abholen.",
+    "buttonPrimaer": "Jetzt anrufen",
     "buttonSekundaer": "Speisekarte ansehen",
-    "bildAlt": "Frisch gebackene Pizza mit geschmolzenem Käse und frischen Kräutern auf einem Holzbrett",
+    "bildAlt": "Frisch gebackene Pizza mit Käse und Kräutern auf einem Holzbrett",
     "scrollPfeilLabel": "Zum nächsten Abschnitt scrollen"
   },
   "genuss": {
-    "ueberschrift": "Italienischer Genuss pur",
-    "text": "Entdecke die Vielfalt unserer frisch zubereiteten Vorspeisen, knackigen Salate, herzhaften Fleischgerichte sowie unserer beliebten Pizzen und cremigen Pastagerichte – für jeden Geschmack das Richtige.",
+    "ueberschrift": "Frisch aus unserer Küche",
+    "text": "Ob Vorspeise, knackiger Salat, Pizza, Pasta oder ein herzhaftes Fleischgericht: Wir kochen frisch, würzen kräftig und bleiben fair im Preis – da findest du bestimmt genau das, worauf du Lust hast.",
     "button": "Speisekarte ansehen",
     "kategorien": [
       {
-        "titel": "Vorspeisen entdecken",
-        "text": "Starte dein Menü mit Caprese, Shrimps-Cocktail, Panini oder Pizzabrot – klassisch italienisch und immer lecker.",
-        "button": "Vorspeisen entdecken",
+        "titel": "Vorspeisen zum Start",
+        "text": "Starte mit Caprese, Shrimps-Cocktail, Panini oder Pizzabrot – frisch zubereitet für den Appetit vorweg.",
+        "button": "Alle Vorspeisen",
         "anker": "#vorspeisen",
         "farbe": "gruen",
         "bild": "vorspeisen-rund.webp"
       },
       {
         "titel": "Frische Salate",
-        "text": "Ob gemischt, italienisch, mit Shrimps oder klassisch als Beilage – unsere Salate passen zu jedem Gericht.",
-        "button": "Salate entdecken",
+        "text": "Ob gemischt, italienisch, mit Shrimps oder einfach als Beilage – knackig frisch und mit Dressing nach deiner Wahl.",
+        "button": "Alle Salate",
         "anker": "#salat",
         "farbe": "rot",
         "bild": "salat-rund.webp"
       },
       {
-        "titel": "Pizza genießen",
-        "text": "Über 30 verschiedene Pizzen, darunter Klassiker und Spezialitäten wie Diavolo, Calzone oder Chef – auch als Jumbo erhältlich.",
-        "button": "Pizza entdecken",
+        "titel": "Unsere Pizzen",
+        "text": "Über 30 verschiedene Pizzen – von Klassikern bis Diavolo, Calzone oder Alla Chef. Für den großen Hunger gibt es einige auch als Jumbo.",
+        "button": "Alle Pizzen",
         "anker": "#pizza",
         "farbe": "gruen",
         "bild": "pizza-rand-inna-gurina.webp"
       },
       {
-        "titel": "Nudeln wie in Italien",
-        "text": "Spaghetti, Penne, Tagliatelle oder Tortellini – mit Carbonara, Lachs, Steinpilzen und vielen weiteren Saucen.",
-        "button": "Nudeln entdecken",
+        "titel": "Nudeln & Überbackenes",
+        "text": "Spaghetti, Penne, Tagliatelle oder Tortellini – ob mit Carbonara, Lachs, Steinpilzen oder im Ofen überbacken, immer kräftig abgeschmeckt.",
+        "button": "Alle Nudelgerichte",
         "anker": "#nudeln",
         "farbe": "rot",
         "bild": "nudeln-rund.webp"
       },
       {
-        "titel": "Fleischgerichte vom Feinsten",
-        "text": "Schnitzel, Cordon Bleu, Rumpsteak und mehr – frisch zubereitet, mit Sauce, Beilage und knackigem Salat serviert.",
-        "button": "Fleischgerichte entdecken",
+        "titel": "Herzhafte Fleischgerichte",
+        "text": "Schnitzel, Cordon Bleu oder Rumpsteak – frisch zubereitet, serviert mit Pommes oder Kroketten und knackigem Salat.",
+        "button": "Alle Fleischgerichte",
         "anker": "#fleischgerichte",
         "farbe": "gruen",
         "bild": "fleisch-rund.webp"
@@ -66,35 +106,35 @@
     ]
   },
   "lieferservice": {
-    "ueberschrift": "Heiß & frisch - direkt zu dir nach Hause",
-    "intro": "Ob Sie Ihr Lieblingsgericht lieber bequem liefern lassen oder selbst abholen – wir sorgen dafür, dass alles frisch zubereitet und heiß bei Ihnen ankommt. Die Lieferkosten richten sich nach dem Ort und sind unten in der Übersicht aufgeführt. Weitere Orte beliefern wir gerne auf Anfrage.",
-    "telefonUntertitel": "Rufen Sie uns direkt an",
+    "ueberschrift": "Heiß & frisch – direkt zu dir nach Hause",
+    "intro": "Ob du dir dein Essen liefern lässt oder es selbst abholst – bei uns erwarten dich freundlicher Service und frisch zubereitete, heiße Gerichte. Die Lieferkosten richten sich nach deinem Ort und stehen gleich hier unten. Weitere Orte beliefern wir gerne auf Anfrage.",
+    "telefonUntertitel": "Ruf uns direkt an",
     "telefonButton": "Jetzt anrufen",
-    "whatsappUntertitel": "Schreiben Sie uns eine Nachricht",
+    "whatsappUntertitel": "Bestell gern einen Tag im Voraus",
     "whatsappButton": "WhatsApp öffnen",
-    "whatsappAriaLabel": "WhatsApp öffnen (öffnet in neuem Tab)",
+    "whatsappAriaLabel": "Per WhatsApp schreiben (öffnet in neuem Tab)",
     "adresseButton": "Auf Karte anzeigen",
     "adresseAriaLabel": "Standort auf Google Maps anzeigen (öffnet in neuem Tab)",
     "bestellinfoPunkte": {
       "abholungTitel": "Abholung",
-      "abholungText": "Abholung vor Ort möglich.",
+      "abholungText": "Du kannst dein Essen auch direkt bei uns abholen.",
       "lieferungTitel": "Lieferung",
-      "lieferungText": "Lieferkosten finden Sie in der Übersicht oder per Adresssuche.",
+      "lieferungText": "Die Lieferkosten findest du unten in der Übersicht oder über die Ortssuche.",
       "mindestbestellwertTitel": "Mindestbestellwert",
       "oeffnungszeitenTitel": "Öffnungszeiten"
     },
     "karten": {
       "telefon": "Telefonisch bestellen",
-      "whatsapp": "WhatsApp bestellen",
+      "whatsapp": "Per WhatsApp bestellen",
       "bestellinfos": "Bestellinformationen",
       "adresse": "Adresse"
     }
   },
   "lieferkosten": {
     "ueberschrift": "Lieferkosten",
-    "untertitel": "Suchen Sie per Adresseingabe oder direkt in der Übersicht.",
+    "untertitel": "Gib deinen Ortsnamen ein oder schau direkt in der Übersicht nach.",
     "suchfeldLabel": "Ort suchen",
-    "suchfeldPlatzhalter": "Ort eingeben, z. B. Idar …",
+    "suchfeldPlatzhalter": "Ortsname, z. B. Idar …",
     "sucheLeerenLabel": "Suche leeren",
     "zonePrefix": "Lieferzone",
     "statusAlle": "Alle {anzahl} Lieferzonen angezeigt",
@@ -105,8 +145,9 @@
   "oeffnungszeitenKontakt": {
     "ueberschrift": "Öffnungszeiten & Kontakt",
     "oeffnungszeitenTitel": "Unsere Öffnungszeiten",
-    "geschlossenLabel": "geschlossen",
-    "kontaktTitel": "So erreichen Sie uns",
+    "zeitspanne": "{von} – {bis} Uhr",
+    "geschlossenLabel": "Ruhetag",
+    "kontaktTitel": "So erreichst du uns",
     "labelTelefon": "Telefon:",
     "labelWhatsapp": "WhatsApp:",
     "labelEmail": "E-Mail:",

@@ -272,6 +272,7 @@ Nur als Ausblick, damit die Architektur schon passt:
 - Hosting umziehen (z. B. Netlify oder Cloudflare Pages), Domain auf den Inhaber registrieren, `DEMO_MODE = false` (Indexierung an, Demo-Balken aus).
 - **Git-basiertes CMS** mit Login für den Inhaber einrichten (z. B. Decap CMS oder Pages CMS; zu dem Zeitpunkt prüfen, was aktuell am einfachsten ist). Bearbeitbar sein sollen: Speisekarte, Preise, Öffnungszeiten, Lieferzonen, Hinweis-Banner. Das Formular muss so einfach sein, dass jemand ohne Technikwissen damit klarkommt.
 - Impressum/Datenschutz mit echten Daten, rechtlich prüfen lassen.
+- **Mehrsprachigkeit** (Wunsch des Nutzers): weitere Sprachen ergänzen. Deshalb liegen ab Phase 4 **alle** sichtbaren Texte und aria-Labels zentral in `src/content/texte.json` (Deutsch); weitere Sprachen später als eigene Datei je Sprache mit denselben Schlüsseln.
 - Echte Fotos und aktuelle Speisekarte einpflegen.
 
 ---

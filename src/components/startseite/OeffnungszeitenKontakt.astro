@@ -9,6 +9,7 @@ import texte from '../../content/texte.json';
 
 const { offeneGruppen, ruhetage } = gruppiereOeffnungszeiten(oeffnungszeiten.tage);
 const oeffnungsTexte = texte.oeffnungszeitenKontakt;
+const statusTexte = texte.oeffnungsstatus;
 ---
 
 <section class="ok" aria-labelledby="oeffnungszeiten-kontakt-titel">
@@ -28,6 +29,12 @@ const oeffnungsTexte = texte.oeffnungszeitenKontakt;
           class="status-badge"
           hidden
           data-oeffnungsstatus
+          data-jetzt-geoeffnet={statusTexte.jetztGeoeffnet}
+          data-oeffnet-heute={statusTexte.oeffnetHeute}
+          data-oeffnet-tag={statusTexte.oeffnetTag}
+          data-geschlossen-hinweis={statusTexte.geschlossenMitHinweis}
+          data-geschlossen={statusTexte.geschlossen}
+          data-derzeit-geschlossen={statusTexte.derzeitGeschlossen}
           role="status"
           aria-live="polite"
         >
@@ -46,7 +53,9 @@ const oeffnungsTexte = texte.oeffnungszeitenKontakt;
                 <dt class="zeiten-liste__tage">{label}</dt>
                 {gruppe.zeiten.map((spanne) => (
                   <dd class="zeiten-liste__zeit">
-                    {spanne.von} – {spanne.bis} Uhr
+                    {oeffnungsTexte.zeitspanne
+                      .replace('{von}', spanne.von)
+                      .replace('{bis}', spanne.bis)}
                   </dd>
                 ))}
               </div>
@@ -126,14 +135,26 @@ const oeffnungsTexte = texte.oeffnungszeitenKontakt;
 
 <script>
   import oeffnungszeiten from '../../content/oeffnungszeiten.json';
-  import { ermittleOeffnungsstatus } from '../../scripts/oeffnungsstatus';
+  import {
+    ermittleOeffnungsstatus,
+    type OeffnungsstatusTexte,
+  } from '../../scripts/oeffnungsstatus';
 
   const badge = document.querySelector<HTMLElement>('[data-oeffnungsstatus]');
   const textEl = badge?.querySelector<HTMLElement>('[data-status-text]');
 
   if (badge && textEl) {
+    const statusTexte: OeffnungsstatusTexte = {
+      jetztGeoeffnet: badge.dataset.jetztGeoeffnet ?? '',
+      oeffnetHeute: badge.dataset.oeffnetHeute ?? '',
+      oeffnetTag: badge.dataset.oeffnetTag ?? '',
+      geschlossenMitHinweis: badge.dataset.geschlossenHinweis ?? '',
+      geschlossen: badge.dataset.geschlossen ?? '',
+      derzeitGeschlossen: badge.dataset.derzeitGeschlossen ?? '',
+    };
+
     const aktualisiere = () => {
-      const status = ermittleOeffnungsstatus(new Date(), oeffnungszeiten);
+      const status = ermittleOeffnungsstatus(new Date(), oeffnungszeiten, statusTexte);
       badge.classList.toggle('status-badge--offen', status.offen);
       textEl.textContent = status.text;
       badge.hidden = false;

@@ -32,6 +32,20 @@ export interface Oeffnungsstatus {
   text: string;
 }
 
+export interface OeffnungsstatusTexte {
+  jetztGeoeffnet: string;
+  oeffnetHeute: string;
+  oeffnetTag: string;
+  geschlossenMitHinweis: string;
+  geschlossen: string;
+  derzeitGeschlossen: string;
+}
+
+export interface OeffnungszeitenKurzTexte {
+  tageBereich: string;
+  zeitspanneKurz: string;
+}
+
 export interface OeffnungszeitenGruppe {
   von: string;
   bis: string;
@@ -66,6 +80,7 @@ function addiereTageIso(jahr: number, monat: number, tag: number, offset: number
 export function ermittleOeffnungsstatus(
   datum: Date,
   daten: OeffnungszeitenDaten,
+  texte: OeffnungsstatusTexte,
 ): Oeffnungsstatus {
   const timeZone = daten.zeitzone ?? STANDARD_ZEITZONE;
   const formatierer = new Intl.DateTimeFormat('de-DE', {
@@ -98,8 +113,8 @@ export function ermittleOeffnungsstatus(
     return {
       offen: false,
       text: heutigeSonderzeit.text
-        ? `Geschlossen · ${heutigeSonderzeit.text}`
-        : 'Geschlossen',
+        ? texte.geschlossenMitHinweis.replace('{text}', heutigeSonderzeit.text)
+        : texte.geschlossen,
     };
   }
 
@@ -120,7 +135,7 @@ export function ermittleOeffnungsstatus(
         if (jetztMinuten >= vonMin && jetztMinuten < bisMin) {
           return {
             offen: true,
-            text: `Jetzt geöffnet · bis ${spanne.bis} Uhr`,
+            text: texte.jetztGeoeffnet.replace('{bis}', spanne.bis),
           };
         }
       }
@@ -131,7 +146,7 @@ export function ermittleOeffnungsstatus(
       if (naechsteHeute) {
         return {
           offen: false,
-          text: `Geschlossen · öffnet heute ${naechsteHeute.von} Uhr`,
+          text: texte.oeffnetHeute.replace('{von}', naechsteHeute.von),
         };
       }
     }
@@ -151,7 +166,7 @@ export function ermittleOeffnungsstatus(
         const erste = sortierteZeiten[0];
         return {
           offen: false,
-          text: `Geschlossen · öffnet ${zielTag.tag} ${erste.von} Uhr`,
+          text: texte.oeffnetTag.replace('{tag}', zielTag.tag).replace('{von}', erste.von),
         };
       }
     }
@@ -159,7 +174,7 @@ export function ermittleOeffnungsstatus(
 
   return {
     offen: false,
-    text: 'Derzeit geschlossen',
+    text: texte.derzeitGeschlossen,
   };
 }
 
@@ -207,13 +222,18 @@ export function gruppiereOeffnungszeiten(tage: WochentagEintrag[]): {
  */
 export function formatiereOeffnungszeitenKurz(
   tage: WochentagEintrag[],
+  texte: OeffnungszeitenKurzTexte,
 ): { tageLabel: string; zeitenText: string }[] {
   const { offeneGruppen } = gruppiereOeffnungszeiten(tage);
 
   return offeneGruppen.map((gruppe) => {
     const tageLabel =
-      gruppe.von === gruppe.bis ? `${gruppe.von}:` : `${gruppe.von} bis ${gruppe.bis}:`;
-    const zeitenText = gruppe.zeiten.map((z) => `${z.von}–${z.bis} Uhr`).join(' & ');
+      gruppe.von === gruppe.bis
+        ? `${gruppe.von}:`
+        : texte.tageBereich.replace('{von}', gruppe.von).replace('{bis}', gruppe.bis);
+    const zeitenText = gruppe.zeiten
+      .map((z) => texte.zeitspanneKurz.replace('{von}', z.von).replace('{bis}', z.bis))
+      .join(' & ');
     return { tageLabel, zeitenText };
   });
 }

@@ -21,8 +21,6 @@ const { transparent = true, aktiv = '' } = Astro.props;
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 
-// Fallback-Bezeichnungen, falls texte.json unvollständig ist
-const fallbackLabels = ['Home', 'Speisekarte', 'Lieferservice', 'Öffnungszeiten', 'Kontakt'];
 const navZiele = [
   { key: 'home', href: base },
   { key: 'speisekarte', href: `${base}speisekarte` },
@@ -33,8 +31,10 @@ const navZiele = [
 
 const navPunkte = navZiele.map((ziel, index) => ({
   ...ziel,
-  label: texte.navigation?.[index]?.label ?? fallbackLabels[index],
+  label: texte.navigation[index].label,
 }));
+
+const logoAlt = texte.header.logoAlt.replace('{name}', kontakt.name);
 
 // Öffnungszeiten-Kurzinfo aus den Daten, z. B. "Di–So 11–14 & 17–22 Uhr · Mo Ruhetag"
 const uhrzeit = (z: string) => {
@@ -59,11 +59,12 @@ oeffnungszeiten.tage.forEach((tag, index) => {
   }
 });
 
-const kurzinfoTeile = zeitGruppen.map(
-  (g) => `${g.von === g.bis ? g.von : `${g.von}–${g.bis}`} ${g.text} Uhr`,
-);
+const kurzinfoTeile = zeitGruppen.map((g) => {
+  const tage = g.von === g.bis ? g.von : `${g.von}–${g.bis}`;
+  return texte.header.kurzinfoOffen.replace('{tage}', tage).replace('{zeiten}', g.text);
+});
 if (ruhetage.length > 0) {
-  kurzinfoTeile.push(`${ruhetage.join(' & ')} Ruhetag`);
+  kurzinfoTeile.push(texte.header.kurzinfoRuhetag.replace('{tage}', ruhetage.join(' & ')));
 }
 const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
 ---
@@ -74,14 +75,14 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
     <a href={base} class="header__logo-link">
       <Image
         src={logoKleinDunkel}
-        alt={`${kontakt.name} – Startseite`}
+        alt={logoAlt}
         class="header__logo"
         loading="eager"
       />
     </a>
 
     <!-- Hauptnavigation (nur Desktop; mobil übernimmt das Menü-Sheet) -->
-    <nav id="hauptmenue" class="header__nav" aria-label="Hauptnavigation">
+    <nav id="hauptmenue" class="header__nav" aria-label={texte.header.navigationLabel}>
       <ul class="header__liste">
         {navPunkte.map((punkt) => {
           const istAktiv = aktiv === punkt.key;
@@ -119,7 +120,9 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
         class="header__burger"
         aria-expanded="false"
         aria-controls="menue-sheet"
-        aria-label="Menü öffnen"
+        aria-label={texte.header.menueOeffnen}
+        data-label-oeffnen={texte.header.menueOeffnen}
+        data-label-schliessen={texte.header.menueSchliessen}
       >
         <span class="header__burger-linie" aria-hidden="true"></span>
         <span class="header__burger-linie" aria-hidden="true"></span>
@@ -129,15 +132,25 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
   </div>
 
   <!-- Mobiles Menü als Vollbild-Sheet -->
-  <div id="menue-sheet" class="menue-sheet" role="dialog" aria-modal="true" aria-label="Menü">
+  <div
+    id="menue-sheet"
+    class="menue-sheet"
+    role="dialog"
+    aria-modal="true"
+    aria-label={texte.header.menueDialogLabel}
+  >
     <div class="menue-sheet__kopf">
       <a href={base} class="menue-sheet__logo">
-        <Image src={logoKleinDunkel} alt={`${kontakt.name} – Startseite`} class="menue-sheet__logo-bild" />
+        <Image src={logoKleinDunkel} alt={logoAlt} class="menue-sheet__logo-bild" />
       </a>
-      <button type="button" class="menue-sheet__zu" aria-label="Menü schließen"></button>
+      <button
+        type="button"
+        class="menue-sheet__zu"
+        aria-label={texte.header.menueSchliessen}
+      ></button>
     </div>
 
-    <nav class="menue-sheet__nav" aria-label="Hauptnavigation">
+    <nav class="menue-sheet__nav" aria-label={texte.header.navigationLabel}>
       <ul class="menue-sheet__liste">
         {navPunkte.map((punkt) => {
           const istAktiv = aktiv === punkt.key;
@@ -159,16 +172,17 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
     <div class="menue-sheet__fuss">
       <a href={kontakt.telefon.link} class="menue-sheet__btn menue-sheet__btn--rot">
         <Image src={telefonIcon} alt="" width={20} height={20} class="menue-sheet__icon" aria-hidden="true" />
-        <span>Anrufen · {kontakt.telefon.anzeige}</span>
+        <span>{texte.header.anrufen} · {kontakt.telefon.anzeige}</span>
       </a>
       <a
         href={kontakt.whatsapp.link}
         class="menue-sheet__btn menue-sheet__btn--gruen"
         target="_blank"
         rel="noopener noreferrer"
+        aria-label={texte.header.whatsappAriaLabel}
       >
         <Image src={whatsappIcon} alt="" width={20} height={20} class="menue-sheet__icon" aria-hidden="true" />
-        <span>WhatsApp schreiben</span>
+        <span>{texte.header.whatsappButton}</span>
       </a>
       <p class="menue-sheet__zeiten">{oeffnungszeitenKurz}</p>
     </div>
@@ -184,13 +198,15 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
     const html = document.documentElement;
     const schliessenKnopf = sheet.querySelector('.menue-sheet__zu');
     const desktop = window.matchMedia('(min-width: 1024px)');
+    const labelOeffnen = burger.dataset.labelOeffnen || '';
+    const labelSchliessen = burger.dataset.labelSchliessen || '';
     const istOffen = () => sheet.classList.contains('ist-offen');
 
     const oeffnen = () => {
       sheet.classList.add('ist-offen');
       html.classList.add('menue-offen');
       burger.setAttribute('aria-expanded', 'true');
-      burger.setAttribute('aria-label', 'Menü schließen');
+      burger.setAttribute('aria-label', labelSchliessen);
       // Fokus auf den ersten Menüpunkt
       const ersterLink = sheet.querySelector('.menue-link');
       if (ersterLink) ersterLink.focus({ preventScroll: true });
@@ -200,7 +216,7 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
       sheet.classList.remove('ist-offen');
       html.classList.remove('menue-offen');
       burger.setAttribute('aria-expanded', 'false');
-      burger.setAttribute('aria-label', 'Menü öffnen');
+      burger.setAttribute('aria-label', labelOeffnen);
       if (fokusZurueck) burger.focus({ preventScroll: true });
     };
 

@@ -9,7 +9,6 @@ const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 const aktuellesJahr = new Date().getFullYear();
 
-const fallbackLabels = ['Home', 'Speisekarte', 'Lieferservice', 'Öffnungszeiten', 'Kontakt'];
 const navZiele = [
   { href: base },
   { href: `${base}speisekarte` },
@@ -20,8 +19,10 @@ const navZiele = [
 
 const navPunkte = navZiele.map((ziel, index) => ({
   ...ziel,
-  label: texte.navigation?.[index]?.label ?? fallbackLabels[index],
+  label: texte.navigation[index].label,
 }));
+
+const logoAlt = texte.footer.logoAlt.replace('{name}', kontakt.name);
 ---
 
 <footer class="footer auf-rot">
@@ -29,14 +30,14 @@ const navPunkte = navZiele.map((ziel, index) => ({
     <a href={base} class="footer__logo-link">
       <Image
         src={logoKlein}
-        alt={`${kontakt.name} – Startseite`}
+        alt={logoAlt}
         width={119}
         height={87}
         class="footer__logo"
       />
     </a>
 
-    <nav class="footer__nav" aria-label="Fußnavigation">
+    <nav class="footer__nav" aria-label={texte.footer.navigationLabel}>
       <ul class="footer__nav-liste">
         {navPunkte.map((punkt) => (
           <li>
@@ -56,19 +57,19 @@ const navPunkte = navZiele.map((ziel, index) => ({
     <div class="footer__unten">
       <div class="footer__copyright">
         <p class="footer__copy-zeile">
-          &copy; {aktuellesJahr} {kontakt.name}. Alle Rechte vorbehalten.
+          &copy; {aktuellesJahr} {kontakt.name}. {texte.footer.rechte}
         </p>
-        <p class="footer__credit">Website by Adomas Mockaitis.</p>
+        <p class="footer__credit">{texte.footer.credit}</p>
       </div>
 
       <div class="footer__rechtliches">
-        <a href={`${base}impressum`} class="footer__link">Impressum</a>
-        <a href={`${base}datenschutz`} class="footer__link">Datenschutz</a>
+        <a href={`${base}impressum`} class="footer__link">{texte.footer.impressum}</a>
+        <a href={`${base}datenschutz`} class="footer__link">{texte.footer.datenschutz}</a>
       </div>
     </div>
 
     <p class="footer__fotonachweis">
-      Fotos: Ivan Torres, Inna Gurina, Nicholas Grande via Unsplash
+      {texte.footer.fotonachweis}
     </p>
   </div>
 </footer>
