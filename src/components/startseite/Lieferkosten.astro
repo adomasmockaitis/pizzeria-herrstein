@@ -668,7 +668,8 @@ const sichtbareZonen = lieferzonen.zonen.filter((zone) => zone.sichtbar);
     align-items: center;
     column-gap: var(--abstand-m);
     row-gap: var(--abstand-2xs);
-    padding: var(--abstand-m);
+    --karte-innen: var(--abstand-m);
+    padding: var(--karte-innen);
   }
 
   .lieferkosten__grid :global(.zone-karte[hidden]) {
@@ -711,7 +712,8 @@ const sichtbareZonen = lieferzonen.zonen.filter((zone) => zone.sichtbar);
     min-width: 56px;
     height: 56px;
     padding-inline: var(--abstand-xs);
-    border-radius: var(--radius-badge);
+    /* konzentrisch zur Kartenecke (Kartenradius − Innenabstand) */
+    border-radius: var(--radius-innen);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -733,7 +735,8 @@ const sichtbareZonen = lieferzonen.zonen.filter((zone) => zone.sichtbar);
   @media (min-width: 768px) {
     .lieferkosten__grid :global(.zone-karte) {
       min-height: 13.375rem;
-      padding: calc(var(--abstand-m) * 2);
+      --karte-innen: calc(var(--abstand-m) * 2);
+      padding: var(--karte-innen);
       grid-template-columns: 1fr auto;
       grid-template-rows: auto 1fr;
       align-items: start;

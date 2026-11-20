@@ -48,7 +48,10 @@
   /* ---------- Radien ---------- */
   --radius-pill: 30px;     /* Buttons */
   --radius-badge: 20px;    /* Nav-Pills, Preis-Badges */
-  --radius-karte: 23px;    /* Karten */
+  /* Konzentrische Ecken (Apple HIG): Kartenradius = Innenabstand + Radius der inneren Elemente.
+     Innere Elemente in Karten (Pill-Buttons ~40px hoch, Preis-Badges) haben 20px Radius. */
+  --radius-innen: 20px;
+  --radius-karte: calc(1.5rem + var(--radius-innen));   /* Standard (Innenabstand 24px) = 44px; Karte.astro rechnet je Innenabstand */
 
   /* ---------- Schatten ---------- */
   --schatten-klein: 0 2px 4px rgba(0, 0, 0, 0.25);

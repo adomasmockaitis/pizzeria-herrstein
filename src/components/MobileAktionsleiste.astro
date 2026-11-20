@@ -51,7 +51,9 @@ import whatsappIcon from '../assets/icons/whatsapp.png';
     grid-template-columns: 1fr 1fr;
     gap: var(--abstand-xs);
     padding: var(--abstand-xs);
-    border-radius: 22px;
+    /* Konzentrische Ecken (Apple HIG): äußerer Radius = Button-Radius (48px / 2) + Innenabstand.
+       Ergibt eine Kapsel, deren Rundung parallel zu den Pill-Buttons verläuft. */
+    border-radius: calc(48px / 2 + var(--abstand-xs));
     background-color: color-mix(in srgb, var(--farbe-offwhite) 80%, transparent);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
     backdrop-filter: saturate(180%) blur(20px);
@@ -78,13 +80,14 @@ import whatsappIcon from '../assets/icons/whatsapp.png';
   }
 
   .aktionsleiste__btn {
-    min-height: 48px;
+    /* feste Höhe, damit die Ecken konzentrisch zum Rahmen bleiben */
+    height: 48px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: var(--abstand-xs);
     padding: 0 var(--abstand-m);
-    border-radius: var(--radius-pill);
+    border-radius: calc(48px / 2);
     color: var(--farbe-text-hell);
     font-family: var(--schrift-basis);
     font-weight: var(--gewicht-fett);

@@ -31,15 +31,18 @@ const {
 </Tag>
 
 <style>
+  /* Konzentrisch: Radius = Innenabstand + --radius-innen. Wer den Innenabstand ändern will,
+     setzt --karte-innen (nicht padding), dann passt der Radius automatisch. */
   .karte {
-    border-radius: var(--radius-karte);
+    --karte-innen: var(--abstand-l);
+    padding: var(--karte-innen);
+    border-radius: calc(var(--karte-innen) + var(--radius-innen));
     color: var(--farbe-text-hell);
-    padding: var(--abstand-l);
   }
 
   @media (min-width: 768px) {
     .karte {
-      padding: calc(var(--abstand-m) * 2);
+      --karte-innen: calc(var(--abstand-m) * 2);
     }
   }
 
