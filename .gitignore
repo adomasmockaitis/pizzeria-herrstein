@@ -34,3 +34,7 @@ desktop.ini
 
 # graphify (lokale Analyse)
 graphify-out/
+
+# Interne Unterlagen (nicht veröffentlichen)
+docs/speisekarte-fotos/
+docs/OFFENE-PUNKTE.md
