@@ -27,8 +27,14 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 ---
 
 <!doctype html>
-<!-- hat-hero: Seite hat einen Hero (Startseite). Ohne Hero ist "nach-hero" von Anfang an gesetzt (kein Flackern). -->
-<html lang="de" class:list={[headerTransparent ? 'hat-hero' : 'nach-hero']}>
+<!-- hat-hero: Seite hat einen Hero (Startseite). Ohne Hero sind "nach-hero" und "gescrollt" sofort gesetzt. -->
+<html
+  lang="de"
+  class:list={[
+    headerTransparent ? 'hat-hero' : ['nach-hero', 'gescrollt'],
+    DEMO_MODE && 'mit-demo',
+  ]}
+>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -50,8 +56,14 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
     <DemoBalken />
     <HinweisBanner />
 
-    <!-- Relativer Anker, damit ein transparenter Header exakt unter DemoBalken/HinweisBanner liegt -->
-    <div class:list={['header-anker', headerTransparent && 'header-anker--transparent']}>
+    <!-- Anker direkt unter DemoBalken/HinweisBanner für die exakte top-Position des fixed Headers -->
+    <div
+      class:list={[
+        'header-anker',
+        headerTransparent ? 'header-anker--transparent' : 'header-anker--fest',
+      ]}
+      data-header-anker
+    >
       <Header transparent={headerTransparent} aktiv={aktiv} />
     </div>
 
@@ -65,19 +77,16 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 </html>
 
 <style>
-  .header-anker--transparent {
+  .header-anker {
     position: relative;
-    z-index: 20;
   }
 
-  /* Menü offen: Header samt Sheet über Demo-Balken, Hinweis und Aktionsleiste */
-  :global(html.menue-offen) .header-anker--transparent {
-    z-index: 100;
+  /* Unterseiten: Platzhalter in Leistenhöhe, damit der fixed Header keinen Inhalt verdeckt */
+  .header-anker--fest {
+    height: var(--aktuelle-leiste-hoehe);
   }
 
-  /* Header-Wrapper von Unterseiten erzeugt keine eigene Box,
-     damit die kompakte Leiste (sticky) an der ganzen Seite haftet (mobil und Desktop) */
-  .header-anker:not(.header-anker--transparent) {
-    display: contents;
+  :global(html:not(.js)) .header-anker--fest {
+    height: auto;
   }
 </style>

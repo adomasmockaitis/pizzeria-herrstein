@@ -22,9 +22,48 @@
     "ueberschrift": "Italienischer Genuss pur",
     "text": "Entdecke die Vielfalt unserer frisch zubereiteten Vorspeisen, knackigen Salate, herzhaften Fleischgerichte sowie unserer beliebten Pizzen und cremigen Pastagerichte – für jeden Geschmack das Richtige.",
     "button": "Speisekarte ansehen",
-    "teaserTitel": "Fleischgerichte vom Feinsten",
-    "teaserText": "Schnitzel, Cordon Bleu, Rumpsteak und mehr – frisch zubereitet, mit Sauce, Beilage und knackigem Salat serviert.",
-    "teaserButton": "Fleischgerichte entdecken"
+    "kategorien": [
+      {
+        "titel": "Vorspeisen entdecken",
+        "text": "Starte dein Menü mit Caprese, Shrimps-Cocktail, Panini oder Pizzabrot – klassisch italienisch und immer lecker.",
+        "button": "Vorspeisen entdecken",
+        "anker": "#vorspeisen",
+        "farbe": "gruen",
+        "bild": "vorspeisen-rund.webp"
+      },
+      {
+        "titel": "Frische Salate",
+        "text": "Ob gemischt, italienisch, mit Shrimps oder klassisch als Beilage – unsere Salate passen zu jedem Gericht.",
+        "button": "Salate entdecken",
+        "anker": "#salat",
+        "farbe": "rot",
+        "bild": "salat-rund.webp"
+      },
+      {
+        "titel": "Pizza genießen",
+        "text": "Über 30 verschiedene Pizzen, darunter Klassiker und Spezialitäten wie Diavolo, Calzone oder Chef – auch als Jumbo erhältlich.",
+        "button": "Pizza entdecken",
+        "anker": "#pizza",
+        "farbe": "gruen",
+        "bild": "pizza-rand-inna-gurina.webp"
+      },
+      {
+        "titel": "Nudeln wie in Italien",
+        "text": "Spaghetti, Penne, Tagliatelle oder Tortellini – mit Carbonara, Lachs, Steinpilzen und vielen weiteren Saucen.",
+        "button": "Nudeln entdecken",
+        "anker": "#nudeln",
+        "farbe": "rot",
+        "bild": "nudeln-rund.webp"
+      },
+      {
+        "titel": "Fleischgerichte vom Feinsten",
+        "text": "Schnitzel, Cordon Bleu, Rumpsteak und mehr – frisch zubereitet, mit Sauce, Beilage und knackigem Salat serviert.",
+        "button": "Fleischgerichte entdecken",
+        "anker": "#fleischgerichte",
+        "farbe": "gruen",
+        "bild": "fleisch-rund.webp"
+      }
+    ]
   },
   "lieferservice": {
     "ueberschrift": "Heiß & frisch - direkt zu dir nach Hause",

@@ -19,17 +19,19 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
   data-hero-sentinel
   aria-labelledby="hero-titel"
 >
-  <Image
-    src={heroPizza}
-    alt={texte.hero.bildAlt}
-    widths={[640, 1024, 1440, 1920]}
-    sizes="100vw"
-    loading="eager"
-    fetchpriority="high"
-    class="hero__hintergrund"
-  />
-  <div class="hero__overlay" aria-hidden="true"></div>
-  <div class="hero__verlauf-unten" aria-hidden="true"></div>
+  <div class="hero__medien">
+    <Image
+      src={heroPizza}
+      alt={texte.hero.bildAlt}
+      widths={[640, 1024, 1440, 1920]}
+      sizes="100vw"
+      loading="eager"
+      fetchpriority="high"
+      class="hero__hintergrund"
+    />
+    <div class="hero__overlay" aria-hidden="true"></div>
+    <div class="hero__verlauf-unten" aria-hidden="true"></div>
+  </div>
 
   <div class="container hero__inhalt">
     <h1 id="hero-titel" class="hero__titel">
@@ -97,7 +99,7 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
+    overflow: visible;
     padding-top: calc(var(--header-hoehe) + var(--abstand-m));
     padding-bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px));
     color: var(--farbe-text-hell);
@@ -112,6 +114,17 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
     .hero {
       padding-top: calc(var(--header-hoehe) + var(--abstand-l));
     }
+  }
+
+  /* Foto-Ebene ragt 160px unter den ersten Bildschirm hinaus; der Verlauf liegt nur dort */
+  .hero__medien {
+    position: absolute;
+    top: 0;
+    inset-inline: 0;
+    bottom: -160px;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
   }
 
   .hero__hintergrund {
@@ -136,18 +149,19 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
     );
   }
 
-  /* Unterer Verlauf ins Offwhite (Figma Rectangle 192) */
+  /* Unterer Verlauf ins Offwhite: liegt ausschließlich in den unteren 160px unterhalb der ersten Bildschirmkante */
   .hero__verlauf-unten {
     position: absolute;
     inset-inline: 0;
     bottom: 0;
-    height: clamp(2.5rem, 6svh, 4.5rem);
+    height: 160px;
     z-index: 2;
     pointer-events: none;
     background: linear-gradient(
       to bottom,
       transparent 0%,
-      color-mix(in srgb, var(--farbe-offwhite) 25%, transparent) 55%,
+      color-mix(in srgb, var(--farbe-offwhite) 35%, transparent) 45%,
+      color-mix(in srgb, var(--farbe-offwhite) 85%, transparent) 80%,
       var(--farbe-offwhite) 100%
     );
   }

@@ -38,8 +38,8 @@ const { bestellinfoPunkte } = texte.lieferservice;
           <Image
             src={pizzakartonMockup}
             alt=""
-            widths={[380, 760]}
-            sizes="(min-width: 1024px) 380px, 0px"
+            widths={[360, 560, 880]}
+            sizes="(min-width: 1024px) 440px, 0px"
             loading="lazy"
             class="lieferservice__karton-bild"
           />
@@ -51,8 +51,8 @@ const { bestellinfoPunkte } = texte.lieferservice;
           <Image
             src={papiertueteMockup}
             alt=""
-            widths={[300, 600]}
-            sizes="(min-width: 1024px) 300px, 0px"
+            widths={[280, 440, 680]}
+            sizes="(min-width: 1024px) 340px, 0px"
             loading="lazy"
             class="lieferservice__tuete-bild"
           />
@@ -290,11 +290,11 @@ const { bestellinfoPunkte } = texte.lieferservice;
     }
 
     .lieferservice__karton {
-      --karton-w: clamp(240px, 24vw, 380px);
+      --karton-w: clamp(260px, 23vw, 440px);
       width: var(--karton-w);
       aspect-ratio: 585 / 395;
-      top: -1.75rem;
-      right: calc(var(--karton-w) * -0.74);
+      top: -2rem;
+      right: calc(var(--karton-w) * -0.66);
     }
 
     .lieferservice__karton-bild {
@@ -307,11 +307,11 @@ const { bestellinfoPunkte } = texte.lieferservice;
     }
 
     .lieferservice__tuete {
-      --tuete-w: clamp(210px, 19vw, 300px);
+      --tuete-w: clamp(220px, 18vw, 340px);
       width: var(--tuete-w);
       aspect-ratio: 613 / 460;
-      bottom: -1.5rem;
-      left: calc(var(--tuete-w) * -0.88);
+      bottom: -1.75rem;
+      left: calc(var(--tuete-w) * -0.82);
     }
 
     .lieferservice__tuete-bild {
@@ -326,7 +326,7 @@ const { bestellinfoPunkte } = texte.lieferservice;
 
   @media (min-width: 1440px) {
     .lieferservice__tuete {
-      left: calc(var(--tuete-w) * -0.8);
+      left: calc(var(--tuete-w) * -0.78);
     }
   }
 

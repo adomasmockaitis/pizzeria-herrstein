@@ -66,7 +66,7 @@
   --abstand-sektion: clamp(3rem, 2rem + 4vw, 6rem);
 
   /* ---------- Layout ---------- */
-  --container-max: 1224px;   /* Figma: Inhaltsbreite ca. 1224 px (348–1575) */
+  --container-max: 1440px;   /* Figma: 1224 px – auf Wunsch breiter (weniger Leerraum auf Full-HD) */
   --container-rand: clamp(1rem, 4vw, 3.4rem);
   --header-hoehe: 4.5rem;
   --demo-balken-hoehe: 2rem;

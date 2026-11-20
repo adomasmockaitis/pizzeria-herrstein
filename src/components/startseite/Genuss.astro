@@ -1,103 +1,344 @@
 ---
-// Abschnitt "Italienischer Genuss pur" mit Speisekarten-Intro und gestapelter Teaser-Karte
+// Abschnitt "Italienischer Genuss pur" mit 5 Kategorie-Karten als Scroll-Kartenstapel (Desktop)
+// bzw. ruhiger Kartenliste (Mobil/Tablet, reduced motion, ohne JS)
+import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
 import Button from '../Button.astro';
 import Karte from '../Karte.astro';
 import texte from '../../content/texte.json';
-import pizzaRand from '../../assets/fotos/pizza-rand-inna-gurina.webp';
+
+interface GenussKategorie {
+  titel: string;
+  text: string;
+  button: string;
+  anker: string;
+  farbe: 'gruen' | 'rot';
+  bild: string;
+}
+
+const bilder = import.meta.glob<{ default: ImageMetadata }>('../../assets/fotos/*.{webp,jpg,png}', {
+  eager: true,
+});
+
+const fallbackBild = 'pizza-rand-inna-gurina.webp';
+
+const findeBild = (dateiname: string) => {
+  const direkt = bilder[`../../assets/fotos/${dateiname}`]?.default;
+  if (direkt) {
+    return { dateiname, src: direkt };
+  }
+  const fallback = bilder[`../../assets/fotos/${fallbackBild}`]?.default;
+  return fallback ? { dateiname: fallbackBild, src: fallback } : null;
+};
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+
+const kategorien = (texte.genuss.kategorien as GenussKategorie[]).map((kat) => {
+  const aufgeloest = findeBild(kat.bild);
+  return {
+    ...kat,
+    bildDateiname: aufgeloest?.dateiname ?? fallbackBild,
+    bildSrc: aufgeloest?.src ?? null,
+  };
+});
+
+const bildEbenen = Array.from(
+  new Map(
+    kategorien
+      .filter((kat): kat is typeof kat & { bildSrc: ImageMetadata } => kat.bildSrc !== null)
+      .map((kat) => [kat.bildDateiname, kat.bildSrc]),
+  ).entries(),
+).map(([dateiname, src]) => ({
+  dateiname,
+  src,
+  istPizzaAusschnitt: dateiname === fallbackBild,
+}));
+
+const startBild = kategorien[0]?.bildDateiname ?? fallbackBild;
+const drehungenDesktop = [-2, 1.5, -1.5, 2, -1];
+const drehungenMobil = [-1, 1, -1, 1, -1];
 ---
 
-<section class="genuss" id="genuss" aria-labelledby="genuss-titel">
-  <!-- Deko-Pizza am linken Rand (nur >= 1024px) -->
-  <div class="genuss__pizza" aria-hidden="true">
-    <div class="genuss__pizza-rahmen">
-      <Image
-        src={pizzaRand}
-        alt=""
-        widths={[320, 520, 800]}
-        sizes="(min-width: 1024px) 460px, 0px"
-        loading="lazy"
-        class="genuss__pizza-bild"
-      />
-    </div>
-  </div>
-
-  <div class="container genuss__grid">
-    <div class="genuss__intro">
-      <h2 id="genuss-titel" class="genuss__titel">{texte.genuss.ueberschrift}</h2>
-      <p class="genuss__text">{texte.genuss.text}</p>
-      <div class="genuss__aktion">
-        <Button href={`${base}speisekarte`} variante="rot" groesse="klein">
-          {texte.genuss.button}
-        </Button>
+<section class="genuss" id="genuss" aria-labelledby="genuss-titel" data-genuss>
+  <div class="genuss__buehne" data-genuss-buehne>
+    <!-- Großes rundes Deko-Bild links am Rand (nur Desktop >= 1024px) -->
+    <div class="genuss__gericht" aria-hidden="true" data-genuss-gericht data-bild={startBild}>
+      <div class="genuss__gericht-drehung" data-genuss-drehung>
+        {bildEbenen.map((ebene) => (
+          <div
+            class:list={['genuss__gericht-ebene', { 'ist-aktiv': ebene.dateiname === startBild }]}
+            data-genuss-ebene={ebene.dateiname}
+          >
+            <Image
+              src={ebene.src}
+              alt=""
+              widths={[420, 620, 960]}
+              sizes="(min-width: 1024px) 620px, 0px"
+              loading="lazy"
+              class:list={[
+                'genuss__gericht-bild',
+                { 'genuss__gericht-bild--pizza': ebene.istPizzaAusschnitt },
+              ]}
+            />
+          </div>
+        ))}
       </div>
     </div>
 
-    <div class="genuss__teaser-stapel">
-      <Karte farbe="gruen" schatten class="genuss__teaser">
-        <h3 class="genuss__teaser-titel">{texte.genuss.teaserTitel}</h3>
-        <p class="genuss__teaser-text">{texte.genuss.teaserText}</p>
-        <div class="genuss__teaser-aktion">
-          <Button href={`${base}speisekarte#fleischgerichte`} variante="rot" groesse="klein">
-            {texte.genuss.teaserButton}
+    <div class="container genuss__grid">
+      <div class="genuss__intro">
+        <h2 id="genuss-titel" class="genuss__titel">{texte.genuss.ueberschrift}</h2>
+        <p class="genuss__text">{texte.genuss.text}</p>
+        <div class="genuss__aktion">
+          <Button href={`${base}speisekarte`} variante="rot" groesse="klein">
+            {texte.genuss.button}
           </Button>
         </div>
-      </Karte>
+      </div>
+
+      <ul class="genuss__stapel" data-genuss-stapel>
+        {kategorien.map((kat, index) => {
+          const buttonVariante = kat.farbe === 'gruen' ? 'rot' : 'gruen';
+          const drehung = drehungenDesktop[index] ?? 0;
+          const drehungMobil = drehungenMobil[index] ?? 0;
+
+          return (
+            <li
+              class="genuss__stapel-eintrag"
+              style={`--karte-index: ${index}; --karte-drehung: ${drehung}deg; --karte-drehung-mobil: ${drehungMobil}deg;`}
+              data-genuss-karte={index}
+              data-drehung={drehung}
+              data-bild={kat.bildDateiname}
+            >
+              <Karte farbe={kat.farbe} schatten class="genuss__karte">
+                <h3 class="genuss__karte-titel">{kat.titel}</h3>
+                <p class="genuss__karte-text">{kat.text}</p>
+                <div class="genuss__karte-aktion">
+                  <Button
+                    href={`${base}speisekarte${kat.anker}`}
+                    variante={buttonVariante}
+                    groesse="klein"
+                  >
+                    {kat.button}
+                  </Button>
+                </div>
+              </Karte>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   </div>
 </section>
 
+<script>
+  const sektion = document.querySelector<HTMLElement>('[data-genuss]');
+  const buehne = sektion?.querySelector<HTMLElement>('[data-genuss-buehne]');
+  const gericht = sektion?.querySelector<HTMLElement>('[data-genuss-gericht]');
+  const drehungEl = sektion?.querySelector<HTMLElement>('[data-genuss-drehung]');
+  const stapel = sektion?.querySelector<HTMLElement>('[data-genuss-stapel]');
+
+  if (sektion && buehne && stapel) {
+    const bildEbenen = Array.from(
+      gericht?.querySelectorAll<HTMLElement>('[data-genuss-ebene]') ?? [],
+    );
+
+    const karten = Array.from(stapel.querySelectorAll<HTMLElement>('[data-genuss-karte]')).map(
+      (el, index) => ({
+        el,
+        index,
+        drehung: Number(el.dataset.drehung ?? 0),
+        bild: el.dataset.bild ?? '',
+      }),
+    );
+
+    const anzahl = karten.length;
+    const uebergaenge = Math.max(1, anzahl - 1);
+    const startPuffer = 0.04;
+    const endPuffer = 0.08;
+    const bereichSpanne = (1 - startPuffer - endPuffer) / uebergaenge;
+    const stapelVersatzPx = 14;
+
+    const desktopMedia = window.matchMedia('(min-width: 1024px)');
+    const reduziertMedia = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const clamp = (wert: number, min: number, max: number) => Math.min(max, Math.max(min, wert));
+    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+
+    const istDesktopStapelAktiv = () => desktopMedia.matches && !reduziertMedia.matches;
+
+    let letztesBild = gericht?.dataset.bild ?? karten[0]?.bild ?? '';
+    let rahmenAngefordert = false;
+    let mobilBeobachter: IntersectionObserver | null = null;
+
+    const setzeAktivesBild = (dateiname: string) => {
+      if (!gericht || !dateiname) return;
+      letztesBild = dateiname;
+      gericht.dataset.bild = dateiname;
+      for (const ebene of bildEbenen) {
+        ebene.classList.toggle('ist-aktiv', ebene.dataset.genussEbene === dateiname);
+      }
+    };
+
+    const berechneStickyMetrik = () => {
+      const rect = sektion.getBoundingClientRect();
+      const stickyTop = Number.parseFloat(window.getComputedStyle(buehne).top) || 0;
+      const scrollDistanz = Math.max(1, rect.height - (window.innerHeight - stickyTop));
+      return { rect, stickyTop, scrollDistanz };
+    };
+
+    const aktualisiereDesktopStapel = () => {
+      if (!istDesktopStapelAktiv()) return;
+
+      const { rect, stickyTop, scrollDistanz } = berechneStickyMetrik();
+      const progress = clamp((stickyTop - rect.top) / scrollDistanz, 0, 1);
+      const wegstreckeUnten = window.innerHeight * 1.1;
+
+      if (drehungEl) {
+        drehungEl.style.transform = `rotate(${(progress * 60).toFixed(2)}deg)`;
+      }
+
+      const ankuenfte: number[] = [];
+      let aktivIndex = 0;
+
+      for (let i = 0; i < anzahl; i++) {
+        if (i === 0) {
+          ankuenfte.push(1);
+          continue;
+        }
+        const segmentStart = startPuffer + (i - 1) * bereichSpanne;
+        const roh = clamp((progress - segmentStart) / bereichSpanne, 0, 1);
+        const ankunft = easeOutCubic(roh);
+        ankuenfte.push(ankunft);
+        if (roh >= 0.5) {
+          aktivIndex = i;
+        }
+      }
+
+      for (let i = 0; i < anzahl; i++) {
+        const eintrag = karten[i];
+        const ankunft = ankuenfte[i];
+        const naechsteAnkunft = i < anzahl - 1 ? ankuenfte[i + 1] : 0;
+        const zielY = i * stapelVersatzPx;
+        const yPx = zielY + (1 - ankunft) * wegstreckeUnten;
+        const scale = 1 - 0.04 * naechsteAnkunft;
+
+        eintrag.el.style.transform = `translate3d(0, ${yPx.toFixed(1)}px, 0) rotate(${eintrag.drehung}deg) scale(${scale.toFixed(4)})`;
+        eintrag.el.classList.toggle('ist-darunter', i < aktivIndex);
+      }
+
+      const aktivesBild = karten[aktivIndex]?.bild ?? karten[0]?.bild ?? '';
+      if (aktivesBild && aktivesBild !== letztesBild) {
+        setzeAktivesBild(aktivesBild);
+      }
+    };
+
+    const planeDesktopUpdate = () => {
+      if (!istDesktopStapelAktiv() || rahmenAngefordert) return;
+      rahmenAngefordert = true;
+      window.requestAnimationFrame(() => {
+        rahmenAngefordert = false;
+        aktualisiereDesktopStapel();
+      });
+    };
+
+    const entferneMobilBeobachter = () => {
+      if (mobilBeobachter) {
+        mobilBeobachter.disconnect();
+        mobilBeobachter = null;
+      }
+    };
+
+    const initialisiereModus = () => {
+      entferneMobilBeobachter();
+
+      if (istDesktopStapelAktiv()) {
+        for (const eintrag of karten) {
+          eintrag.el.classList.add('ist-sichtbar');
+        }
+        aktualisiereDesktopStapel();
+        return;
+      }
+
+      // Mobil/Tablet oder reduzierte Bewegung: Inline-Stile zurücksetzen
+      if (drehungEl) {
+        drehungEl.style.transform = '';
+      }
+      for (const eintrag of karten) {
+        eintrag.el.style.transform = '';
+        eintrag.el.classList.remove('ist-darunter');
+      }
+
+      if (reduziertMedia.matches || !('IntersectionObserver' in window)) {
+        for (const eintrag of karten) {
+          eintrag.el.classList.add('ist-sichtbar');
+        }
+        return;
+      }
+
+      mobilBeobachter = new IntersectionObserver(
+        (eintraege) => {
+          for (const eintrag of eintraege) {
+            if (eintrag.isIntersecting) {
+              eintrag.target.classList.add('ist-sichtbar');
+              mobilBeobachter?.unobserve(eintrag.target);
+            }
+          }
+        },
+        { threshold: 0.12, rootMargin: '0px 0px -24px 0px' },
+      );
+
+      for (const eintrag of karten) {
+        eintrag.el.classList.remove('ist-sichtbar');
+        mobilBeobachter.observe(eintrag.el);
+      }
+    };
+
+    // Tastatur-Barrierefreiheit: Fokus auf Button in einer Stapel-Karte scrollt sie ins Bild
+    stapel.addEventListener('focusin', (event) => {
+      if (!istDesktopStapelAktiv()) return;
+      const zielEl = event.target instanceof HTMLElement ? event.target : null;
+      const kartenEl = zielEl?.closest<HTMLElement>('[data-genuss-karte]');
+      if (!kartenEl) return;
+
+      const index = Number(kartenEl.dataset.genussKarte ?? 0);
+      const zielProgress = index === 0 ? 0 : startPuffer + index * bereichSpanne;
+      const { rect, stickyTop, scrollDistanz } = berechneStickyMetrik();
+      const sektionOben = rect.top + window.scrollY;
+      const zielScrollY = sektionOben - stickyTop + zielProgress * scrollDistanz;
+
+      window.scrollTo({ top: Math.max(0, Math.round(zielScrollY)), behavior: 'auto' });
+      aktualisiereDesktopStapel();
+    });
+
+    window.addEventListener('scroll', planeDesktopUpdate, { passive: true });
+    window.addEventListener('resize', planeDesktopUpdate, { passive: true });
+    desktopMedia.addEventListener('change', initialisiereModus);
+    reduziertMedia.addEventListener('change', initialisiereModus);
+
+    initialisiereModus();
+  }
+</script>
+
 <style>
+  /* position: relative + z-index: 2 liegt sauber über dem 160px-Verlauf des Hero;
+     margin-top >= 160px stellt sicher, dass der Inhalt erst auf voll deckendem Offwhite beginnt. */
   .genuss {
     position: relative;
-    overflow-x: clip;
+    z-index: 2;
+    margin-top: max(10rem, var(--abstand-sektion));
     padding-top: var(--abstand-l);
-    margin-top: calc(var(--abstand-sektion) - var(--abstand-l));
   }
 
-  .genuss__pizza {
+  .genuss__buehne {
+    position: relative;
+    overflow-x: clip;
+  }
+
+  /* Deko-Bild mobil ausgeblendet für ruhige, klare Darstellung ohne horizontales Scrollen */
+  .genuss__gericht {
     display: none;
-  }
-
-  @media (min-width: 1024px) {
-    .genuss__pizza {
-      display: block;
-      position: absolute;
-      width: 240px;
-      left: -165px;
-      top: 52%;
-      aspect-ratio: 603 / 621;
-      transform: rotate(180deg);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .genuss__pizza-rahmen {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-    }
-
-    .genuss__pizza-bild {
-      position: absolute;
-      max-width: none;
-      width: 179.27%;
-      height: 115.99%;
-      left: -19.82%;
-      top: -10.66%;
-    }
-  }
-
-  @media (min-width: 1380px) {
-    .genuss__pizza {
-      width: clamp(320px, 27vw, 520px);
-      left: clamp(-290px, -15.5vw, -180px);
-      top: 1.5rem;
-    }
   }
 
   .genuss__grid {
@@ -107,13 +348,6 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
     grid-template-columns: 1fr;
     gap: var(--abstand-xl);
     align-items: center;
-  }
-
-  @media (min-width: 1024px) {
-    .genuss__grid {
-      grid-template-columns: 1.15fr 1fr;
-      gap: clamp(2rem, 4vw, 4rem);
-    }
   }
 
   .genuss__intro {
@@ -134,85 +368,192 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
     line-height: var(--zeilenhoehe);
   }
 
-  @media (min-width: 1024px) {
-    .genuss__text {
-      font-size: var(--text-l);
-    }
-  }
-
   .genuss__aktion {
     margin-top: var(--abstand-xs);
   }
 
-  /* Stapel-Effekt: Wrapper bildet eigenen Stacking Context, ::before liegt dahinter */
-  .genuss__teaser-stapel {
-    position: relative;
-    isolation: isolate;
-    margin-inline: 0.25rem;
+  /* Kartenliste (Mobil/Tablet, reduced motion und ohne JS): untereinander mit 16px Abstand */
+  .genuss__stapel {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--abstand-m);
+    padding-block: var(--abstand-xs);
   }
 
-  .genuss__teaser-stapel::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    border-radius: var(--radius-karte);
-    background-color: var(--farbe-rot);
-    transform: rotate(1.2deg);
-    pointer-events: none;
+  .genuss__stapel-eintrag {
+    transform: rotate(var(--karte-drehung-mobil, 0deg));
   }
 
-  .genuss__teaser-stapel :global(.genuss__teaser) {
-    position: relative;
-    z-index: 1;
-    transform: rotate(-1.2deg);
+  /* Sanftes Einblenden mobil/tablet per IntersectionObserver (nur mit JS und ohne reduced motion) */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.js) .genuss__stapel-eintrag {
+      opacity: 0;
+      transform: translate3d(0, 24px, 0) rotate(var(--karte-drehung-mobil, 0deg));
+      transition:
+        opacity 400ms ease,
+        transform 400ms ease;
+    }
+
+    :global(html.js) .genuss__stapel-eintrag.ist-sichtbar {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) rotate(var(--karte-drehung-mobil, 0deg));
+    }
+  }
+
+  .genuss__stapel-eintrag :global(.genuss__karte) {
     display: flex;
     flex-direction: column;
     gap: var(--abstand-m);
   }
 
-  @media (min-width: 768px) {
-    .genuss__teaser-stapel::before {
-      transform: rotate(1.8deg);
-    }
-
-    .genuss__teaser-stapel :global(.genuss__teaser) {
-      transform: rotate(-2deg);
-    }
-  }
-
-  .genuss__teaser-titel {
+  .genuss__karte-titel {
     font-size: var(--text-xl);
     font-weight: var(--gewicht-fett);
     line-height: var(--zeilenhoehe-eng);
   }
 
-  @media (min-width: 1024px) {
-    .genuss__teaser-titel {
-      font-size: var(--text-2xl);
-    }
-  }
-
-  .genuss__teaser-text {
+  .genuss__karte-text {
     font-size: var(--text-basis);
     line-height: var(--zeilenhoehe);
   }
 
+  .genuss__karte-aktion {
+    margin-top: auto;
+    padding-top: var(--abstand-xs);
+    display: flex;
+    justify-content: flex-end;
+  }
+
   @media (min-width: 1024px) {
-    .genuss__teaser-text {
+    .genuss__text {
+      font-size: var(--text-l);
+    }
+
+    .genuss__karte-titel {
+      font-size: var(--text-2xl);
+    }
+
+    .genuss__karte-text {
       font-size: var(--text-l);
     }
   }
 
-  .genuss__teaser-aktion {
-    margin-top: var(--abstand-xs);
-    display: flex;
-    justify-content: flex-start;
-  }
+  /* ---------- Desktop (>= 1024px) mit JS und ohne reduced motion: Sticky-Scroll-Kartenstapel ---------- */
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    :global(html.js) .genuss {
+      padding-top: 0;
+      height: calc(100vh + 5 * 55vh);
+      height: calc(100svh + 5 * 55svh);
+    }
 
-  @media (min-width: 768px) {
-    .genuss__teaser-aktion {
-      justify-content: flex-end;
+    :global(html.js) .genuss__buehne {
+      --gericht-groesse: clamp(360px, 32.3vw, 620px);
+      position: sticky;
+      top: var(--leiste-hoehe-desktop);
+      height: calc(100vh - var(--leiste-hoehe-desktop));
+      height: calc(100svh - var(--leiste-hoehe-desktop));
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      overflow: clip;
+    }
+
+    /* Großes rundes Gericht halb aus dem linken Bildschirmrand ragend */
+    :global(html.js) .genuss__gericht {
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: calc(var(--gericht-groesse) * -0.5);
+      width: var(--gericht-groesse);
+      aspect-ratio: 1 / 1;
+      transform: translateY(-50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    :global(html.js) .genuss__gericht-drehung {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      will-change: transform;
+    }
+
+    :global(html.js) .genuss__gericht-ebene {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      overflow: hidden;
+      opacity: 0;
+      transform: rotate(-10deg) scale(0.96);
+      transition:
+        opacity 400ms ease,
+        transform 400ms ease;
+    }
+
+    :global(html.js) .genuss__gericht-ebene.ist-aktiv {
+      opacity: 1;
+      transform: rotate(0deg) scale(1);
+    }
+
+    :global(html.js) .genuss__gericht-bild {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    :global(html.js) .genuss__gericht-bild--pizza {
+      position: absolute;
+      max-width: none;
+      width: 179.27%;
+      height: 115.99%;
+      left: -19.82%;
+      top: -10.66%;
+    }
+
+    /* Linker Einzug passt sich an das runde Gericht an, damit Text nie überdeckt wird */
+    :global(html.js) .genuss__grid {
+      --gericht-sichtbar: calc(var(--gericht-groesse) * 0.5);
+      --container-offset: max(0px, (100vw - var(--container-max)) / 2);
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+      gap: clamp(2rem, 4vw, 4.5rem);
+      padding-inline-start: max(
+        var(--container-rand),
+        calc(var(--gericht-sichtbar) - var(--container-offset) + 2rem)
+      );
+      align-items: center;
+    }
+
+    /* Kartenstapel rechts: alle 5 Karten absolut übereinander */
+    :global(html.js) .genuss__stapel {
+      position: relative;
+      display: block;
+      width: 100%;
+      min-height: calc(21rem + 56px);
+      padding-block: 0;
+    }
+
+    :global(html.js) .genuss__stapel-eintrag {
+      position: absolute;
+      inset-inline: 0;
+      top: 0;
+      z-index: calc(var(--karte-index) + 1);
+      opacity: 1;
+      transform: translate3d(0, 110vh, 0) rotate(var(--karte-drehung, 0deg));
+      transition: filter 250ms ease;
+      will-change: transform;
+    }
+
+    :global(html.js) .genuss__stapel-eintrag:first-child {
+      transform: translate3d(0, 0, 0) rotate(var(--karte-drehung, 0deg));
+    }
+
+    :global(html.js) .genuss__stapel-eintrag.ist-darunter {
+      filter: brightness(0.92);
+    }
+
+    :global(html.js) .genuss__stapel-eintrag :global(.genuss__karte) {
+      min-height: 21rem;
     }
   }
 </style>

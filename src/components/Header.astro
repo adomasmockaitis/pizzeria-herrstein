@@ -251,20 +251,17 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
 
 <style>
   .header {
+    position: fixed;
+    top: var(--header-top, 0px);
+    inset-inline: 0;
     width: 100%;
     color: var(--farbe-text-hell);
-    z-index: 20;
+    z-index: 50;
   }
 
   /* Menü offen: Header (mit Sheet) über Demo-Balken, Hinweis und Aktionsleiste */
   :global(html.menue-offen) .header {
     z-index: 100;
-  }
-
-  .header--transparent {
-    position: absolute;
-    top: 0;
-    inset-inline: 0;
   }
 
   /* Dunkler Verlauf oben über dem Hero-Foto (Figma: ca. 305px hoch, 60% Schwarz → transparent) */
@@ -285,8 +282,7 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
   }
 
   .header--fest {
-    position: relative;
-    background-color: var(--farbe-schwarz);
+    background-color: transparent;
   }
 
   .header__leiste {
@@ -570,8 +566,10 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
     display: none;
   }
 
-  :global(html:not(.js)) .header--transparent {
+  :global(html:not(.js)) .header--transparent,
+  :global(html:not(.js)) .header--fest {
     position: relative;
+    top: auto;
     background-color: var(--farbe-offwhite);
   }
 
@@ -623,20 +621,8 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
 
   /* ---------- Mobil/Tablet (< 1024px): kompakte Leiste, "Large Title"-Muster ---------- */
   @media (max-width: 1023px) {
-    /* Nach dem Hero wird der transparente Header zur festen kompakten Leiste */
-    :global(html.nach-hero) .header--transparent {
-      position: fixed;
-    }
-
-    :global(html.nach-hero) .header--transparent::before {
+    :global(html.gescrollt) .header--transparent::before {
       opacity: 0;
-    }
-
-    /* Unterseiten: kompakte Leiste von Anfang an, bleibt oben stehen */
-    .header--fest {
-      position: sticky;
-      top: 0;
-      background-color: transparent;
     }
 
     .header__leiste {
@@ -679,22 +665,22 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
       margin-inline-end: -11px;
     }
 
-    /* Oben auf der Startseite: nur Burger (offwhite über dem Foto), Logo und Material ausgeblendet */
-    :global(html.js:not(.nach-hero)) .header--transparent .header__leiste::before {
+    /* Ganz oben (scrollY <= 8) auf der Startseite: nur Burger (offwhite über dem Foto), Logo und Material aus */
+    :global(html.js:not(.gescrollt)) .header--transparent .header__leiste::before {
       opacity: 0;
       transform: translateY(-8px);
     }
 
-    :global(html.js:not(.nach-hero)) .header--transparent .header__logo-link {
+    :global(html.js:not(.gescrollt)) .header--transparent .header__logo-link {
       opacity: 0;
       visibility: hidden;
     }
 
-    :global(html.js:not(.nach-hero)) .header--transparent .header__burger-linie {
+    :global(html.js:not(.gescrollt)) .header--transparent .header__burger-linie {
       background-color: var(--farbe-offwhite);
     }
 
-    :global(html.js:not(.nach-hero)) .header--transparent .header__burger:focus-visible {
+    :global(html.js:not(.gescrollt)) .header--transparent .header__burger:focus-visible {
       outline-color: var(--farbe-offwhite);
     }
 
@@ -712,6 +698,13 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
   @media (min-width: 1024px) {
     :global(html:not(.js)) .header--transparent {
       position: absolute;
+      top: 0;
+      background-color: transparent;
+    }
+
+    :global(html:not(.js)) .header--fest {
+      position: sticky;
+      top: 0;
       background-color: transparent;
     }
 
@@ -719,22 +712,12 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
       display: block;
     }
 
-    /* Grundzustand = kompakte feste Leiste (56px, Material wie mobil): Logo links, Navigation
-       mittig, Telefon rechts. Gilt nach dem Hero (html.nach-hero) und auf Unterseiten. */
-    .header--transparent {
-      position: fixed;
-    }
-
-    .header--fest {
-      position: sticky;
-      top: 0;
-      background-color: transparent;
-    }
-
-    :global(html.nach-hero) .header--transparent::before {
+    :global(html.gescrollt) .header--transparent::before {
       opacity: 0;
     }
 
+    /* Grundzustand = kompakte feste Leiste (56px, Material wie mobil): Logo links, Navigation
+       mittig, Telefon rechts. Gilt ab scrollY > 8 (html.gescrollt) und auf Unterseiten. */
     .header__leiste {
       display: grid;
       grid-template-columns: 1fr auto 1fr;
@@ -744,6 +727,7 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
       padding-block: 0;
       padding-inline: clamp(1.5rem, 2.86vw, 3.5rem);
       isolation: isolate;
+      transition: padding 200ms ease;
     }
 
     /* Material: offwhite 80 % mit Unschärfe und Haarlinie (Pseudo-Element wie mobil) */
@@ -766,12 +750,8 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
       }
     }
 
-    /* Oben über dem Hero-Foto (Figma): transparent, offwhite Schrift, Navigation links, Telefon rechts */
-    :global(html:not(.nach-hero)) .header--transparent {
-      position: absolute;
-    }
-
-    :global(html:not(.nach-hero)) .header--transparent .header__leiste {
+    /* Ganz oben (scrollY <= 8) über dem Hero-Foto (Figma): transparent, offwhite Schrift, Navigation links, Telefon rechts */
+    :global(html:not(.gescrollt)) .header--transparent .header__leiste {
       display: flex;
       justify-content: space-between;
       height: auto;
@@ -779,7 +759,7 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
       padding-bottom: var(--abstand-m);
     }
 
-    :global(html:not(.nach-hero)) .header__leiste::before {
+    :global(html:not(.gescrollt)) .header--transparent .header__leiste::before {
       opacity: 0;
     }
 
@@ -787,9 +767,10 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
       display: inline-flex;
       justify-self: start;
       min-height: 44px;
+      transition: opacity 200ms ease;
     }
 
-    :global(html:not(.nach-hero)) .header__logo-link,
+    :global(html:not(.gescrollt)) .header--transparent .header__logo-link,
     .header__mobil-aktionen,
     .menue-sheet {
       display: none;
@@ -818,6 +799,11 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
       white-space: nowrap;
       background-color: transparent;
       border-radius: var(--radius-pill);
+      transition:
+        color 200ms ease,
+        background-color var(--dauer-kurz) ease,
+        transform 100ms ease,
+        opacity 100ms ease;
     }
 
     .header__link::before {
@@ -830,7 +816,7 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
       transition: background-color var(--dauer-kurz) ease;
     }
 
-    :global(html:not(.nach-hero)) .header__link {
+    :global(html:not(.gescrollt)) .header--transparent .header__link {
       color: var(--farbe-text-hell);
     }
 
@@ -850,7 +836,9 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
         background-color: color-mix(in srgb, var(--farbe-schwarz) 6%, transparent);
       }
 
-      :global(html:not(.nach-hero)) .header__link:not(.header__link--aktiv):hover::before {
+      :global(html:not(.gescrollt))
+        .header--transparent
+        .header__link:not(.header__link--aktiv):hover::before {
         background-color: color-mix(in srgb, var(--farbe-offwhite) 15%, transparent);
       }
     }
@@ -862,7 +850,11 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
     }
 
     @media (prefers-reduced-motion: reduce) {
+      .header__leiste,
       .header__leiste::before,
+      .header--transparent::before,
+      .header__logo-link,
+      .header__link,
       .header__link::before {
         transition: none;
       }
