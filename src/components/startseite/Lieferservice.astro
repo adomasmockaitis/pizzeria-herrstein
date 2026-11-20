@@ -309,12 +309,23 @@ const { bestellinfoPunkte } = texte.lieferservice;
     }
 
     .lieferservice__tuete {
-      /* So breit wie der freie Rand links neben den Karten (+ kleine Überlappung), max. 440px */
-      --tuete-w: clamp(220px, calc((100vw - var(--container-max)) / 2 + var(--container-rand) + 0.5rem), 440px);
+      /* Wie in Figma: groß, liegt halb über der roten Bestellinfo-Karte.
+         Breite = freier Rand links neben den Karten + Überlappung (max. 440px). */
+      /* Die Tüte selbst füllt (gespiegelt) nur 31–82 % der Bildbreite, der Rest ist Schatten.
+         Position daher am rechten Rand der sichtbaren Tüte (82 %) ausrichten. */
+      --tuete-ueberlapp: 4.5rem;
+      --tuete-w: clamp(400px, calc((100vw - var(--container-max)) / 2 + var(--container-rand) + 14rem), 540px);
       width: var(--tuete-w);
-      bottom: -3rem;
-      /* ragt nur 1.5rem über die Kartenkante – die Icons bleiben frei */
-      left: calc(var(--tuete-w) * -1 + 1.5rem);
+      bottom: -5rem;
+      left: calc(var(--tuete-w) * -0.82 + var(--tuete-ueberlapp));
+    }
+
+    /* Die Liste rückt nach rechts, damit die überlappende Tüte die Icons nicht verdeckt
+       (nur dort, wo die Tüte überhaupt angezeigt wird) */
+    @media (min-width: 1760px) {
+      .lieferservice__buehne .info-liste {
+        padding-left: 4rem;
+      }
     }
   }
 

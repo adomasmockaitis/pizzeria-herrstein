@@ -213,6 +213,7 @@ const sichtbareZonen = lieferzonen.zonen.filter((zone) => zone.sichtbar);
     const karten = Array.from(sektion.querySelectorAll<HTMLElement>('.zone-karte')).map(
       (karte) => ({
         karte,
+        passt: true,
         orte: Array.from(karte.querySelectorAll<HTMLElement>('[data-ort]')).map((el) => ({
           el,
           ort: el.dataset.ort ?? '',
@@ -249,6 +250,170 @@ const sichtbareZonen = lieferzonen.zonen.filter((zone) => zone.sichtbar);
       }
     };
 
+    // ---------- Animation (FLIP, nur transform/opacity/height) ----------
+    const zonenBox = sektion.querySelector<HTMLElement>('.lieferkosten__zonen');
+    const DAUER_AUS = 180;
+    const DAUER_EIN = 220;
+    const DAUER_VERSATZ = 30;
+    const DAUER_BEWEGUNG = 280;
+    const DAUER_LEER = 200;
+    const KURVE_BEWEGUNG = 'cubic-bezier(0.2, 0.8, 0.2, 1)';
+    const VERSTECKT = { opacity: 0, transform: 'scale(0.96) translateY(8px)' };
+    const NORMAL = { opacity: 1, transform: 'scale(1) translateY(0)' };
+
+    interface Momentaufnahme {
+      rects: Map<HTMLElement, DOMRect>;
+      deckkraft: Map<HTMLElement, number>;
+      hoehe: number;
+    }
+
+    let laufende: Animation[] = [];
+    let generation = 0;
+    let animationsTimer: number | undefined;
+    let leerSoll = false;
+
+    const reduzierteBewegung = () =>
+      !zonenBox ||
+      typeof zonenBox.animate !== 'function' ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const sichtbareKarten = () => karten.filter((e) => !e.karte.hidden).map((e) => e.karte);
+
+    const merke = (): Momentaufnahme => {
+      const rects = new Map<HTMLElement, DOMRect>();
+      const deckkraft = new Map<HTMLElement, number>();
+      for (const karte of sichtbareKarten()) {
+        rects.set(karte, karte.getBoundingClientRect());
+        deckkraft.set(karte, parseFloat(getComputedStyle(karte).opacity));
+      }
+      return { rects, deckkraft, hoehe: zonenBox?.getBoundingClientRect().height ?? 0 };
+    };
+
+    const stoppeAnimationen = () => {
+      for (const a of laufende) a.cancel();
+      laufende = [];
+    };
+
+    const starte = (el: HTMLElement, keyframes: Keyframe[], optionen: KeyframeAnimationOptions) => {
+      const a = el.animate(keyframes, optionen);
+      laufende.push(a);
+      return a;
+    };
+
+    // FLIP: alte Position/Höhe -> neue Position/Höhe gleiten; neue Karten blenden gestaffelt ein
+    const bewegeVon = (alt: Momentaufnahme, neueKarten: HTMLElement[] = []) => {
+      for (const karte of sichtbareKarten()) {
+        const vorher = alt.rects.get(karte);
+        if (!vorher) {
+          const nr = neueKarten.indexOf(karte);
+          starte(karte, [VERSTECKT, NORMAL], {
+            duration: DAUER_EIN,
+            delay: Math.max(nr, 0) * DAUER_VERSATZ,
+            easing: 'ease-out',
+            fill: 'backwards',
+          });
+          continue;
+        }
+        const jetzt = karte.getBoundingClientRect();
+        const dx = vorher.left - jetzt.left;
+        const dy = vorher.top - jetzt.top;
+        if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) {
+          starte(karte, [{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'translate(0, 0)' }], {
+            duration: DAUER_BEWEGUNG,
+            easing: KURVE_BEWEGUNG,
+          });
+        }
+        const start = alt.deckkraft.get(karte) ?? 1;
+        if (start < 0.99) {
+          starte(karte, [{ opacity: start }, { opacity: 1 }], { duration: DAUER_EIN, easing: 'ease-out' });
+        }
+      }
+
+      if (zonenBox) {
+        const neueHoehe = zonenBox.getBoundingClientRect().height;
+        if (Math.abs(alt.hoehe - neueHoehe) > 1) {
+          // explizite Höhe nur während der Animation, danach wieder auto (kein fill)
+          starte(zonenBox, [{ height: `${alt.hoehe}px` }, { height: `${neueHoehe}px` }], {
+            duration: DAUER_BEWEGUNG,
+            easing: KURVE_BEWEGUNG,
+          });
+        }
+      }
+    };
+
+    // Eigene Animation für den Leer-Hinweis: wird NICHT von stoppeAnimationen() abgebrochen,
+    // sonst bliebe der Hinweis nach dem Leeren der Suche sichtbar stehen.
+    let leerAnimation: Animation | undefined;
+
+    const zeigeLeerBox = () => {
+      leerAnimation?.cancel();
+      leerAnimation = undefined;
+      if (!leerBox.hidden) return;
+      leerBox.hidden = false;
+      starte(leerBox, [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'translateY(0)' }], {
+        duration: DAUER_LEER,
+        easing: 'ease-out',
+        fill: 'backwards',
+      });
+    };
+
+    const verbergeLeerBox = () => {
+      if (leerBox.hidden || leerAnimation) return;
+      const a = leerBox.animate(
+        [{ opacity: 1, transform: 'translateY(0)' }, { opacity: 0, transform: 'translateY(8px)' }],
+        { duration: DAUER_LEER, easing: 'ease-in', fill: 'forwards' },
+      );
+      leerAnimation = a;
+      a.finished.then(
+        () => {
+          if (leerAnimation === a) {
+            if (!leerSoll) leerBox.hidden = true;
+            a.cancel(); // fill aufheben, damit der Hinweis beim nächsten Mal normal erscheint
+            leerAnimation = undefined;
+          }
+        },
+        () => {},
+      );
+    };
+
+    const wendeSofortAn = () => {
+      leerAnimation?.cancel();
+      leerAnimation = undefined;
+      for (const e of karten) e.karte.hidden = !e.passt;
+      leerBox.hidden = !leerSoll;
+    };
+
+    const wendeAn = async () => {
+      const meine = ++generation;
+      const vorher = merke();
+      stoppeAnimationen();
+      // laufende Bewegungen sauber übernehmen (kein Springen bei schnellem Tippen)
+      bewegeVon(vorher);
+
+      const ausblenden = karten.filter((e) => !e.karte.hidden && !e.passt).map((e) => e.karte);
+      const einblenden = karten.filter((e) => e.karte.hidden && e.passt).map((e) => e.karte);
+
+      if (!leerSoll) verbergeLeerBox();
+
+      if (ausblenden.length > 0) {
+        const aus = ausblenden.map((karte) =>
+          starte(
+            karte,
+            [{ opacity: vorher.deckkraft.get(karte) ?? 1, transform: NORMAL.transform }, VERSTECKT],
+            { duration: DAUER_AUS, easing: 'ease-in', fill: 'forwards' },
+          ),
+        );
+        await Promise.allSettled(aus.map((a) => a.finished));
+        if (meine !== generation) return;
+      }
+
+      const davor = merke();
+      stoppeAnimationen();
+      for (const e of karten) e.karte.hidden = !e.passt;
+      if (leerSoll) zeigeLeerBox();
+      bewegeVon(davor, einblenden);
+    };
+
     const filterZonen = (sofortStatus = false) => {
       const rohWert = eingabe.value.trim();
       const anfragen = erzeugeAnfrageVarianten(rohWert);
@@ -262,7 +427,7 @@ const sichtbareZonen = lieferzonen.zonen.filter((zone) => zone.sichtbar);
 
       for (const eintrag of karten) {
         if (!hatSuche) {
-          eintrag.karte.hidden = false;
+          eintrag.passt = true;
           sichtbareAnzahl++;
           for (const ortEintrag of eintrag.orte) {
             setzeOrtHervorhebung(ortEintrag.el, ortEintrag.ort, null);
@@ -279,11 +444,19 @@ const sichtbareZonen = lieferzonen.zonen.filter((zone) => zone.sichtbar);
           setzeOrtHervorhebung(ortEintrag.el, ortEintrag.ort, bereich);
         }
 
-        eintrag.karte.hidden = !zonePasst;
+        eintrag.passt = zonePasst;
         if (zonePasst) sichtbareAnzahl++;
       }
 
-      leerBox.hidden = !hatSuche || sichtbareAnzahl > 0;
+      leerSoll = hatSuche && sichtbareAnzahl === 0;
+      window.clearTimeout(animationsTimer);
+      if (reduzierteBewegung()) {
+        generation++;
+        stoppeAnimationen();
+        wendeSofortAn();
+      } else {
+        animationsTimer = window.setTimeout(wendeAn, sofortStatus ? 0 : 60);
+      }
       meldeStatus(sichtbareAnzahl, hatSuche, sofortStatus);
     };
 
@@ -428,6 +601,21 @@ const sichtbareZonen = lieferzonen.zonen.filter((zone) => zone.sichtbar);
       padding-bottom: clamp(6rem, 9vw, 9rem);
     }
 
+    .lieferkosten__auto {
+      transition: opacity 200ms ease-out;
+    }
+
+    /* Ohne Treffer gibt es kein Raster – das Auto blendet dann aus */
+    .lieferkosten:has(.lieferkosten__leer:not([hidden])) .lieferkosten__auto {
+      opacity: 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .lieferkosten__auto {
+        transition: none;
+      }
+    }
+
     .lieferkosten__auto-bild {
       display: block;
       width: 100%;
@@ -439,11 +627,6 @@ const sichtbareZonen = lieferzonen.zonen.filter((zone) => zone.sichtbar);
       .lieferkosten__auto {
         display: none;
       }
-    }
-
-    /* Während einer Suche ändert sich das Raster – Auto dann ausblenden */
-    .lieferkosten__zonen:has(:global(.zone-karte[hidden])) .lieferkosten__auto {
-      display: none;
     }
   }
 
