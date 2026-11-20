@@ -171,6 +171,7 @@ Figma bestimmt die **Optik** (Farben, Schriften, Karten, Bilder). Die **Bedienun
 - **Navigation wie iOS:** großer Titel im Inhalt, kompakte Leiste beim Scrollen („Large Title“-Muster); Menü als Vollbild-Liste mit großen Zeilen.
 - **Daumenzone:** wichtige Aktionen (Anrufen, WhatsApp) unten erreichbar; Safe Areas (`env(safe-area-inset-*)`) beachten.
 - **Raster:** Abstände im 8-px-Raster, Seitenränder mobil 16–20 px.
+- **Konzentrische Ecken:** Liegt ein abgerundetes Element in einem anderen, gilt äußerer Radius = innerer Radius + Abstand. Umsetzung: Karten setzen `--karte-innen` (Innenabstand), der Radius ergibt sich daraus (`--karte-innen` + `--radius-innen` 20 px); innere Buttons/Badges nutzen `--radius-innen` bzw. Kapselform.
 - **Feedback:** sichtbare Reaktion beim Antippen (`:active`), nicht nur Hover.
 - **Materialien:** schwebende Leisten mit leicht durchscheinendem, unscharfem Hintergrund (`backdrop-filter`), mit Fallback.
 - **Bewegung:** dezent, `prefers-reduced-motion` respektieren.
