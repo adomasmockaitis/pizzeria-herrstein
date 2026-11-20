@@ -163,6 +163,20 @@ Es gibt **kein** Mobile-Design in Figma. Leite es selbst aus dem Desktop-Design 
 
 ---
 
+### Design-Regeln: Apple Human Interface Guidelines
+Figma bestimmt die **Optik** (Farben, Schriften, Karten, Bilder). Die **Bedienung** richtet sich nach den [Apple Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines), vor allem mobil:
+- **Tippflächen** mindestens 44 × 44 px, genug Abstand zwischen tippbaren Elementen.
+- **Lesbarkeit:** Fließtext mobil mindestens 17 px, nichts unter 12 px; Schriftgrößen in `rem`, damit die System-Schriftgröße greift.
+- **Hierarchie & Klarheit:** ein klarer Haupt-Call-to-Action pro Bildschirm, keine doppelten Elemente (z. B. Logo oder Anruf-Button nicht zweimal sichtbar).
+- **Navigation wie iOS:** großer Titel im Inhalt, kompakte Leiste beim Scrollen („Large Title“-Muster); Menü als Vollbild-Liste mit großen Zeilen.
+- **Daumenzone:** wichtige Aktionen (Anrufen, WhatsApp) unten erreichbar; Safe Areas (`env(safe-area-inset-*)`) beachten.
+- **Raster:** Abstände im 8-px-Raster, Seitenränder mobil 16–20 px.
+- **Feedback:** sichtbare Reaktion beim Antippen (`:active`), nicht nur Hover.
+- **Materialien:** schwebende Leisten mit leicht durchscheinendem, unscharfem Hintergrund (`backdrop-filter`), mit Fallback.
+- **Bewegung:** dezent, `prefers-reduced-motion` respektieren.
+
+---
+
 ## 9. Funktionen im Detail
 
 - **Lieferzonen-Suche**: Eingabe eines Ortsnamens filtert die Zonen live und hebt den Treffer hervor (Groß-/Kleinschreibung und Umlaute egal, Teilwörter erlaubt). Kein Treffer → „Dein Ort ist nicht dabei? Ruf uns an, wir liefern gerne auf Anfrage.“ Funktioniert nur mit Ortsnamen, keine echte Adress-/Geodaten-Suche.

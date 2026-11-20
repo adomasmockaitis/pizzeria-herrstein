@@ -78,12 +78,14 @@ const iconGroesse = groesse === 'klein' ? 16 : 19;
     border: 2px solid transparent;
     transition:
       background-color var(--dauer-kurz) ease,
-      border-color var(--dauer-kurz) ease;
+      border-color var(--dauer-kurz) ease,
+      transform 100ms ease,
+      opacity 100ms ease;
   }
 
-  /* Normale Größe (Figma: ca. 46px Höhe, 2.5rem seitliches Padding) */
+  /* Normale Größe (Figma: 46px, für HIG auf 48px angehoben; 2.5rem seitliches Padding) */
   .btn--normal {
-    min-height: 2.875rem;
+    min-height: 3rem;
     padding: var(--abstand-xs) var(--abstand-xl);
   }
 
@@ -94,10 +96,10 @@ const iconGroesse = groesse === 'klein' ? 16 : 19;
     padding: var(--abstand-xs) var(--abstand-m);
   }
 
-  /* Auf Desktop mit Mauszeiger kompakte Figma-Höhe (28px) */
+  /* Auf Desktop mit Mauszeiger kompakt, aber mind. 36px hoch (Figma: 28px) */
   @media (min-width: 768px) and (pointer: fine) {
     .btn--klein {
-      min-height: 1.75rem;
+      min-height: 2.25rem;
       min-width: auto;
       padding: 0 var(--abstand-m);
     }
@@ -114,17 +116,9 @@ const iconGroesse = groesse === 'klein' ? 16 : 19;
     color: var(--farbe-text-hell);
   }
 
-  .btn--rot:hover {
-    background-color: var(--farbe-rot-dunkel);
-  }
-
   .btn--gruen {
     background-color: var(--farbe-gruen);
     color: var(--farbe-text-hell);
-  }
-
-  .btn--gruen:hover {
-    background-color: var(--farbe-gruen-dunkel);
   }
 
   .btn--hell {
@@ -133,9 +127,20 @@ const iconGroesse = groesse === 'klein' ? 16 : 19;
     border-color: var(--farbe-offwhite);
   }
 
-  .btn--hell:hover {
-    background-color: color-mix(in srgb, var(--farbe-offwhite) 90%, var(--farbe-schwarz));
-    border-color: color-mix(in srgb, var(--farbe-offwhite) 90%, var(--farbe-schwarz));
+  /* Hover nur auf Geräten mit Mauszeiger */
+  @media (hover: hover) {
+    .btn--rot:hover {
+      background-color: var(--farbe-rot-dunkel);
+    }
+
+    .btn--gruen:hover {
+      background-color: var(--farbe-gruen-dunkel);
+    }
+
+    .btn--hell:hover {
+      background-color: color-mix(in srgb, var(--farbe-offwhite) 90%, var(--farbe-schwarz));
+      border-color: color-mix(in srgb, var(--farbe-offwhite) 90%, var(--farbe-schwarz));
+    }
   }
 
   /* Weiße PNG-Icons auf hellem Button schwarz einfärben */

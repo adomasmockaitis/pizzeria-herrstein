@@ -27,10 +27,11 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 ---
 
 <!doctype html>
-<html lang="de">
+<!-- hat-hero: Seite hat einen Hero (Startseite). Ohne Hero ist "nach-hero" von Anfang an gesetzt (kein Flackern). -->
+<html lang="de" class:list={[headerTransparent ? 'hat-hero' : 'nach-hero']}>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
     {DEMO_MODE && <meta name="robots" content="noindex, nofollow" />}
@@ -38,6 +39,9 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
     <link rel="icon" href={`${base}favicon.ico`} sizes="32x32" />
     <meta name="theme-color" content="#c40010" />
     <script is:inline>document.documentElement.classList.add('js');</script>
+    <script>
+      import '../scripts/scroll-zustand.ts';
+    </script>
   </head>
   <body>
     <a class="skip-link auf-rot" href="#inhalt">Zum Inhalt springen</a>
@@ -63,5 +67,16 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
   .header-anker--transparent {
     position: relative;
     z-index: 20;
+  }
+
+  /* Menü offen: Header samt Sheet über Demo-Balken, Hinweis und Aktionsleiste */
+  :global(html.menue-offen) .header-anker--transparent {
+    z-index: 100;
+  }
+
+  /* Header-Wrapper von Unterseiten erzeugt keine eigene Box,
+     damit die kompakte Leiste (sticky) an der ganzen Seite haftet (mobil und Desktop) */
+  .header-anker:not(.header-anker--transparent) {
+    display: contents;
   }
 </style>

@@ -1,12 +1,12 @@
 ---
-// Feste Schnellkontakt-Leiste am unteren Bildschirmrand (nur < 768px sichtbar)
+// Schwebende Schnellkontakt-Leiste (iOS-Toolbar) am unteren Bildschirmrand (nur < 768px sichtbar)
 import { Image } from 'astro:assets';
 import kontakt from '../content/kontakt.json';
 import telefonIcon from '../assets/icons/telefon.png';
 import whatsappIcon from '../assets/icons/whatsapp.png';
 ---
 
-<aside class="aktionsleiste auf-rot" aria-label="Schnellkontakt">
+<aside class="aktionsleiste" aria-label="Schnellkontakt">
   <a href={kontakt.telefon.link} class="aktionsleiste__btn aktionsleiste__btn--rot">
     <Image
       src={telefonIcon}
@@ -38,53 +38,89 @@ import whatsappIcon from '../assets/icons/whatsapp.png';
 </aside>
 
 <style>
+  /* Schwebende Leiste: 12px Abstand zu den Rändern, Material mit Unschärfe (Fallback: deckend) */
   .aktionsleiste {
     position: fixed;
-    bottom: 0;
-    inset-inline: 0;
-    width: 100%;
+    left: var(--aktionsleiste-abstand, 12px);
+    right: var(--aktionsleiste-abstand, 12px);
+    bottom: calc(var(--aktionsleiste-abstand, 12px) + env(safe-area-inset-bottom, 0px));
     z-index: 40;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    background-color: var(--farbe-schwarz);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-    box-shadow: 0 -2px 8px color-mix(in srgb, var(--farbe-schwarz) 25%, transparent);
+    gap: var(--abstand-xs);
+    padding: var(--abstand-xs);
+    border-radius: 22px;
+    background-color: color-mix(in srgb, var(--farbe-offwhite) 80%, transparent);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    transition:
+      opacity 200ms ease,
+      transform 200ms ease,
+      visibility 200ms ease;
+  }
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .aktionsleiste {
+      background-color: var(--farbe-offwhite);
+    }
+  }
+
+  /* Startseite: erst einblenden, wenn der Hero (mit "Jetzt bestellen") aus dem Bild ist.
+     Ohne JS und auf Unterseiten (nach-hero von Anfang an) immer sichtbar. */
+  :global(html.js.hat-hero:not(.nach-hero)) .aktionsleiste {
+    opacity: 0;
+    transform: translateY(16px);
+    visibility: hidden;
+    pointer-events: none;
   }
 
   .aktionsleiste__btn {
-    min-height: 3.5rem;
+    min-height: 48px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: var(--abstand-xs);
-    padding: var(--abstand-s) var(--abstand-m);
+    padding: 0 var(--abstand-m);
+    border-radius: var(--radius-pill);
     color: var(--farbe-text-hell);
     font-family: var(--schrift-basis);
     font-weight: var(--gewicht-fett);
-    font-size: var(--text-m);
+    font-size: 1.0625rem;
     text-decoration: none;
-    transition: background-color var(--dauer-kurz) ease;
+    transition:
+      background-color var(--dauer-kurz) ease,
+      transform 100ms ease,
+      opacity 100ms ease;
   }
 
   .aktionsleiste__btn--rot {
     background-color: var(--farbe-rot);
   }
 
-  .aktionsleiste__btn--rot:hover {
-    background-color: var(--farbe-rot-dunkel);
-  }
-
   .aktionsleiste__btn--gruen {
     background-color: var(--farbe-gruen);
   }
 
-  .aktionsleiste__btn--gruen:hover {
-    background-color: var(--farbe-gruen-dunkel);
+  @media (hover: hover) {
+    .aktionsleiste__btn--rot:hover {
+      background-color: var(--farbe-rot-dunkel);
+    }
+
+    .aktionsleiste__btn--gruen:hover {
+      background-color: var(--farbe-gruen-dunkel);
+    }
   }
 
   .aktionsleiste__icon {
     flex-shrink: 0;
     object-fit: contain;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .aktionsleiste {
+      transition: none;
+    }
   }
 
   /* Ab Tablet (768px) ausblenden */

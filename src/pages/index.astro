@@ -10,6 +10,7 @@ import heroPizza from '../assets/fotos/hero-pizza-ivan-torres.jpg';
 import logoGross from '../assets/logo/logo-gross.svg';
 import telefonIcon from '../assets/icons/telefon.png';
 import whatsappIcon from '../assets/icons/whatsapp.png';
+import pfeilRunter from '../assets/icons/pfeil-runter.png';
 
 const rawBase = import.meta.env.BASE_URL;
 const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
@@ -22,7 +23,7 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
   aktiv="home"
 >
   <!-- Provisorischer Hero-Bereich (Phase-2-Checkpoint) -->
-  <section class="hero auf-rot" id="top">
+  <section class="hero auf-rot" id="top" data-hero-sentinel>
     <Image
       src={heroPizza}
       alt="Frisch gebackene Pizza mit geschmolzenem Käse und frischen Kräutern auf einem Holzbrett"
@@ -53,12 +54,24 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
         </Button>
       </div>
     </div>
+
+    <!-- Scroll-Pfeil (Figma): Link zum ersten Abschnitt, erst ab Tablet sichtbar -->
+    <a href="#erster-abschnitt" class="hero__pfeil" aria-label="Nach unten scrollen">
+      <Image
+        src={pfeilRunter}
+        alt=""
+        width={30}
+        height={30}
+        class="hero__pfeil-icon"
+        aria-hidden="true"
+      />
+    </a>
   </section>
 
   <!-- Vorschau der Basis-Bausteine (Phase 2) -->
-  <section class="vorschau">
+  <section class="vorschau" id="erster-abschnitt">
     <div class="container">
-      <h2 class="sektion-titel vorschau__titel">Bausteine (Vorschau Phase 2)</h2>
+      <h2 class="sektion-titel vorschau__titel">Bausteine (Vorschau)</h2>
 
       <div class="vorschau__grid">
         <Karte farbe="rot" schatten class="bestell-karte">
@@ -171,6 +184,74 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
     gap: var(--abstand-m);
   }
 
+  /* Scroll-Pfeil: 44px Tippfläche unten mittig im Hero, Icon 30px wippt sanft */
+  .hero__pfeil {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .hero__pfeil {
+      position: absolute;
+      z-index: 2;
+      bottom: var(--abstand-m);
+      left: 50%;
+      width: 44px;
+      height: 44px;
+      margin-left: -22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+
+    .hero__pfeil-icon {
+      width: 30px;
+      height: 30px;
+      object-fit: contain;
+      animation: pfeil-wippen 2s ease-in-out infinite;
+    }
+  }
+
+  @keyframes pfeil-wippen {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(6px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__pfeil-icon {
+      animation: none;
+    }
+  }
+
+  /* Mobil (iOS-typisch): großes Logo max. 200px, beide Buttons untereinander in voller Breite */
+  @media (max-width: 767px) {
+    .hero__logo {
+      width: min(200px, 68vw);
+    }
+
+    .hero__aktionen {
+      flex-direction: column;
+      flex-wrap: nowrap;
+      align-items: stretch;
+      width: 100%;
+      max-width: 320px;
+      gap: var(--abstand-m);
+    }
+
+    .hero__aktionen :global(.btn) {
+      width: 100%;
+      min-height: 50px;
+      border-radius: 14px;
+      font-size: var(--text-basis);
+    }
+  }
+
   /* Vorschau-Sektion */
   .vorschau {
     padding-block: var(--abstand-sektion);
@@ -180,15 +261,17 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
     margin-bottom: var(--abstand-xl);
   }
 
+  /* Kartenabstand: mobil 16px, ab Tablet unverändert */
   .vorschau__grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--abstand-l);
+    gap: var(--abstand-m);
   }
 
   @media (min-width: 768px) {
     .vorschau__grid {
       grid-template-columns: repeat(2, 1fr);
+      gap: var(--abstand-l);
     }
   }
 
@@ -216,6 +299,12 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
   .bestell-karte__untertitel {
     font-size: var(--text-s);
     margin-top: var(--abstand-2xs);
+  }
+
+  @media (min-width: 1024px) {
+    .bestell-karte__untertitel {
+      margin-top: var(--abstand-xs);
+    }
   }
 
   .bestell-karte__nummer {

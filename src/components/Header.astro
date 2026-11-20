@@ -1,11 +1,15 @@
 ---
-// Responsiver Header: Desktop transparent über Hero (Figma) oder fest; Mobil mit Logo, Anruf-Button und Burger-Menü
+// Responsiver Header: Desktop (>= 1024px) transparent über Hero (Figma) oder fest.
+// Mobil (< 1024px) nach Apple HIG: "Large Title"-Muster (auf der Startseite zeigt der Hero das große Logo,
+// erst nach dem Hero erscheint die kompakte Leiste), Menü als Vollbild-Sheet.
 import { Image } from 'astro:assets';
 import Button from './Button.astro';
 import kontakt from '../content/kontakt.json';
 import texte from '../content/texte.json';
-import logoKlein from '../assets/logo/logo-klein.svg';
+import oeffnungszeiten from '../content/oeffnungszeiten.json';
+import logoKleinDunkel from '../assets/logo/logo-klein-dunkel.svg';
 import telefonIcon from '../assets/icons/telefon.png';
+import whatsappIcon from '../assets/icons/whatsapp.png';
 
 interface Props {
   transparent?: boolean;
@@ -31,21 +35,52 @@ const navPunkte = navZiele.map((ziel, index) => ({
   ...ziel,
   label: texte.navigation?.[index]?.label ?? fallbackLabels[index],
 }));
+
+// Öffnungszeiten-Kurzinfo aus den Daten, z. B. "Di–So 11–14 & 17–22 Uhr · Mo Ruhetag"
+const uhrzeit = (z: string) => {
+  const [stunde, minute] = z.split(':');
+  return minute === '00' ? String(Number(stunde)) : `${Number(stunde)}:${minute}`;
+};
+
+const zeitGruppen: { von: string; bis: string; text: string; letzterIndex: number }[] = [];
+const ruhetage: string[] = [];
+oeffnungszeiten.tage.forEach((tag, index) => {
+  if (tag.ruhetag || tag.zeiten.length === 0) {
+    ruhetage.push(tag.kuerzel);
+    return;
+  }
+  const text = tag.zeiten.map((z) => `${uhrzeit(z.von)}–${uhrzeit(z.bis)}`).join(' & ');
+  const letzte = zeitGruppen[zeitGruppen.length - 1];
+  if (letzte && letzte.text === text && letzte.letzterIndex === index - 1) {
+    letzte.bis = tag.kuerzel;
+    letzte.letzterIndex = index;
+  } else {
+    zeitGruppen.push({ von: tag.kuerzel, bis: tag.kuerzel, text, letzterIndex: index });
+  }
+});
+
+const kurzinfoTeile = zeitGruppen.map(
+  (g) => `${g.von === g.bis ? g.von : `${g.von}–${g.bis}`} ${g.text} Uhr`,
+);
+if (ruhetage.length > 0) {
+  kurzinfoTeile.push(`${ruhetage.join(' & ')} Ruhetag`);
+}
+const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
 ---
 
 <header class:list={['header', transparent ? 'header--transparent' : 'header--fest', 'auf-rot']}>
   <div class="header__leiste">
-    <!-- Kleines Logo nur auf Mobil (< 1024px) -->
+    <!-- Kleines dunkles Logo nur mobil (< 1024px) in der kompakten Leiste -->
     <a href={base} class="header__logo-link">
       <Image
-        src={logoKlein}
+        src={logoKleinDunkel}
         alt={`${kontakt.name} – Startseite`}
         class="header__logo"
         loading="eager"
       />
     </a>
 
-    <!-- Hauptnavigation -->
+    <!-- Hauptnavigation (nur Desktop; mobil übernimmt das Menü-Sheet) -->
     <nav id="hauptmenue" class="header__nav" aria-label="Hauptnavigation">
       <ul class="header__liste">
         {navPunkte.map((punkt) => {
@@ -77,28 +112,13 @@ const navPunkte = navZiele.map((ziel, index) => ({
       </Button>
     </div>
 
-    <!-- Mobil: Runder Anruf-Button + Burger-Button -->
+    <!-- Mobil: nur der Burger-Button (Anrufen liegt in der Aktionsleiste und im Menü) -->
     <div class="header__mobil-aktionen">
-      <a
-        href={kontakt.telefon.link}
-        class="header__anruf-rund"
-        aria-label={`Anrufen: ${kontakt.telefon.anzeige}`}
-      >
-        <Image
-          src={telefonIcon}
-          alt=""
-          width={20}
-          height={20}
-          class="header__anruf-icon"
-          aria-hidden="true"
-        />
-      </a>
-
       <button
         type="button"
         class="header__burger"
         aria-expanded="false"
-        aria-controls="hauptmenue"
+        aria-controls="menue-sheet"
         aria-label="Menü öffnen"
       >
         <span class="header__burger-linie" aria-hidden="true"></span>
@@ -107,52 +127,124 @@ const navPunkte = navZiele.map((ziel, index) => ({
       </button>
     </div>
   </div>
+
+  <!-- Mobiles Menü als Vollbild-Sheet -->
+  <div id="menue-sheet" class="menue-sheet" role="dialog" aria-modal="true" aria-label="Menü">
+    <div class="menue-sheet__kopf">
+      <a href={base} class="menue-sheet__logo">
+        <Image src={logoKleinDunkel} alt={`${kontakt.name} – Startseite`} class="menue-sheet__logo-bild" />
+      </a>
+      <button type="button" class="menue-sheet__zu" aria-label="Menü schließen"></button>
+    </div>
+
+    <nav class="menue-sheet__nav" aria-label="Hauptnavigation">
+      <ul class="menue-sheet__liste">
+        {navPunkte.map((punkt) => {
+          const istAktiv = aktiv === punkt.key;
+          return (
+            <li>
+              <a
+                href={punkt.href}
+                class:list={['menue-link', istAktiv && 'menue-link--aktiv']}
+                aria-current={istAktiv ? 'page' : undefined}
+              >
+                {punkt.label}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+
+    <div class="menue-sheet__fuss">
+      <a href={kontakt.telefon.link} class="menue-sheet__btn menue-sheet__btn--rot">
+        <Image src={telefonIcon} alt="" width={20} height={20} class="menue-sheet__icon" aria-hidden="true" />
+        <span>Anrufen · {kontakt.telefon.anzeige}</span>
+      </a>
+      <a
+        href={kontakt.whatsapp.link}
+        class="menue-sheet__btn menue-sheet__btn--gruen"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <Image src={whatsappIcon} alt="" width={20} height={20} class="menue-sheet__icon" aria-hidden="true" />
+        <span>WhatsApp schreiben</span>
+      </a>
+      <p class="menue-sheet__zeiten">{oeffnungszeitenKurz}</p>
+    </div>
+  </div>
 </header>
 
 <script is:inline>
   (() => {
     const burger = document.querySelector('.header__burger');
-    const nav = document.getElementById('hauptmenue');
-    if (!burger || !nav) return;
+    const sheet = document.getElementById('menue-sheet');
+    if (!burger || !sheet) return;
 
-    const schliessen = (fokusZurueck) => {
-      burger.setAttribute('aria-expanded', 'false');
-      burger.setAttribute('aria-label', 'Menü öffnen');
-      nav.classList.remove('ist-offen');
-      if (fokusZurueck) {
-        burger.focus({ preventScroll: true });
-      }
-    };
+    const html = document.documentElement;
+    const schliessenKnopf = sheet.querySelector('.menue-sheet__zu');
+    const desktop = window.matchMedia('(min-width: 1024px)');
+    const istOffen = () => sheet.classList.contains('ist-offen');
 
     const oeffnen = () => {
+      sheet.classList.add('ist-offen');
+      html.classList.add('menue-offen');
       burger.setAttribute('aria-expanded', 'true');
       burger.setAttribute('aria-label', 'Menü schließen');
-      nav.classList.add('ist-offen');
+      // Fokus auf den ersten Menüpunkt
+      const ersterLink = sheet.querySelector('.menue-link');
+      if (ersterLink) ersterLink.focus({ preventScroll: true });
     };
 
-    burger.addEventListener('click', () => {
-      const offen = burger.getAttribute('aria-expanded') === 'true';
-      if (offen) {
-        schliessen(false);
-      } else {
-        oeffnen();
-      }
-    });
+    const schliessen = (fokusZurueck) => {
+      sheet.classList.remove('ist-offen');
+      html.classList.remove('menue-offen');
+      burger.setAttribute('aria-expanded', 'false');
+      burger.setAttribute('aria-label', 'Menü öffnen');
+      if (fokusZurueck) burger.focus({ preventScroll: true });
+    };
 
-    // Bei Escape schließen und Fokus zurück an den Burger geben
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && burger.getAttribute('aria-expanded') === 'true') {
-        schliessen(true);
-      }
-    });
+    burger.addEventListener('click', () => (istOffen() ? schliessen(false) : oeffnen()));
+    if (schliessenKnopf) schliessenKnopf.addEventListener('click', () => schliessen(true));
 
-    // Bei Klick auf einen Navigationslink schließen und Fokus zurückgeben
-    nav.querySelectorAll('a').forEach((link) => {
+    // Links im Sheet schließen das Menü
+    sheet.querySelectorAll('a').forEach((link) => {
       link.addEventListener('click', () => {
-        if (burger.getAttribute('aria-expanded') === 'true') {
-          schliessen(true);
-        }
+        if (istOffen()) schliessen(true);
       });
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (!istOffen()) return;
+
+      // Escape schließt, Fokus zurück an den Burger
+      if (event.key === 'Escape') {
+        schliessen(true);
+        return;
+      }
+
+      // Fokusfalle innerhalb des Sheets
+      if (event.key === 'Tab') {
+        const elemente = Array.from(sheet.querySelectorAll('a[href], button:not([disabled])'));
+        if (elemente.length === 0) return;
+        const erstes = elemente[0];
+        const letztes = elemente[elemente.length - 1];
+        const aktuell = document.activeElement;
+        const imSheet = sheet.contains(aktuell);
+
+        if (event.shiftKey && (!imSheet || aktuell === erstes)) {
+          event.preventDefault();
+          letztes.focus();
+        } else if (!event.shiftKey && (!imSheet || aktuell === letztes)) {
+          event.preventDefault();
+          erstes.focus();
+        }
+      }
+    });
+
+    // Beim Wechsel auf Desktop-Breite das Sheet sauber schließen (Scroll-Sperre aufheben)
+    desktop.addEventListener('change', (event) => {
+      if (event.matches && istOffen()) schliessen(false);
     });
   })();
 </script>
@@ -162,6 +254,11 @@ const navPunkte = navZiele.map((ziel, index) => ({
     width: 100%;
     color: var(--farbe-text-hell);
     z-index: 20;
+  }
+
+  /* Menü offen: Header (mit Sheet) über Demo-Balken, Hinweis und Aktionsleiste */
+  :global(html.menue-offen) .header {
+    z-index: 100;
   }
 
   .header--transparent {
@@ -184,6 +281,7 @@ const navPunkte = navZiele.map((ziel, index) => ({
     );
     pointer-events: none;
     z-index: -1;
+    transition: opacity 200ms ease;
   }
 
   .header--fest {
@@ -201,7 +299,7 @@ const navPunkte = navZiele.map((ziel, index) => ({
     position: relative;
   }
 
-  /* Kleines Logo auf Mobil (ohne Seitenverhältnis zu verzerren) */
+  /* Kleines Logo mobil (ohne Seitenverhältnis zu verzerren), 32px hoch */
   .header__logo-link {
     display: inline-flex;
     align-items: center;
@@ -209,69 +307,46 @@ const navPunkte = navZiele.map((ziel, index) => ({
   }
 
   .header__logo {
-    height: 2.75rem;
+    height: 32px;
     width: auto;
     aspect-ratio: 119 / 87;
   }
 
-  /* Mobile Aktionen rechts (Anruf + Burger) */
+  /* Mobile Aktionen rechts (nur Burger) */
   .header__mobil-aktionen {
     display: flex;
     align-items: center;
-    gap: var(--abstand-s);
   }
 
-  .header__anruf-rund {
-    width: 2.75rem;
-    height: 2.75rem;
-    border-radius: 50%;
-    background-color: var(--farbe-rot);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color var(--dauer-kurz) ease;
-  }
-
-  .header__anruf-rund:hover {
-    background-color: var(--farbe-rot-dunkel);
-  }
-
-  .header__anruf-icon {
-    width: 1.25rem;
-    height: 1.25rem;
-    object-fit: contain;
-  }
-
-  /* Burger-Button (3 CSS-Striche, 44×44 px Klickfläche) */
+  /* Burger-Button: 44×44 px Tippfläche, nur drei abgerundete Striche */
   .header__burger {
-    width: 2.75rem;
-    height: 2.75rem;
-    padding: 0.625rem 0.5rem;
+    width: 44px;
+    height: 44px;
+    padding: 0;
     border: 0;
-    border-radius: var(--radius-badge);
-    background-color: color-mix(in srgb, var(--farbe-schwarz) 55%, transparent);
+    background: transparent;
     display: inline-flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 0.3125rem;
+    gap: 5px;
     cursor: pointer;
-    transition: background-color var(--dauer-kurz) ease;
   }
 
-  .header__burger:hover {
-    background-color: color-mix(in srgb, var(--farbe-schwarz) 80%, transparent);
+  .header__burger:focus-visible {
+    outline-color: var(--farbe-rot);
   }
 
   .header__burger-linie {
     display: block;
-    width: 1.375rem;
+    width: 22px;
     height: 2px;
     border-radius: 2px;
-    background-color: var(--farbe-offwhite);
+    background-color: var(--farbe-leiste-text);
     transition:
       transform var(--dauer-kurz) ease,
-      opacity var(--dauer-kurz) ease;
+      opacity var(--dauer-kurz) ease,
+      background-color 200ms ease;
   }
 
   .header__burger[aria-expanded='true'] .header__burger-linie:nth-child(1) {
@@ -291,32 +366,230 @@ const navPunkte = navZiele.map((ziel, index) => ({
     display: none;
   }
 
-  /* Mobiles Navigationspanel (volle Breite) */
+  /* Desktop-Navigation: unter 1024px ausgeblendet, dort übernimmt das Sheet */
   .header__nav {
-    order: 3;
-    flex: 1 0 100%;
-    margin-inline: calc(var(--container-rand) * -1);
-    background-color: color-mix(in srgb, var(--farbe-schwarz) 92%, transparent);
-    padding: var(--abstand-s) var(--container-rand) var(--abstand-m);
-  }
-
-  /* Mit JS standardmäßig eingeklappt, nur bei .ist-offen sichtbar */
-  :global(html.js) .header__nav {
     display: none;
   }
 
-  :global(html.js) .header__nav.ist-offen {
-    display: block;
+  /* ---------- Menü-Sheet (Vollbild, nur < 1024px) ---------- */
+  .menue-sheet {
+    position: fixed;
+    inset: 0;
+    height: 100vh;
+    height: 100dvh;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--farbe-offwhite);
+    color: var(--farbe-leiste-text);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-bottom: calc(var(--abstand-m) + env(safe-area-inset-bottom, 0px));
+    transform: translateY(100%);
+    visibility: hidden;
+    transition:
+      transform 250ms ease-out,
+      visibility 0s linear 250ms;
   }
 
-  /* Ohne JS: Burger ausblenden, Navigation unter dem Header sichtbar lassen */
+  .menue-sheet.ist-offen {
+    transform: none;
+    visibility: visible;
+    transition: transform 250ms ease-out;
+  }
+
+  .menue-sheet :focus-visible {
+    outline-color: var(--farbe-rot);
+  }
+
+  .menue-sheet__kopf {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--leiste-hoehe);
+    padding: env(safe-area-inset-top, 0px) var(--container-rand) 0;
+  }
+
+  .menue-sheet__logo {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .menue-sheet__logo-bild {
+    height: 32px;
+    width: auto;
+    aspect-ratio: 119 / 87;
+  }
+
+  /* Schließen-X: 44×44 px Tippfläche, Striche liegen exakt über dem Burger */
+  .menue-sheet__zu {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    margin-inline-end: -11px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .menue-sheet__zu::before,
+  .menue-sheet__zu::after {
+    content: '';
+    position: absolute;
+    left: 11px;
+    top: calc(50% - 1px);
+    width: 22px;
+    height: 2px;
+    border-radius: 2px;
+    background-color: var(--farbe-leiste-text);
+  }
+
+  .menue-sheet__zu::before {
+    transform: rotate(45deg);
+  }
+
+  .menue-sheet__zu::after {
+    transform: rotate(-45deg);
+  }
+
+  .menue-sheet__nav {
+    padding: var(--abstand-xs) var(--container-rand) 0;
+  }
+
+  .menue-sheet__liste {
+    list-style: none;
+  }
+
+  .menue-sheet__liste li + li {
+    border-top: 0.5px solid rgba(0, 0, 0, 0.15);
+  }
+
+  /* iOS-Liste: große Zeile, fette Schrift, Chevron rechts */
+  .menue-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 52px;
+    padding-block: var(--abstand-xs);
+    color: var(--farbe-leiste-text);
+    font-family: var(--schrift-basis);
+    font-weight: var(--gewicht-fett);
+    font-size: 1.375rem;
+    line-height: 1.2;
+    text-decoration: none;
+    transition:
+      transform 100ms ease,
+      opacity 100ms ease;
+  }
+
+  .menue-link::after {
+    content: '';
+    flex-shrink: 0;
+    width: 9px;
+    height: 9px;
+    margin-inline-end: 4px;
+    border-top: 2px solid rgba(0, 0, 0, 0.3);
+    border-right: 2px solid rgba(0, 0, 0, 0.3);
+    border-radius: 1px;
+    transform: rotate(45deg);
+  }
+
+  /* Aktiver Punkt: rot, kleiner roter Punkt links */
+  .menue-link--aktiv {
+    color: var(--farbe-rot);
+  }
+
+  .menue-link--aktiv::before {
+    content: '';
+    position: absolute;
+    left: -16px;
+    top: calc(50% - 4px);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--farbe-rot);
+  }
+
+  .menue-sheet__fuss {
+    margin-top: auto;
+    padding: var(--abstand-l) var(--container-rand) 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--abstand-s);
+  }
+
+  .menue-sheet__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--abstand-xs);
+    height: 50px;
+    border-radius: 14px;
+    color: var(--farbe-text-hell);
+    font-family: var(--schrift-basis);
+    font-weight: var(--gewicht-fett);
+    font-size: 1.0625rem;
+    text-decoration: none;
+    transition:
+      transform 100ms ease,
+      opacity 100ms ease;
+  }
+
+  .menue-sheet__btn--rot {
+    background-color: var(--farbe-rot);
+  }
+
+  .menue-sheet__btn--gruen {
+    background-color: var(--farbe-gruen);
+  }
+
+  .menue-sheet__icon {
+    flex-shrink: 0;
+    object-fit: contain;
+  }
+
+  .menue-sheet__zeiten {
+    text-align: center;
+    font-size: 0.9375rem;
+    line-height: 1.4;
+    color: color-mix(in srgb, var(--farbe-leiste-text) 70%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .menue-sheet,
+    .menue-sheet.ist-offen {
+      transition: none;
+    }
+  }
+
+  /* Ohne JS: Menü als einfache Liste unter der Leiste, kein Vollbild */
   :global(html:not(.js)) .header__burger {
     display: none;
   }
 
   :global(html:not(.js)) .header--transparent {
     position: relative;
-    background-color: var(--farbe-schwarz);
+    background-color: var(--farbe-offwhite);
+  }
+
+  :global(html:not(.js)) .header--transparent::before {
+    display: none;
+  }
+
+  :global(html:not(.js)) .menue-sheet {
+    position: static;
+    height: auto;
+    transform: none;
+    visibility: visible;
+    transition: none;
+    overflow: visible;
+  }
+
+  :global(html:not(.js)) .menue-sheet__kopf {
+    display: none;
   }
 
   .header__liste {
@@ -337,16 +610,102 @@ const navPunkte = navZiele.map((ziel, index) => ({
     font-size: var(--text-basis);
     text-decoration: none;
     border-radius: var(--radius-badge);
-    transition: background-color var(--dauer-kurz) ease;
-  }
-
-  .header__link:hover {
-    background-color: color-mix(in srgb, var(--farbe-offwhite) 14%, transparent);
+    transition:
+      background-color var(--dauer-kurz) ease,
+      transform 100ms ease,
+      opacity 100ms ease;
   }
 
   .header__link--aktiv,
   .header__link--aktiv:hover {
     background-color: var(--farbe-rot);
+  }
+
+  /* ---------- Mobil/Tablet (< 1024px): kompakte Leiste, "Large Title"-Muster ---------- */
+  @media (max-width: 1023px) {
+    /* Nach dem Hero wird der transparente Header zur festen kompakten Leiste */
+    :global(html.nach-hero) .header--transparent {
+      position: fixed;
+    }
+
+    :global(html.nach-hero) .header--transparent::before {
+      opacity: 0;
+    }
+
+    /* Unterseiten: kompakte Leiste von Anfang an, bleibt oben stehen */
+    .header--fest {
+      position: sticky;
+      top: 0;
+      background-color: transparent;
+    }
+
+    .header__leiste {
+      flex-wrap: nowrap;
+      height: var(--leiste-hoehe);
+      padding: env(safe-area-inset-top, 0px) var(--container-rand) 0;
+      isolation: isolate;
+    }
+
+    /* Material: durchscheinende, unscharfe Leiste mit 0,5px-Haarlinie. Als Pseudo-Element,
+       damit das Sheet (position: fixed) nicht an einem backdrop-filter des Headers hängt. */
+    .header__leiste::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background-color: color-mix(in srgb, var(--farbe-offwhite) 80%, transparent);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 0.5px solid rgba(0, 0, 0, 0.15);
+      pointer-events: none;
+      transition:
+        opacity 200ms ease,
+        transform 200ms ease;
+    }
+
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+      .header__leiste::before {
+        background-color: var(--farbe-offwhite);
+      }
+    }
+
+    .header__logo-link {
+      transition:
+        opacity 200ms ease,
+        visibility 200ms ease;
+    }
+
+    .header__mobil-aktionen {
+      margin-inline-end: -11px;
+    }
+
+    /* Oben auf der Startseite: nur Burger (offwhite über dem Foto), Logo und Material ausgeblendet */
+    :global(html.js:not(.nach-hero)) .header--transparent .header__leiste::before {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+
+    :global(html.js:not(.nach-hero)) .header--transparent .header__logo-link {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    :global(html.js:not(.nach-hero)) .header--transparent .header__burger-linie {
+      background-color: var(--farbe-offwhite);
+    }
+
+    :global(html.js:not(.nach-hero)) .header--transparent .header__burger:focus-visible {
+      outline-color: var(--farbe-offwhite);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .header__leiste::before,
+      .header__logo-link,
+      .header__burger-linie,
+      .header--transparent::before {
+        transition: none;
+      }
+    }
   }
 
   /* Desktop-Ansicht (≥ 1024px): Figma-Navigation links, Telefon-Button rechts */
@@ -356,65 +715,157 @@ const navPunkte = navZiele.map((ziel, index) => ({
       background-color: transparent;
     }
 
-    .header__leiste {
-      flex-wrap: nowrap;
-      padding-inline: clamp(1.5rem, 2.86vw, 3.4375rem);
+    :global(html:not(.js)) .header--transparent::before {
+      display: block;
     }
 
-    .header--transparent .header__leiste {
-      padding-top: clamp(1.75rem, 2.86vw, 3.4375rem);
+    /* Grundzustand = kompakte feste Leiste (56px, Material wie mobil): Logo links, Navigation
+       mittig, Telefon rechts. Gilt nach dem Hero (html.nach-hero) und auf Unterseiten. */
+    .header--transparent {
+      position: fixed;
+    }
+
+    .header--fest {
+      position: sticky;
+      top: 0;
+      background-color: transparent;
+    }
+
+    :global(html.nach-hero) .header--transparent::before {
+      opacity: 0;
+    }
+
+    .header__leiste {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: var(--abstand-m);
+      height: var(--leiste-hoehe-desktop);
+      padding-block: 0;
+      padding-inline: clamp(1.5rem, 2.86vw, 3.5rem);
+      isolation: isolate;
+    }
+
+    /* Material: offwhite 80 % mit Unschärfe und Haarlinie (Pseudo-Element wie mobil) */
+    .header__leiste::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background-color: color-mix(in srgb, var(--farbe-offwhite) 80%, transparent);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 0.5px solid rgba(0, 0, 0, 0.15);
+      pointer-events: none;
+      transition: opacity 200ms ease;
+    }
+
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+      .header__leiste::before {
+        background-color: var(--farbe-offwhite);
+      }
+    }
+
+    /* Oben über dem Hero-Foto (Figma): transparent, offwhite Schrift, Navigation links, Telefon rechts */
+    :global(html:not(.nach-hero)) .header--transparent {
+      position: absolute;
+    }
+
+    :global(html:not(.nach-hero)) .header--transparent .header__leiste {
+      display: flex;
+      justify-content: space-between;
+      height: auto;
+      padding-top: clamp(2rem, 2.86vw, 3.5rem);
       padding-bottom: var(--abstand-m);
     }
 
-    .header--fest .header__leiste {
-      padding-block: var(--abstand-m);
+    :global(html:not(.nach-hero)) .header__leiste::before {
+      opacity: 0;
     }
 
-    .header__logo-link,
-    .header__mobil-aktionen {
+    .header__logo-link {
+      display: inline-flex;
+      justify-self: start;
+      min-height: 44px;
+    }
+
+    :global(html:not(.nach-hero)) .header__logo-link,
+    .header__mobil-aktionen,
+    .menue-sheet {
       display: none;
     }
 
     .header__nav,
     :global(html.js) .header__nav {
       display: block;
-      order: 0;
-      flex: 0 1 auto;
-      margin-inline: 0;
-      padding: 0;
-      background-color: transparent;
+      justify-self: center;
     }
 
     .header__liste {
       flex-direction: row;
       align-items: center;
-      gap: var(--abstand-xl);
+      gap: var(--abstand-xs);
     }
 
+    /* Tippfläche mind. 44px hoch (Padding statt fester Höhe); die sichtbare Pill (32px) ist ein Pseudo-Element */
     .header__link {
-      min-height: 1.75rem;
-      padding: 0;
+      position: relative;
+      isolation: isolate;
+      min-height: 44px;
+      padding: 0 var(--abstand-m);
+      color: var(--farbe-leiste-text);
       font-size: var(--text-m);
       white-space: nowrap;
+      background-color: transparent;
+      border-radius: var(--radius-pill);
     }
 
-    .header__link:hover {
+    .header__link::before {
+      content: '';
+      position: absolute;
+      inset: 6px 0;
+      z-index: -1;
+      border-radius: var(--radius-pill);
       background-color: transparent;
-      text-decoration: underline;
-      text-underline-offset: 0.35em;
+      transition: background-color var(--dauer-kurz) ease;
+    }
+
+    :global(html:not(.nach-hero)) .header__link {
+      color: var(--farbe-text-hell);
     }
 
     .header__link--aktiv,
     .header__link--aktiv:hover {
+      background-color: transparent;
+      color: var(--farbe-text-hell);
+    }
+
+    .header__link--aktiv::before {
       background-color: var(--farbe-rot);
-      padding-inline: var(--abstand-m);
-      text-decoration: none;
+    }
+
+    /* Hover nur mit Mauszeiger: leicht graue Pill auf der Leiste, offwhite 15 % über dem Foto */
+    @media (hover: hover) {
+      .header__link:not(.header__link--aktiv):hover::before {
+        background-color: color-mix(in srgb, var(--farbe-schwarz) 6%, transparent);
+      }
+
+      :global(html:not(.nach-hero)) .header__link:not(.header__link--aktiv):hover::before {
+        background-color: color-mix(in srgb, var(--farbe-offwhite) 15%, transparent);
+      }
     }
 
     .header__telefon-desktop {
       display: flex;
       align-items: center;
-      flex-shrink: 0;
+      justify-self: end;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .header__leiste::before,
+      .header__link::before {
+        transition: none;
+      }
     }
   }
 </style>

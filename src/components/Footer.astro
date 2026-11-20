@@ -127,11 +127,23 @@ const navPunkte = navZiele.map((ziel, index) => ({
     display: inline-flex;
     align-items: center;
     min-height: 2rem;
+    transition:
+      transform 100ms ease,
+      opacity 100ms ease;
   }
 
-  .footer__link:hover {
-    text-decoration: underline;
-    text-underline-offset: 0.3em;
+  @media (hover: hover) {
+    .footer__link:hover {
+      text-decoration: underline;
+      text-underline-offset: 0.3em;
+    }
+  }
+
+  /* Touch: Tippfläche mindestens 44px hoch */
+  @media (pointer: coarse) {
+    .footer__link {
+      min-height: 44px;
+    }
   }
 
   /* Trikolore-Linie: 4px hoch, drei gleiche Segmente, äußere Ecken 4px gerundet */
@@ -191,6 +203,25 @@ const navPunkte = navZiele.map((ziel, index) => ({
 
   .footer__fotonachweis {
     margin-top: var(--abstand-s);
+  }
+
+  /* Desktop: Abstände im 8px-Raster */
+  @media (min-width: 1024px) {
+    .footer__unten {
+      gap: var(--abstand-m);
+    }
+
+    .footer__copyright {
+      gap: var(--abstand-xs);
+    }
+
+    .footer__rechtliches {
+      gap: var(--abstand-m) var(--abstand-l);
+    }
+
+    .footer__fotonachweis {
+      margin-top: var(--abstand-m);
+    }
   }
 
   @media (min-width: 768px) {
