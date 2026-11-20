@@ -172,7 +172,7 @@
     "kategorieNaviLabel": "Kategorien der Speisekarte",
     "extrasTitel": "Extras & Aufpreise",
     "suchfeldLabel": "Speisekarte durchsuchen",
-    "suchfeldPlatzhalter": "Gericht oder Zutat suchen …",
+    "suchfeldPlatzhalter": "Gericht oder Zutat …",
     "sucheLeerenLabel": "Suche leeren",
     "teiltrefferHinweis": "Kein Gericht enthält alle {anzahl} Zutaten – diese passen teilweise:",
     "teiltrefferZaehler": "{treffer} von {gesamt} Zutaten",
