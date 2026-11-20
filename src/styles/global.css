@@ -24,6 +24,17 @@
   --schatten-sticky: 0 2px 10px rgba(0, 0, 0, 0.06);
   --kurve-ios: cubic-bezier(0.32, 0.72, 0, 1);
   --kurve-ein: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --farbe-overlay: rgba(0, 0, 0, 0.4);
+  --farbe-chip-bg: #efeeec;
+  --farbe-chip-bg-hover: #e5e4e1;
+  --farbe-chip-mit-bg: color-mix(in srgb, var(--farbe-gruen) 14%, var(--farbe-weiss));
+  --farbe-chip-mit-rand: var(--farbe-gruen);
+  --farbe-chip-ohne-bg: color-mix(in srgb, var(--farbe-rot) 12%, var(--farbe-weiss));
+  --farbe-chip-ohne-rand: var(--farbe-rot);
+  --schatten-popover: 0 12px 36px rgba(0, 0, 0, 0.16), 0 2px 8px rgba(0, 0, 0, 0.08);
+  --radius-sheet: 28px;
+  --dauer-uebergang: 450ms;
+  --dauer-einblenden: 350ms;
 }
 
 html.mit-demo {
@@ -117,9 +128,15 @@ html:has([data-kat-navi-leiste]) {
   scroll-padding-top: calc(var(--nav-hoehe) + var(--katnavi-hoehe));
 }
 
-/* Hintergrund nicht scrollen, solange das mobile Menü offen ist */
+/* Hintergrund nicht scrollen, solange das mobile Menü oder das Filter-Sheet offen ist */
 html.menue-offen {
   overflow: hidden;
+}
+
+@media (max-width: 767px) {
+  html.filter-offen {
+    overflow: hidden;
+  }
 }
 
 /* Schnelle Taps ohne Doppeltipp-Zoom-Verzögerung, kein graues Tap-Highlight */
@@ -149,17 +166,28 @@ textarea {
   }
 }
 
-/* Berührungs-Feedback für Buttons, Menü- und Kartenlinks */
+/* Berührungs-Feedback für Buttons, Chips, Pills, Menü- und Kartenlinks */
 :is(
     .btn,
+    .chip,
+    .pill,
+    .filter-btn,
+    .filter-chip,
+    .aktiver-filter-chip,
+    .aktive-filter__reset,
+    .preis-segment__btn,
+    .kat-navi__link,
     .header__link,
+    .unterseite-leiste__zurueck,
     .menue-link,
     .menue-sheet__btn,
     .aktionsleiste__btn,
     .footer__link,
-    .karte a
+    .karte a,
+    .speisekarte-suche__leeren,
+    .extras-details__summary
   ):active {
-  transform: scale(0.97);
+  transform: scale(0.96);
   opacity: 0.85;
   transition:
     transform 100ms ease,
@@ -296,12 +324,178 @@ h2 {
 }
 
 .sektion-titel {
-  text-align: center;
+  text-align: left;
 }
 
 @media (max-width: 767px) {
   .sektion-titel {
     font-size: var(--text-sektion-titel);
     line-height: 1.15;
+  }
+}
+
+/* ---------- Gemeinsame Einblendung (data-einblenden) & Cross-Document View Transitions ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .einblenden-bereit {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  .einblenden-aktiv {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity var(--dauer-einblenden) var(--kurve-ein),
+      transform var(--dauer-einblenden) var(--kurve-ein);
+  }
+
+  @view-transition {
+    navigation: auto;
+  }
+
+  .header {
+    view-transition-name: kopfleiste;
+  }
+
+  :root:active-view-transition-type(vor)::view-transition,
+  :root:active-view-transition-type(zurueck)::view-transition {
+    background-color: var(--farbe-schwarz);
+  }
+
+  ::view-transition-group(kopfleiste),
+  ::view-transition-group(aktionsleiste) {
+    z-index: 20;
+    animation: none;
+  }
+
+  ::view-transition-old(kopfleiste),
+  ::view-transition-old(aktionsleiste) {
+    animation: vt-ausblenden 180ms ease both;
+  }
+
+  ::view-transition-new(kopfleiste),
+  ::view-transition-new(aktionsleiste) {
+    animation: vt-einblenden 180ms ease both;
+  }
+
+  :root:active-view-transition-type(vor)::view-transition-group(root) {
+    z-index: 1;
+  }
+
+  :root:active-view-transition-type(vor)::view-transition-old(root) {
+    animation: vt-vor-raus var(--dauer-uebergang) var(--kurve-ios) both;
+    z-index: 1;
+  }
+
+  :root:active-view-transition-type(vor)::view-transition-new(root) {
+    animation: vt-vor-rein var(--dauer-uebergang) var(--kurve-ios) both;
+    z-index: 2;
+  }
+
+  :root:active-view-transition-type(zurueck)::view-transition-group(root) {
+    z-index: 1;
+  }
+
+  :root:active-view-transition-type(zurueck)::view-transition-old(root) {
+    animation: vt-zurueck-raus var(--dauer-uebergang) var(--kurve-ios) both;
+    z-index: 2;
+  }
+
+  :root:active-view-transition-type(zurueck)::view-transition-new(root) {
+    animation: vt-zurueck-rein var(--dauer-uebergang) var(--kurve-ios) both;
+    z-index: 1;
+  }
+
+  :root:active-view-transition-type(morph)::view-transition-old(root) {
+    animation: vt-ausblenden 350ms var(--kurve-ios) both;
+  }
+
+  :root:active-view-transition-type(morph)::view-transition-new(root) {
+    animation: vt-einblenden 350ms var(--kurve-ios) both;
+  }
+
+  ::view-transition-group(kategorie-morph) {
+    z-index: 10;
+    animation-duration: var(--dauer-uebergang);
+    animation-timing-function: var(--kurve-ios);
+    overflow: clip;
+    border-radius: calc(var(--abstand-l) + var(--radius-innen));
+  }
+
+  ::view-transition-old(kategorie-morph),
+  ::view-transition-new(kategorie-morph) {
+    height: 100%;
+    animation-duration: var(--dauer-uebergang);
+    animation-timing-function: var(--kurve-ios);
+  }
+}
+
+@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+  .aktionsleiste {
+    view-transition-name: aktionsleiste;
+  }
+}
+
+@keyframes vt-vor-rein {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes vt-vor-raus {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateX(-30%);
+    opacity: 0.78;
+  }
+}
+
+@keyframes vt-zurueck-raus {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes vt-zurueck-rein {
+  from {
+    transform: translateX(-30%);
+    opacity: 0.78;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes vt-ausblenden {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes vt-einblenden {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }

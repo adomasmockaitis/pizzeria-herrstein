@@ -1,5 +1,5 @@
 ---
-// Speisekarte: iOS-Navigationsleiste, Large Title, Live-Suche, sticky Kategorie-Navi, helle Listen & Legende
+// Speisekarte: iOS-Navigationsleiste, Large Title, Live-Suche & Filter, sticky Kategorie-Navi, helle Listen & Legende
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Button from '../components/Button.astro';
 import KategorieNavi from '../components/speisekarte/KategorieNavi.astro';
@@ -31,6 +31,34 @@ const gesamtGerichte = speisekarte.kategorien.reduce(
     summe + kat.abschnitte.reduce((s, abs) => s + abs.gerichte.length, 0),
   0,
 );
+
+const gerichteMitKennzeichnung = speisekarte.kategorien.reduce(
+  (summe, kat) =>
+    summe +
+    kat.abschnitte.reduce(
+      (s, abs) =>
+        s +
+        abs.gerichte.filter((g) => g.kennzeichnung && g.kennzeichnung.length > 0).length,
+      0,
+    ),
+  0,
+);
+
+// Allergen-Filter vorbereiten:
+// Dieser Abschnitt wird erst gerendert, sobald mindestens 80 % der Gerichte in
+// src/content/speisekarte.json eine nicht leere "kennzeichnung" haben.
+// Aktivierung erfolgt ausschließlich über das Befüllen der Daten in speisekarte.json – keine Code-Änderung nötig.
+const allergeneAnteil = gesamtGerichte > 0 ? gerichteMitKennzeichnung / gesamtGerichte : 0;
+const zeigeAllergeneFilter = allergeneAnteil >= 0.8;
+
+const filterTexte = texte.speisekarte.filter;
+const preisOptionen = [
+  { wert: '', label: filterTexte.preisAlle },
+  { wert: '8', label: filterTexte.preisBis8 },
+  { wert: '10', label: filterTexte.preisBis10 },
+  { wert: '12', label: filterTexte.preisBis12 },
+];
+const filterKonfigJson = JSON.stringify(filterTexte).replace(/</g, '\\u003c');
 ---
 
 <BaseLayout
@@ -49,6 +77,7 @@ const gesamtGerichte = speisekarte.kategorien.reduce(
     data-text-teiltreffer-zaehler={texte.speisekarte.teiltrefferZaehler}
     data-text-teiltreffer-ohne={texte.speisekarte.teiltrefferOhne}
     data-text-kein-treffer={texte.speisekarte.keinTreffer}
+    data-text-kein-treffer-filter={filterTexte.keinTrefferFilter}
     data-status-alle={texte.speisekarte.sucheStatusAlle}
     data-status-singular={texte.speisekarte.sucheStatusSingular}
     data-status-plural={texte.speisekarte.sucheStatusPlural}
@@ -67,38 +96,242 @@ const gesamtGerichte = speisekarte.kategorien.reduce(
           <p class="speisekarte-kopf__stand">{standText}</p>
         </div>
 
-        <div class="speisekarte-suche" hidden data-suche-box>
-          <label for="speisekarte-suche" class="visually-hidden">
-            {texte.speisekarte.suchfeldLabel}
-          </label>
-          <svg
-            class="speisekarte-suche__lupe"
-            viewBox="0 0 20 20"
-            width="18"
-            height="18"
-            fill="none"
-            aria-hidden="true"
-          >
-            <circle cx="8.75" cy="8.75" r="5.75" stroke="currentColor" stroke-width="2" />
-            <path d="m13.25 13.25 3.75 3.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-          </svg>
-          <input
-            id="speisekarte-suche"
-            type="search"
-            inputmode="search"
-            autocomplete="off"
-            placeholder={texte.speisekarte.suchfeldPlatzhalter}
-            class="speisekarte-suche__eingabe"
-            data-suche-eingabe
-          />
+        <div class="speisekarte-suche-zeile" hidden data-suche-box>
+          <div class="speisekarte-suche">
+            <label for="speisekarte-suche" class="visually-hidden">
+              {texte.speisekarte.suchfeldLabel}
+            </label>
+            <svg
+              class="speisekarte-suche__lupe"
+              viewBox="0 0 20 20"
+              width="18"
+              height="18"
+              fill="none"
+              aria-hidden="true"
+            >
+              <circle cx="8.75" cy="8.75" r="5.75" stroke="currentColor" stroke-width="2" />
+              <path d="m13.25 13.25 3.75 3.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+            <input
+              id="speisekarte-suche"
+              type="search"
+              inputmode="search"
+              autocomplete="off"
+              placeholder={texte.speisekarte.suchfeldPlatzhalter}
+              class="speisekarte-suche__eingabe"
+              data-suche-eingabe
+            />
+            <button
+              type="button"
+              class="speisekarte-suche__leeren"
+              hidden
+              data-suche-leeren
+              aria-label={texte.speisekarte.sucheLeerenLabel}
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <div class="speisekarte-filter-anker">
+            <button
+              type="button"
+              class="filter-btn"
+              aria-label={filterTexte.buttonLabel}
+              aria-expanded="false"
+              aria-controls="speisekarte-filter-panel"
+              data-filter-btn
+            >
+              <svg
+                class="filter-btn__icon"
+                viewBox="0 0 20 20"
+                width="20"
+                height="20"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M3 5.5h2m4 0h8M3 10h8m4 0h2M3 14.5h3m4 0h7"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+                <circle cx="7" cy="5.5" r="2" stroke="currentColor" stroke-width="1.8" />
+                <circle cx="13" cy="10" r="2" stroke="currentColor" stroke-width="1.8" />
+                <circle cx="8" cy="14.5" r="2" stroke="currentColor" stroke-width="1.8" />
+              </svg>
+              <span class="filter-btn__badge" hidden data-filter-badge aria-hidden="true">0</span>
+            </button>
+
+            <div class="filter-backdrop" hidden data-filter-backdrop></div>
+
+            <div
+              id="speisekarte-filter-panel"
+              class="filter-panel"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="filter-dialog-titel"
+              hidden
+              tabindex="-1"
+              data-filter-panel
+            >
+              <div class="filter-panel__griff" aria-hidden="true"></div>
+
+              <div class="filter-panel__kopf">
+                <h2 id="filter-dialog-titel" class="filter-panel__titel">
+                  {filterTexte.dialogTitel}
+                </h2>
+                <button
+                  type="button"
+                  class="filter-panel__fertig"
+                  data-filter-schliessen
+                >
+                  {filterTexte.fertigButton}
+                </button>
+              </div>
+
+              <div class="filter-panel__inhalt">
+                <section class="filter-abschnitt" aria-labelledby="filter-veg-titel">
+                  <h3 id="filter-veg-titel" class="filter-abschnitt__titel">
+                    {filterTexte.vegetarischTitel}
+                  </h3>
+                  <div class="filter-switch-zeile" data-filter-veg-zeile>
+                    <span id="filter-veg-label" class="filter-switch-zeile__label">
+                      {filterTexte.vegetarischLabel}
+                    </span>
+                    <button
+                      type="button"
+                      class="ios-switch"
+                      role="switch"
+                      aria-checked="false"
+                      aria-labelledby="filter-veg-label"
+                      data-filter-veg
+                    >
+                      <span class="ios-switch__spur" aria-hidden="true">
+                        <span class="ios-switch__knopf"></span>
+                      </span>
+                    </button>
+                  </div>
+                </section>
+
+                <section class="filter-abschnitt" aria-labelledby="filter-kat-titel">
+                  <h3 id="filter-kat-titel" class="filter-abschnitt__titel">
+                    {filterTexte.kategorienTitel}
+                  </h3>
+                  <div class="filter-chips">
+                    {speisekarte.kategorien.map((kat) => (
+                      <button
+                        type="button"
+                        class="filter-chip"
+                        aria-pressed="false"
+                        data-filter-kat={kat.id}
+                        data-label={kat.name}
+                      >
+                        {kat.name}
+                      </button>
+                    ))}
+                  </div>
+                </section>
+
+                <section
+                  class="filter-abschnitt"
+                  aria-labelledby="filter-zutaten-titel"
+                  hidden
+                  data-filter-zutaten-abschnitt
+                >
+                  <h3 id="filter-zutaten-titel" class="filter-abschnitt__titel">
+                    {filterTexte.zutatenTitel}
+                  </h3>
+                  <p class="filter-abschnitt__hinweis">{filterTexte.zutatenHinweis}</p>
+                  <div class="filter-chips" data-filter-zutaten-liste></div>
+                </section>
+
+                <section class="filter-abschnitt" aria-labelledby="filter-preis-titel">
+                  <h3 id="filter-preis-titel" class="filter-abschnitt__titel">
+                    {filterTexte.preisTitel}
+                  </h3>
+                  <div
+                    class="preis-segment"
+                    role="radiogroup"
+                    aria-labelledby="filter-preis-titel"
+                    data-filter-preis-gruppe
+                  >
+                    {preisOptionen.map((opt, idx) => (
+                      <button
+                        type="button"
+                        role="radio"
+                        class="preis-segment__btn"
+                        aria-checked={idx === 0 ? 'true' : 'false'}
+                        tabindex={idx === 0 ? 0 : -1}
+                        data-filter-preis={opt.wert}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </section>
+
+                {zeigeAllergeneFilter && speisekarte.legende.allergene.length > 0 && (
+                  <section class="filter-abschnitt" aria-labelledby="filter-allergene-titel">
+                    <h3 id="filter-allergene-titel" class="filter-abschnitt__titel">
+                      {filterTexte.allergeneTitel}
+                    </h3>
+                    <div class="filter-chips">
+                      {speisekarte.legende.allergene.map((eintrag) => {
+                        const chipLabel = filterTexte.allergenOhne.replace(
+                          '{allergen}',
+                          eintrag.text,
+                        );
+                        return (
+                          <button
+                            type="button"
+                            class="filter-chip"
+                            aria-pressed="false"
+                            data-filter-allergen={eintrag.kuerzel}
+                            data-label={eintrag.text}
+                          >
+                            {chipLabel}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </section>
+                )}
+              </div>
+
+              <div class="filter-panel__fuss">
+                <button
+                  type="button"
+                  class="filter-panel__reset"
+                  data-filter-reset
+                >
+                  {filterTexte.zuruecksetzenButton}
+                </button>
+                <button
+                  type="button"
+                  class="filter-panel__anzeigen auf-rot"
+                  data-filter-anzeigen
+                >
+                  {filterTexte.gerichteAnzeigenPlural.replace('{anzahl}', String(gesamtGerichte))}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="aktive-filter"
+          hidden
+          role="region"
+          aria-label={filterTexte.aktiveFilterLabel}
+          data-aktive-filter
+        >
+          <div class="aktive-filter__chips" data-aktive-filter-chips></div>
           <button
             type="button"
-            class="speisekarte-suche__leeren"
-            hidden
-            data-suche-leeren
-            aria-label={texte.speisekarte.sucheLeerenLabel}
+            class="aktive-filter__reset"
+            data-aktive-filter-reset
           >
-            <span aria-hidden="true">&times;</span>
+            {filterTexte.alleZuruecksetzenButton}
           </button>
         </div>
 
@@ -143,6 +376,8 @@ const gesamtGerichte = speisekarte.kategorien.reduce(
       <Legende legende={speisekarte.legende} stand={speisekarte.stand} />
     </div>
   </div>
+
+  <script type="application/json" data-filter-konfig set:html={filterKonfigJson} />
 </BaseLayout>
 
 <script>
@@ -179,16 +414,25 @@ const gesamtGerichte = speisekarte.kategorien.reduce(
     max-width: none;
   }
 
-  /* Suchfeld im iOS-"searchable"-Stil */
-  .speisekarte-suche {
-    position: relative;
+  /* Suchzeile: Suchfeld + runder Filter-Button */
+  .speisekarte-suche-zeile {
     margin-top: var(--abstand-m);
     display: flex;
     align-items: center;
+    gap: var(--abstand-xs);
   }
 
-  .speisekarte-suche[hidden] {
+  .speisekarte-suche-zeile[hidden] {
     display: none;
+  }
+
+  /* Suchfeld im iOS-"searchable"-Stil */
+  .speisekarte-suche {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
   }
 
   .speisekarte-suche__lupe {
@@ -250,20 +494,578 @@ const gesamtGerichte = speisekarte.kategorien.reduce(
     cursor: pointer;
     transition:
       color var(--dauer-kurz) ease,
-      transform 100ms ease;
+      transform 100ms ease,
+      opacity 100ms ease;
   }
 
   .speisekarte-suche__leeren[hidden] {
     display: none;
   }
 
-  .speisekarte-suche__leeren:active {
-    transform: scale(0.96);
-  }
-
   @media (hover: hover) {
     .speisekarte-suche__leeren:hover {
       color: var(--farbe-leiste-text);
+    }
+  }
+
+  /* Filter-Button rechts neben dem Suchfeld */
+  .speisekarte-filter-anker {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .filter-btn {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background-color: var(--farbe-suche-bg);
+    color: var(--farbe-leiste-text);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition:
+      background-color var(--dauer-kurz) ease,
+      color var(--dauer-kurz) ease,
+      transform 100ms ease,
+      opacity 100ms ease;
+  }
+
+  .filter-btn[aria-expanded='true'] {
+    background-color: var(--farbe-suche-bg-fokus);
+    color: var(--farbe-rot);
+  }
+
+  @media (hover: hover) {
+    .filter-btn:hover {
+      background-color: var(--farbe-suche-bg-fokus);
+    }
+  }
+
+  .filter-btn__icon {
+    flex-shrink: 0;
+  }
+
+  .filter-btn__badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    min-width: 1.25rem;
+    height: 1.25rem;
+    padding-inline: 0.25rem;
+    border-radius: 999px;
+    border: 2px solid var(--farbe-offwhite);
+    background-color: var(--farbe-rot);
+    color: var(--farbe-text-hell);
+    font-family: var(--schrift-basis);
+    font-size: 0.75rem;
+    font-weight: var(--gewicht-fett);
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .filter-btn__badge[hidden] {
+    display: none;
+  }
+
+  /* Backdrop & Panel (Mobil: Bottom-Sheet, >= 768px: Popover) */
+  .filter-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background-color: var(--farbe-overlay);
+    opacity: 0;
+    transition: opacity 350ms var(--kurve-ios);
+  }
+
+  .filter-backdrop[hidden] {
+    display: none;
+  }
+
+  .filter-backdrop.ist-offen {
+    opacity: 1;
+  }
+
+  .filter-panel {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 95;
+    max-height: 85vh;
+    max-height: 85dvh;
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+    background-color: var(--farbe-offwhite);
+    color: var(--farbe-leiste-text);
+    box-shadow: var(--schatten-popover);
+    overflow: hidden;
+    transform: translateY(100%);
+    opacity: 0;
+    transition:
+      transform 350ms var(--kurve-ios),
+      opacity 250ms var(--kurve-ios);
+  }
+
+  .filter-panel[hidden] {
+    display: none;
+  }
+
+  .filter-panel.ist-offen {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .filter-panel__griff {
+    width: 2.25rem;
+    height: 5px;
+    margin: 0.625rem auto 0.125rem;
+    border-radius: 999px;
+    background-color: var(--farbe-haarlinie-stark);
+    flex-shrink: 0;
+  }
+
+  .filter-panel__kopf {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--abstand-m);
+    padding: var(--abstand-s) var(--abstand-l);
+    border-bottom: 0.5px solid var(--farbe-haarlinie-stark);
+  }
+
+  .filter-panel__titel {
+    font-family: var(--schrift-basis);
+    font-weight: var(--gewicht-fett);
+    font-size: var(--text-l);
+    line-height: 1.2;
+    color: var(--farbe-leiste-text);
+  }
+
+  .filter-panel__fertig {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0 var(--abstand-xs);
+    margin-inline-end: calc(var(--abstand-xs) * -1);
+    border: 0;
+    border-radius: var(--radius-badge);
+    background: transparent;
+    color: var(--farbe-rot);
+    font-family: var(--schrift-basis);
+    font-weight: var(--gewicht-fett);
+    font-size: var(--text-basis);
+    cursor: pointer;
+    transition: opacity var(--dauer-kurz) ease;
+  }
+
+  @media (hover: hover) {
+    .filter-panel__fertig:hover {
+      opacity: 0.75;
+    }
+  }
+
+  .filter-panel__inhalt {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: var(--abstand-m) var(--abstand-l);
+    display: flex;
+    flex-direction: column;
+    gap: var(--abstand-l);
+  }
+
+  .filter-abschnitt[hidden] {
+    display: none;
+  }
+
+  .filter-abschnitt__titel {
+    font-family: var(--schrift-basis);
+    font-weight: var(--gewicht-fett);
+    font-size: var(--text-xs);
+    line-height: 1.25;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--farbe-text-sekundaer);
+    margin-bottom: var(--abstand-xs);
+  }
+
+  .filter-abschnitt__hinweis {
+    font-size: var(--text-xs);
+    line-height: 1.35;
+    color: var(--farbe-text-sekundaer);
+    margin-bottom: var(--abstand-s);
+    max-width: none;
+  }
+
+  /* a) Vegetarisch-Schalter im iOS-Stil */
+  .filter-switch-zeile {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--abstand-m);
+    padding: var(--abstand-xs) var(--abstand-m);
+    border-radius: var(--radius-innen);
+    background-color: var(--farbe-weiss);
+    box-shadow: 0 0 0 1px var(--farbe-haarlinie);
+    cursor: pointer;
+  }
+
+  .filter-switch-zeile__label {
+    font-size: var(--text-basis);
+    font-weight: var(--gewicht-normal);
+    color: var(--farbe-leiste-text);
+    line-height: 1.3;
+  }
+
+  .ios-switch {
+    position: relative;
+    flex-shrink: 0;
+    min-width: 51px;
+    min-height: 44px;
+    padding: 6px 0;
+    border: 0;
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .ios-switch__spur {
+    position: relative;
+    width: 51px;
+    height: 31px;
+    border-radius: 999px;
+    background-color: var(--farbe-haarlinie-stark);
+    transition: background-color 200ms var(--kurve-ios);
+  }
+
+  .ios-switch__knopf {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+    background-color: var(--farbe-weiss);
+    box-shadow: var(--schatten-klein);
+    transition: transform 220ms var(--kurve-ios);
+  }
+
+  .ios-switch[aria-checked='true'] .ios-switch__spur {
+    background-color: var(--farbe-gruen);
+  }
+
+  .ios-switch[aria-checked='true'] .ios-switch__knopf {
+    transform: translateX(20px);
+  }
+
+  /* b, c, e) Filter-Chips (auch per JS erzeugte Zutaten-Chips via :global) */
+  .filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--abstand-xs);
+  }
+
+  .filter-chips :global(.filter-chip) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    min-height: 44px;
+    padding: var(--abstand-xs) var(--abstand-m);
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-pill);
+    background-color: var(--farbe-chip-bg);
+    color: var(--farbe-leiste-text);
+    font-family: var(--schrift-basis);
+    font-size: var(--text-m);
+    font-weight: var(--gewicht-fett);
+    line-height: 1.2;
+    cursor: pointer;
+    transition:
+      background-color var(--dauer-kurz) ease,
+      border-color var(--dauer-kurz) ease,
+      color var(--dauer-kurz) ease,
+      transform 100ms ease,
+      opacity 100ms ease;
+  }
+
+  @media (hover: hover) {
+    .filter-chips :global(.filter-chip:hover) {
+      background-color: var(--farbe-chip-bg-hover);
+    }
+  }
+
+  .filter-chips :global(.filter-chip[aria-pressed='true']:not(.filter-chip--mit):not(.filter-chip--ohne)) {
+    background-color: var(--farbe-rot);
+    border-color: var(--farbe-rot);
+    color: var(--farbe-text-hell);
+  }
+
+  .filter-chips :global(.filter-chip--mit) {
+    background-color: var(--farbe-chip-mit-bg);
+    border-color: var(--farbe-chip-mit-rand);
+    color: var(--farbe-gruen-dunkel);
+  }
+
+  .filter-chips :global(.filter-chip--ohne) {
+    background-color: var(--farbe-chip-ohne-bg);
+    border-color: var(--farbe-chip-ohne-rand);
+    color: var(--farbe-rot-dunkel);
+  }
+
+  .filter-chips :global(.filter-chip__symbol) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* d) Preis Segmented Control im iOS-Stil */
+  .preis-segment {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 3px;
+    padding: 3px;
+    border-radius: var(--radius-innen);
+    background-color: var(--farbe-chip-bg);
+  }
+
+  .preis-segment__btn {
+    min-height: 44px;
+    padding: var(--abstand-2xs) var(--abstand-xs);
+    border: 0;
+    border-radius: calc(var(--radius-innen) - 3px);
+    background-color: transparent;
+    color: var(--farbe-text-sekundaer);
+    font-family: var(--schrift-basis);
+    font-size: var(--text-s);
+    font-weight: var(--gewicht-fett);
+    line-height: 1.2;
+    text-align: center;
+    cursor: pointer;
+    transition:
+      background-color var(--dauer-kurz) ease,
+      color var(--dauer-kurz) ease,
+      box-shadow var(--dauer-kurz) ease,
+      transform 100ms ease,
+      opacity 100ms ease;
+  }
+
+  .preis-segment__btn[aria-checked='true'] {
+    background-color: var(--farbe-weiss);
+    color: var(--farbe-leiste-text);
+    box-shadow: var(--schatten-klein);
+  }
+
+  /* Feste Fußleiste im Panel mit Safe Area */
+  .filter-panel__fuss {
+    flex-shrink: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--abstand-s);
+    padding: var(--abstand-s) var(--abstand-l) calc(var(--abstand-s) + env(safe-area-inset-bottom, 0px));
+    border-top: 0.5px solid var(--farbe-haarlinie-stark);
+    background-color: var(--farbe-offwhite);
+  }
+
+  .filter-panel__reset,
+  .filter-panel__anzeigen {
+    min-height: 44px;
+    padding: var(--abstand-xs) var(--abstand-m);
+    border: 0;
+    border-radius: var(--radius-pill);
+    font-family: var(--schrift-basis);
+    font-size: var(--text-m);
+    font-weight: var(--gewicht-fett);
+    line-height: 1.2;
+    cursor: pointer;
+    transition:
+      background-color var(--dauer-kurz) ease,
+      transform 100ms ease,
+      opacity 100ms ease;
+  }
+
+  .filter-panel__reset {
+    background-color: var(--farbe-chip-bg);
+    color: var(--farbe-leiste-text);
+  }
+
+  .filter-panel__anzeigen {
+    flex: 1;
+    background-color: var(--farbe-rot);
+    color: var(--farbe-text-hell);
+  }
+
+  .filter-panel__reset:active,
+  .filter-panel__anzeigen:active {
+    transform: scale(0.96);
+    opacity: 0.85;
+  }
+
+  @media (hover: hover) {
+    .filter-panel__reset:hover {
+      background-color: var(--farbe-chip-bg-hover);
+    }
+
+    .filter-panel__anzeigen:hover {
+      background-color: var(--farbe-rot-dunkel);
+    }
+  }
+
+  /* Desktop (>= 768px): Popover unter dem Button */
+  @media (min-width: 768px) {
+    .filter-backdrop {
+      background-color: transparent;
+    }
+
+    .filter-panel {
+      position: absolute;
+      inset-inline: auto;
+      top: calc(100% + var(--abstand-xs));
+      right: 0;
+      bottom: auto;
+      width: min(420px, calc(100vw - 2 * var(--container-rand)));
+      max-width: 420px;
+      max-height: min(75vh, 640px);
+      border-radius: calc(var(--abstand-m) + var(--radius-innen));
+      border: 1px solid var(--farbe-haarlinie);
+      transform-origin: top right;
+      transform: translateY(-6px) scale(0.98);
+      opacity: 0;
+      transition:
+        transform 200ms var(--kurve-ios),
+        opacity 180ms var(--kurve-ios);
+    }
+
+    .filter-panel.ist-offen {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+
+    .filter-panel__griff {
+      display: none;
+    }
+
+    .filter-panel__kopf {
+      padding: var(--abstand-s) var(--abstand-m);
+    }
+
+    .filter-panel__inhalt {
+      padding: var(--abstand-m);
+    }
+
+    .filter-panel__fuss {
+      padding: var(--abstand-s) var(--abstand-m);
+    }
+  }
+
+  /* Aktive-Filter-Leiste unter der Suchzeile */
+  .aktive-filter {
+    margin-top: var(--abstand-s);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--abstand-xs);
+    opacity: 0;
+    transform: translateY(-6px);
+    transition:
+      opacity 200ms var(--kurve-ein),
+      transform 200ms var(--kurve-ein);
+  }
+
+  .aktive-filter[hidden] {
+    display: none;
+  }
+
+  .aktive-filter.ist-sichtbar {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .aktive-filter__chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--abstand-xs);
+  }
+
+  .aktive-filter__chips :global(.aktiver-filter-chip) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-height: 44px;
+    padding: 0 var(--abstand-s);
+    border: 1px solid var(--farbe-haarlinie-stark);
+    border-radius: var(--radius-pill);
+    background-color: var(--farbe-weiss);
+    color: var(--farbe-leiste-text);
+    font-family: var(--schrift-basis);
+    font-size: var(--text-s);
+    font-weight: var(--gewicht-fett);
+    line-height: 1.2;
+    cursor: pointer;
+    transition:
+      background-color var(--dauer-kurz) ease,
+      border-color var(--dauer-kurz) ease,
+      transform 100ms ease,
+      opacity 100ms ease;
+  }
+
+  .aktive-filter__chips :global(.aktiver-filter-chip--mit) {
+    background-color: var(--farbe-chip-mit-bg);
+    border-color: var(--farbe-chip-mit-rand);
+    color: var(--farbe-gruen-dunkel);
+  }
+
+  .aktive-filter__chips :global(.aktiver-filter-chip--ohne) {
+    background-color: var(--farbe-chip-ohne-bg);
+    border-color: var(--farbe-chip-ohne-rand);
+    color: var(--farbe-rot-dunkel);
+  }
+
+  .aktive-filter__chips :global(.aktiver-filter-chip__x) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    opacity: 0.75;
+  }
+
+  .aktive-filter__reset {
+    min-height: 44px;
+    padding: 0 var(--abstand-s);
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--farbe-rot);
+    font-family: var(--schrift-basis);
+    font-size: var(--text-s);
+    font-weight: var(--gewicht-fett);
+    cursor: pointer;
+    transition:
+      background-color var(--dauer-kurz) ease,
+      transform 100ms ease,
+      opacity 100ms ease;
+  }
+
+  @media (hover: hover) {
+    .aktive-filter__chips :global(.aktiver-filter-chip:hover) {
+      background-color: var(--farbe-chip-bg);
+    }
+
+    .aktive-filter__reset:hover {
+      background-color: color-mix(in srgb, var(--farbe-rot) 8%, transparent);
     }
   }
 
@@ -319,17 +1121,13 @@ const gesamtGerichte = speisekarte.kategorien.reduce(
     max-width: 48ch;
   }
 
-  .suche-leer :global(.btn:active) {
-    transform: scale(0.96);
-  }
-
   @media (min-width: 1024px) {
     .speisekarte-kopf {
       padding-top: var(--abstand-xl);
       padding-bottom: var(--abstand-l);
     }
 
-    .speisekarte-suche {
+    .speisekarte-suche-zeile {
       max-width: 34rem;
     }
 
@@ -341,7 +1139,19 @@ const gesamtGerichte = speisekarte.kategorien.reduce(
   @media (prefers-reduced-motion: reduce) {
     .speisekarte-suche__lupe,
     .speisekarte-suche__eingabe,
-    .speisekarte-suche__leeren {
+    .speisekarte-suche__leeren,
+    .filter-btn,
+    .filter-backdrop,
+    .filter-panel,
+    .ios-switch__spur,
+    .ios-switch__knopf,
+    .filter-chips :global(.filter-chip),
+    .preis-segment__btn,
+    .filter-panel__reset,
+    .filter-panel__anzeigen,
+    .aktive-filter,
+    .aktive-filter__chips :global(.aktiver-filter-chip),
+    .aktive-filter__reset {
       transition: none;
     }
   }

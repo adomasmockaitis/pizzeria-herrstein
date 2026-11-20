@@ -1,9 +1,10 @@
 // Interaktionen und Animationen für /speisekarte:
-// Large Title, sticky Kategorie-Köpfe, Listen-Einblendung, Extras-Details und 2-stufige Live-Suche
+// Large Title, sticky Kategorie-Köpfe, Extras-Details, Live-Suche, Filter-Sheet/Popover und URL-Zustand
 
 const KURVE_IOS = 'cubic-bezier(0.32, 0.72, 0, 1)';
 const KURVE_EIN = 'cubic-bezier(0.2, 0.8, 0.2, 1)';
 const reduziertMedia = window.matchMedia('(prefers-reduced-motion: reduce)');
+const desktopMedia = window.matchMedia('(min-width: 768px)');
 
 interface Normalisiert {
   text: string;
@@ -23,9 +24,58 @@ interface TextFeld {
   einfach: Normalisiert;
 }
 
+interface ZutatDefinitionKonfig {
+  id: string;
+  label: string;
+  stichwoerter: string[];
+  ausschluss?: string[];
+}
+
+interface ZutatDefinition {
+  id: string;
+  label: string;
+  stichwoerter: string[];
+  ausschluss: string[];
+  anzahl: number;
+}
+
+interface FilterKonfig {
+  buttonLabel: string;
+  buttonLabelAktiv: string;
+  gerichteAnzeigenNull: string;
+  gerichteAnzeigenSingular: string;
+  gerichteAnzeigenPlural: string;
+  filterEntfernenLabel: string;
+  vegChip: string;
+  zutatStatusMit: string;
+  zutatStatusOhne: string;
+  zutatChipMit: string;
+  zutatChipOhne: string;
+  preisChipBis: string;
+  allergenChipOhne: string;
+  zutatenListe: ZutatDefinitionKonfig[];
+}
+
+type ZutatZustand = 'neutral' | 'mit' | 'ohne';
+
+interface FilterZustand {
+  vegetarisch: boolean;
+  kategorien: Set<string>;
+  mitZutaten: Set<string>;
+  ohneZutaten: Set<string>;
+  maxPreis: number | null;
+  ohneAllergene: Set<string>;
+}
+
 interface GerichtEintrag {
   el: HTMLElement;
   index: number;
+  kategorieId: string;
+  vegetarisch: boolean;
+  preis: number | null;
+  kennzeichnungen: Set<string>;
+  zutaten: Set<string>;
+  zutatSuchtext: string;
   felder: TextFeld[];
   kontextUmlaut: string;
   kontextEinfach: string;
@@ -44,6 +94,7 @@ interface AbschnittEintrag {
 
 interface KategorieEintrag {
   id: string;
+  name: string;
   el: HTMLElement;
   block: HTMLElement;
   sentinel: HTMLElement | null;
@@ -61,6 +112,8 @@ const UMLAUT_ERSETZUNG: Record<string, string> = {
   ü: 'ue',
   ß: 'ss',
 };
+const ERLAUBTE_PREISE = new Set([8, 10, 12]);
+const SVG_NS = 'http://www.w3.org/2000/svg';
 
 function normalisiereMitIndex(eingabe: string, umlauteErweitern: boolean): Normalisiert {
   let text = '';
@@ -207,6 +260,27 @@ function setzeHervorhebung(feld: TextFeld, tokens: SuchToken[]) {
   feld.el.appendChild(fragment);
 }
 
+function erstelleSymbolSvg(typ: 'haken' | 'kreuz'): SVGSVGElement {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 14 14');
+  svg.setAttribute('width', '13');
+  svg.setAttribute('height', '13');
+  svg.setAttribute('fill', 'none');
+  svg.setAttribute('aria-hidden', 'true');
+
+  const pfad = document.createElementNS(SVG_NS, 'path');
+  pfad.setAttribute(
+    'd',
+    typ === 'haken' ? 'M2.5 7.5 5.5 10.5 11.5 3.5' : 'M3.5 3.5 10.5 10.5M10.5 3.5 3.5 10.5',
+  );
+  pfad.setAttribute('stroke', 'currentColor');
+  pfad.setAttribute('stroke-width', '2');
+  pfad.setAttribute('stroke-linecap', 'round');
+  pfad.setAttribute('stroke-linejoin', 'round');
+  svg.appendChild(pfad);
+  return svg;
+}
+
 // ---------- 1. Large Title & Navigations-Titel ----------
 function initLargeTitle() {
   const largeTitle = document.querySelector<HTMLElement>('[data-large-title]');
@@ -280,68 +354,7 @@ function initStickyKoepfe(kategorien: KategorieEintrag[]) {
   window.addEventListener('speisekarte:filter', aktualisiere);
 }
 
-// ---------- 3. Kategorie-Block Erst-Einblendung ----------
-function initBlockEinblendung(kategorien: KategorieEintrag[]): () => void {
-  const wartend = new Set<HTMLElement>();
-  let beobachter: IntersectionObserver | undefined;
-
-  const zeigeAlleSofort = () => {
-    for (const block of wartend) {
-      block.style.opacity = '';
-      beobachter?.unobserve(block);
-    }
-    wartend.clear();
-  };
-
-  if (
-    reduziertMedia.matches ||
-    !('IntersectionObserver' in window) ||
-    typeof Element.prototype.animate !== 'function' ||
-    window.location.hash.length > 1
-  ) {
-    return zeigeAlleSofort;
-  }
-
-  beobachter = new IntersectionObserver(
-    (eintraege) => {
-      for (const eintrag of eintraege) {
-        if (!eintrag.isIntersecting) continue;
-        const block = eintrag.target as HTMLElement;
-        beobachter?.unobserve(block);
-        if (!wartend.delete(block)) continue;
-        block.style.opacity = '';
-        if (!reduziertMedia.matches) {
-          block.animate(
-            [
-              { opacity: 0, transform: 'translateY(12px)' },
-              { opacity: 1, transform: 'translateY(0)' },
-            ],
-            { duration: 350, easing: KURVE_EIN },
-          );
-        }
-      }
-    },
-    { rootMargin: '0px 0px -24px 0px', threshold: 0.01 },
-  );
-
-  for (const kat of kategorien) {
-    if (kat.block.getBoundingClientRect().top > window.innerHeight * 0.96) {
-      kat.block.style.opacity = '0';
-      wartend.add(kat.block);
-      beobachter.observe(kat.block);
-    }
-  }
-
-  window.addEventListener('speisekarte:ankersprung', zeigeAlleSofort);
-  window.addEventListener('hashchange', zeigeAlleSofort);
-  reduziertMedia.addEventListener('change', (e) => {
-    if (e.matches) zeigeAlleSofort();
-  });
-
-  return zeigeAlleSofort;
-}
-
-// ---------- 4. "Extras & Aufpreise" (<details>) Höhen-Animation ----------
+// ---------- 3. "Extras & Aufpreise" (<details>) Höhen-Animation ----------
 function initExtrasDetails() {
   const elemente = document.querySelectorAll<HTMLDetailsElement>('[data-extras-details]');
 
@@ -404,8 +417,8 @@ function initExtrasDetails() {
   }
 }
 
-// ---------- 5. Live-Suche (2-stufig + FLIP + gestaffeltes Einblenden) ----------
-function initSuche(kategorien: KategorieEintrag[], zeigeAlleBloeckeSofort: () => void) {
+// ---------- 4. Live-Suche + Filter (UND-Verknüpfung) & URL-Zustand ----------
+function initSucheUndFilter(kategorien: KategorieEintrag[]) {
   const seite = document.querySelector<HTMLElement>('[data-speisekarte-seite]');
   const suchBox = seite?.querySelector<HTMLElement>('[data-suche-box]');
   const eingabe = seite?.querySelector<HTMLInputElement>('[data-suche-eingabe]');
@@ -415,7 +428,49 @@ function initSuche(kategorien: KategorieEintrag[], zeigeAlleBloeckeSofort: () =>
   const leerBox = seite?.querySelector<HTMLElement>('[data-suche-leer]');
   const leerTextEl = seite?.querySelector<HTMLElement>('[data-suche-leer-text]');
 
-  if (!seite || !suchBox || !eingabe || !statusEl || !teiltrefferBanner || !leerBox || !leerTextEl) {
+  const filterBtn = seite?.querySelector<HTMLButtonElement>('[data-filter-btn]');
+  const filterBadge = seite?.querySelector<HTMLElement>('[data-filter-badge]');
+  const filterBackdrop = seite?.querySelector<HTMLElement>('[data-filter-backdrop]');
+  const filterPanel = seite?.querySelector<HTMLElement>('[data-filter-panel]');
+  const fertigBtn = seite?.querySelector<HTMLButtonElement>('[data-filter-schliessen]');
+  const resetBtn = seite?.querySelector<HTMLButtonElement>('[data-filter-reset]');
+  const anzeigenBtn = seite?.querySelector<HTMLButtonElement>('[data-filter-anzeigen]');
+  const vegSwitch = seite?.querySelector<HTMLButtonElement>('[data-filter-veg]');
+  const vegZeile = seite?.querySelector<HTMLElement>('[data-filter-veg-zeile]');
+  const katChips = Array.from(
+    seite?.querySelectorAll<HTMLButtonElement>('[data-filter-kat]') ?? [],
+  );
+  const zutatenAbschnitt = seite?.querySelector<HTMLElement>('[data-filter-zutaten-abschnitt]');
+  const zutatenListeEl = seite?.querySelector<HTMLElement>('[data-filter-zutaten-liste]');
+  const preisGruppe = seite?.querySelector<HTMLElement>('[data-filter-preis-gruppe]');
+  const preisRadios = Array.from(
+    seite?.querySelectorAll<HTMLButtonElement>('[data-filter-preis]') ?? [],
+  );
+  const allergenChips = Array.from(
+    seite?.querySelectorAll<HTMLButtonElement>('[data-filter-allergen]') ?? [],
+  );
+  const aktiveFilterLeiste = seite?.querySelector<HTMLElement>('[data-aktive-filter]');
+  const aktiveFilterChipsEl = seite?.querySelector<HTMLElement>('[data-aktive-filter-chips]');
+  const aktiveFilterResetBtn = seite?.querySelector<HTMLButtonElement>('[data-aktive-filter-reset]');
+  const konfigScript = document.querySelector<HTMLScriptElement>('[data-filter-konfig]');
+
+  if (
+    !seite ||
+    !suchBox ||
+    !eingabe ||
+    !statusEl ||
+    !teiltrefferBanner ||
+    !leerBox ||
+    !leerTextEl ||
+    !konfigScript?.textContent
+  ) {
+    return;
+  }
+
+  let konfig: FilterKonfig;
+  try {
+    konfig = JSON.parse(konfigScript.textContent) as FilterKonfig;
+  } catch {
     return;
   }
 
@@ -425,6 +480,7 @@ function initSuche(kategorien: KategorieEintrag[], zeigeAlleBloeckeSofort: () =>
   const textTeiltrefferZaehler = seite.dataset.textTeiltrefferZaehler ?? '';
   const textTeiltrefferOhne = seite.dataset.textTeiltrefferOhne ?? '';
   const textKeinTreffer = seite.dataset.textKeinTreffer ?? '';
+  const textKeinTrefferFilter = seite.dataset.textKeinTrefferFilter ?? textKeinTreffer;
   const statusAlle = seite.dataset.statusAlle ?? '';
   const statusSingular = seite.dataset.statusSingular ?? '';
   const statusPlural = seite.dataset.statusPlural ?? '';
@@ -441,6 +497,401 @@ function initSuche(kategorien: KategorieEintrag[], zeigeAlleBloeckeSofort: () =>
       for (const g of abs.gerichte) alleGerichte.push(g);
     }
   }
+
+  // Zutaten aus Name & Beschreibung aller Gerichte anhand der kuratierten Stichwortliste erkennen
+  const zutatDefs: ZutatDefinition[] = konfig.zutatenListe.map((z) => ({
+    id: z.id,
+    label: z.label,
+    stichwoerter: z.stichwoerter.map((w) => normalisiereMitIndex(w, true).text).filter(Boolean),
+    ausschluss: (z.ausschluss ?? [])
+      .map((w) => normalisiereMitIndex(w, true).text)
+      .filter(Boolean),
+    anzahl: 0,
+  }));
+
+  for (const def of zutatDefs) {
+    for (const gericht of alleGerichte) {
+      let text = gericht.zutatSuchtext;
+      if (def.ausschluss.length > 0) {
+        for (const aus of def.ausschluss) {
+          text = text.split(aus).join(' ');
+        }
+      }
+      if (def.stichwoerter.some((kw) => text.includes(kw))) {
+        gericht.zutaten.add(def.id);
+        def.anzahl++;
+      }
+    }
+  }
+
+  // Nur Zutaten anzeigen, die bei mindestens 2 Gerichten vorkommen
+  const verfuegbareZutaten = zutatDefs.filter((z) => z.anzahl >= 2);
+  const zutatNachId = new Map(verfuegbareZutaten.map((z) => [z.id, z]));
+  const zutatChipNachId = new Map<string, HTMLButtonElement>();
+  const kategorieNameNachId = new Map(kategorien.map((k) => [k.id, k.name]));
+  const allergenLabelNachKuerzel = new Map(
+    allergenChips.map((btn) => [btn.dataset.filterAllergen ?? '', btn.dataset.label ?? '']),
+  );
+
+  const zustand: FilterZustand = {
+    vegetarisch: false,
+    kategorien: new Set<string>(),
+    mitZutaten: new Set<string>(),
+    ohneZutaten: new Set<string>(),
+    maxPreis: null,
+    ohneAllergene: new Set<string>(),
+  };
+
+  if (zutatenListeEl && zutatenAbschnitt && verfuegbareZutaten.length > 0) {
+    const frag = document.createDocumentFragment();
+    for (const zutat of verfuegbareZutaten) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'filter-chip filter-chip--zutat';
+      btn.setAttribute('aria-pressed', 'false');
+      btn.setAttribute('aria-label', zutat.label);
+      btn.dataset.filterZutat = zutat.id;
+      btn.textContent = zutat.label;
+      zutatChipNachId.set(zutat.id, btn);
+      frag.appendChild(btn);
+    }
+    zutatenListeEl.appendChild(frag);
+    zutatenAbschnitt.hidden = false;
+  }
+
+  const istFilterAktiv = () =>
+    zustand.vegetarisch ||
+    zustand.kategorien.size > 0 ||
+    zustand.mitZutaten.size > 0 ||
+    zustand.ohneZutaten.size > 0 ||
+    zustand.maxPreis !== null ||
+    zustand.ohneAllergene.size > 0;
+
+  const zaehleAktiveFilter = () =>
+    (zustand.vegetarisch ? 1 : 0) +
+    zustand.kategorien.size +
+    zustand.mitZutaten.size +
+    zustand.ohneZutaten.size +
+    (zustand.maxPreis !== null ? 1 : 0) +
+    zustand.ohneAllergene.size;
+
+  const gerichtPasstFilter = (gericht: GerichtEintrag): boolean => {
+    if (zustand.vegetarisch && !gericht.vegetarisch) return false;
+    if (zustand.kategorien.size > 0 && !zustand.kategorien.has(gericht.kategorieId)) return false;
+    if (zustand.maxPreis !== null && (gericht.preis === null || gericht.preis > zustand.maxPreis)) {
+      return false;
+    }
+    for (const zId of zustand.mitZutaten) {
+      if (!gericht.zutaten.has(zId)) return false;
+    }
+    for (const zId of zustand.ohneZutaten) {
+      if (gericht.zutaten.has(zId)) return false;
+    }
+    for (const kuerzel of zustand.ohneAllergene) {
+      if (gericht.kennzeichnungen.has(kuerzel)) return false;
+    }
+    return true;
+  };
+
+  const holeZutatZustand = (id: string): ZutatZustand => {
+    if (zustand.mitZutaten.has(id)) return 'mit';
+    if (zustand.ohneZutaten.has(id)) return 'ohne';
+    return 'neutral';
+  };
+
+  const aktualisiereZutatChip = (id: string) => {
+    const btn = zutatChipNachId.get(id);
+    const zutat = zutatNachId.get(id);
+    if (!btn || !zutat) return;
+
+    const status = holeZutatZustand(id);
+    btn.classList.toggle('filter-chip--mit', status === 'mit');
+    btn.classList.toggle('filter-chip--ohne', status === 'ohne');
+    btn.setAttribute('aria-pressed', status === 'neutral' ? 'false' : 'true');
+    btn.textContent = '';
+
+    if (status === 'mit' || status === 'ohne') {
+      const symbolSpan = document.createElement('span');
+      symbolSpan.className = 'filter-chip__symbol';
+      symbolSpan.setAttribute('aria-hidden', 'true');
+      symbolSpan.appendChild(erstelleSymbolSvg(status === 'mit' ? 'haken' : 'kreuz'));
+      btn.appendChild(symbolSpan);
+      btn.setAttribute(
+        'aria-label',
+        (status === 'mit' ? konfig.zutatStatusMit : konfig.zutatStatusOhne).replace(
+          '{zutat}',
+          zutat.label,
+        ),
+      );
+    } else {
+      btn.setAttribute('aria-label', zutat.label);
+    }
+
+    const textSpan = document.createElement('span');
+    textSpan.textContent = zutat.label;
+    btn.appendChild(textSpan);
+  };
+
+  let aktiveLeisteTimer: number | undefined;
+
+  const erstelleAktivenChip = (
+    text: string,
+    variante: 'standard' | 'mit' | 'ohne',
+    beiKlick: () => void,
+  ) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'aktiver-filter-chip';
+    if (variante === 'mit') btn.classList.add('aktiver-filter-chip--mit');
+    if (variante === 'ohne') btn.classList.add('aktiver-filter-chip--ohne');
+    btn.setAttribute('aria-label', konfig.filterEntfernenLabel.replace('{filter}', text));
+
+    const labelSpan = document.createElement('span');
+    labelSpan.textContent = text;
+    btn.appendChild(labelSpan);
+
+    const xSpan = document.createElement('span');
+    xSpan.className = 'aktiver-filter-chip__x';
+    xSpan.setAttribute('aria-hidden', 'true');
+    xSpan.appendChild(erstelleSymbolSvg('kreuz'));
+    btn.appendChild(xSpan);
+
+    btn.addEventListener('click', beiKlick);
+    return btn;
+  };
+
+  const aktualisiereFilterUi = (trefferAnzahl: number) => {
+    if (vegSwitch) {
+      vegSwitch.setAttribute('aria-checked', zustand.vegetarisch ? 'true' : 'false');
+    }
+
+    for (const btn of katChips) {
+      const id = btn.dataset.filterKat ?? '';
+      btn.setAttribute('aria-pressed', zustand.kategorien.has(id) ? 'true' : 'false');
+    }
+
+    for (const id of zutatChipNachId.keys()) {
+      aktualisiereZutatChip(id);
+    }
+
+    const aktiverPreisWert = zustand.maxPreis !== null ? String(zustand.maxPreis) : '';
+    for (const radio of preisRadios) {
+      const aktiv = (radio.dataset.filterPreis ?? '') === aktiverPreisWert;
+      radio.setAttribute('aria-checked', aktiv ? 'true' : 'false');
+      radio.tabIndex = aktiv ? 0 : -1;
+    }
+
+    for (const btn of allergenChips) {
+      const kuerzel = btn.dataset.filterAllergen ?? '';
+      btn.setAttribute('aria-pressed', zustand.ohneAllergene.has(kuerzel) ? 'true' : 'false');
+    }
+
+    const aktiveAnzahl = zaehleAktiveFilter();
+    if (filterBadge) {
+      filterBadge.hidden = aktiveAnzahl === 0;
+      filterBadge.textContent = String(aktiveAnzahl);
+    }
+    if (filterBtn) {
+      filterBtn.setAttribute(
+        'aria-label',
+        aktiveAnzahl > 0
+          ? konfig.buttonLabelAktiv.replace('{anzahl}', String(aktiveAnzahl))
+          : konfig.buttonLabel,
+      );
+    }
+
+    if (anzeigenBtn) {
+      if (trefferAnzahl === 0) {
+        anzeigenBtn.textContent = konfig.gerichteAnzeigenNull;
+      } else if (trefferAnzahl === 1) {
+        anzeigenBtn.textContent = konfig.gerichteAnzeigenSingular;
+      } else {
+        anzeigenBtn.textContent = konfig.gerichteAnzeigenPlural.replace(
+          '{anzahl}',
+          String(trefferAnzahl),
+        );
+      }
+    }
+
+    if (resetBtn) {
+      resetBtn.disabled = aktiveAnzahl === 0;
+    }
+
+    // Aktive Filter-Chips unter der Suchleiste rendern & animiert ein-/ausblenden
+    if (aktiveFilterLeiste && aktiveFilterChipsEl) {
+      aktiveFilterChipsEl.textContent = '';
+
+      if (zustand.vegetarisch) {
+        aktiveFilterChipsEl.appendChild(
+          erstelleAktivenChip(konfig.vegChip, 'mit', () => {
+            zustand.vegetarisch = false;
+            beiFilterAenderung();
+          }),
+        );
+      }
+
+      for (const katId of zustand.kategorien) {
+        const katName = kategorieNameNachId.get(katId) ?? katId;
+        aktiveFilterChipsEl.appendChild(
+          erstelleAktivenChip(katName, 'standard', () => {
+            zustand.kategorien.delete(katId);
+            beiFilterAenderung();
+          }),
+        );
+      }
+
+      for (const zId of zustand.mitZutaten) {
+        const zName = zutatNachId.get(zId)?.label ?? zId;
+        aktiveFilterChipsEl.appendChild(
+          erstelleAktivenChip(konfig.zutatChipMit.replace('{zutat}', zName), 'mit', () => {
+            zustand.mitZutaten.delete(zId);
+            beiFilterAenderung();
+          }),
+        );
+      }
+
+      for (const zId of zustand.ohneZutaten) {
+        const zName = zutatNachId.get(zId)?.label ?? zId;
+        aktiveFilterChipsEl.appendChild(
+          erstelleAktivenChip(konfig.zutatChipOhne.replace('{zutat}', zName), 'ohne', () => {
+            zustand.ohneZutaten.delete(zId);
+            beiFilterAenderung();
+          }),
+        );
+      }
+
+      if (zustand.maxPreis !== null) {
+        aktiveFilterChipsEl.appendChild(
+          erstelleAktivenChip(
+            konfig.preisChipBis.replace('{preis}', String(zustand.maxPreis)),
+            'standard',
+            () => {
+              zustand.maxPreis = null;
+              beiFilterAenderung();
+            },
+          ),
+        );
+      }
+
+      for (const kuerzel of zustand.ohneAllergene) {
+        const label = allergenLabelNachKuerzel.get(kuerzel) ?? kuerzel;
+        aktiveFilterChipsEl.appendChild(
+          erstelleAktivenChip(konfig.allergenChipOhne.replace('{allergen}', label), 'ohne', () => {
+            zustand.ohneAllergene.delete(kuerzel);
+            beiFilterAenderung();
+          }),
+        );
+      }
+
+      window.clearTimeout(aktiveLeisteTimer);
+      if (aktiveAnzahl > 0) {
+        const warVersteckt = aktiveFilterLeiste.hidden;
+        aktiveFilterLeiste.hidden = false;
+        if (warVersteckt && !reduziertMedia.matches) {
+          void aktiveFilterLeiste.offsetHeight;
+        }
+        aktiveFilterLeiste.classList.add('ist-sichtbar');
+      } else if (!aktiveFilterLeiste.hidden) {
+        aktiveFilterLeiste.classList.remove('ist-sichtbar');
+        if (reduziertMedia.matches) {
+          aktiveFilterLeiste.hidden = true;
+        } else {
+          aktiveLeisteTimer = window.setTimeout(() => {
+            if (zaehleAktiveFilter() === 0) {
+              aktiveFilterLeiste.hidden = true;
+            }
+          }, 210);
+        }
+      }
+    }
+  };
+
+  const schreibeUrlZustand = () => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (zustand.vegetarisch) {
+      params.set('veg', '1');
+    } else {
+      params.delete('veg');
+    }
+
+    if (zustand.kategorien.size > 0) {
+      params.set('kat', Array.from(zustand.kategorien).join(','));
+    } else {
+      params.delete('kat');
+    }
+
+    if (zustand.mitZutaten.size > 0) {
+      params.set('mit', Array.from(zustand.mitZutaten).join(','));
+    } else {
+      params.delete('mit');
+    }
+
+    if (zustand.ohneZutaten.size > 0) {
+      params.set('ohne', Array.from(zustand.ohneZutaten).join(','));
+    } else {
+      params.delete('ohne');
+    }
+
+    if (zustand.maxPreis !== null) {
+      params.set('preis', String(zustand.maxPreis));
+    } else {
+      params.delete('preis');
+    }
+
+    if (zustand.ohneAllergene.size > 0) {
+      params.set('allergen', Array.from(zustand.ohneAllergene).join(','));
+    } else {
+      params.delete('allergen');
+    }
+
+    const query = params.toString();
+    const neueUrl = `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`;
+    window.history.replaceState(window.history.state, '', neueUrl);
+  };
+
+  const ladeUrlZustand = () => {
+    const params = new URLSearchParams(window.location.search);
+    zustand.vegetarisch = params.get('veg') === '1';
+
+    zustand.kategorien.clear();
+    const katParam = params.get('kat');
+    if (katParam) {
+      for (const id of katParam.split(',')) {
+        if (kategorieNameNachId.has(id)) zustand.kategorien.add(id);
+      }
+    }
+
+    zustand.mitZutaten.clear();
+    const mitParam = params.get('mit');
+    if (mitParam) {
+      for (const id of mitParam.split(',')) {
+        if (zutatNachId.has(id)) zustand.mitZutaten.add(id);
+      }
+    }
+
+    zustand.ohneZutaten.clear();
+    const ohneParam = params.get('ohne');
+    if (ohneParam) {
+      for (const id of ohneParam.split(',')) {
+        if (zutatNachId.has(id) && !zustand.mitZutaten.has(id)) {
+          zustand.ohneZutaten.add(id);
+        }
+      }
+    }
+
+    const preisRoh = params.get('preis');
+    const preisNum = preisRoh ? Number(preisRoh) : NaN;
+    zustand.maxPreis = ERLAUBTE_PREISE.has(preisNum) ? preisNum : null;
+
+    zustand.ohneAllergene.clear();
+    const allergenParam = params.get('allergen');
+    if (allergenParam) {
+      for (const kuerzel of allergenParam.split(',')) {
+        if (allergenLabelNachKuerzel.has(kuerzel)) zustand.ohneAllergene.add(kuerzel);
+      }
+    }
+  };
 
   let laufende: Animation[] = [];
   let generation = 0;
@@ -469,13 +920,14 @@ function initSuche(kategorien: KategorieEintrag[], zeigeAlleBloeckeSofort: () =>
   const meldeStatus = (
     treffer: number,
     hatSuche: boolean,
+    hatFilter: boolean,
     mehrereBegriffe: boolean,
     istTeilweise: boolean,
     sofort: boolean,
   ) => {
     window.clearTimeout(statusTimer);
     const schreiben = () => {
-      if (!hatSuche) {
+      if (!hatSuche && !hatFilter) {
         statusEl.textContent = statusAlle.replace('{anzahl}', anzahlGesamt);
       } else if (treffer === 0) {
         statusEl.textContent = statusLeer;
@@ -484,7 +936,7 @@ function initSuche(kategorien: KategorieEintrag[], zeigeAlleBloeckeSofort: () =>
           treffer === 1
             ? statusTeilweiseSingular
             : statusTeilweisePlural.replace('{anzahl}', String(treffer));
-      } else if (mehrereBegriffe) {
+      } else if (hatSuche && mehrereBegriffe) {
         statusEl.textContent =
           treffer === 1
             ? statusAlleZutatenSingular
@@ -511,12 +963,10 @@ function initSuche(kategorien: KategorieEintrag[], zeigeAlleBloeckeSofort: () =>
     const katNaviEl = document.querySelector<HTMLElement>('[data-kat-navi-leiste]');
     const leistenUnten = katNaviEl ? katNaviEl.getBoundingClientRect().bottom : navUnten + 60;
 
-    // Ergebnis bereits im sichtbaren Bereich -> nicht scrollen
     if (zielRect.top >= leistenUnten - 8 && zielRect.top <= window.innerHeight - 80) {
       return;
     }
 
-    // Nach unten scrollen nur soweit das Suchfeld dabei sichtbar bleibt
     if (zielRect.top > window.innerHeight - 80) {
       const noetig = zielRect.top - (window.innerHeight - 160);
       const maxOhneSuchfeldVerlust = Math.max(0, suchRect.top - navUnten - 12);
@@ -536,30 +986,35 @@ function initSuche(kategorien: KategorieEintrag[], zeigeAlleBloeckeSofort: () =>
     }
   };
 
-  const wendeFilterAn = async (sofort: boolean) => {
+  const wendeFilterAn = async (sofort: boolean, ausloeser: 'suche' | 'filter' | 'init' = 'suche') => {
     const meine = ++generation;
     const rohWert = eingabe.value.trim();
     const tokens = zerlegeSuchbegriffe(rohWert);
     const hatSuche = tokens.length > 0;
+    const hatFilter = istFilterAktiv();
 
     if (leerenBtn) {
       leerenBtn.hidden = eingabe.value.length === 0;
     }
 
-    if (hatSuche) {
-      zeigeAlleBloeckeSofort();
+    if (hatSuche || hatFilter) {
+      window.dispatchEvent(new CustomEvent('einblenden:sofort'));
     }
 
-    // Stufe 1 & 2 bewerten
+    // Filter und 2-stufige Suche gemeinsam (UND-Verknüpfung) bewerten
     let vollTrefferAnzahl = 0;
     let teilTrefferAnzahl = 0;
+    const filterErgebnis = new Map<GerichtEintrag, boolean>();
 
     for (const gericht of alleGerichte) {
-      if (!hatSuche) {
+      const passtFilter = gerichtPasstFilter(gericht);
+      filterErgebnis.set(gericht, passtFilter);
+
+      if (!passtFilter || !hatSuche) {
         gericht.trefferAnzahl = 0;
         gericht.fehlende = [];
         gericht.getroffeneTokens = [];
-        gericht.passt = true;
+        gericht.passt = passtFilter;
         continue;
       }
 
@@ -601,14 +1056,18 @@ function initSuche(kategorien: KategorieEintrag[], zeigeAlleBloeckeSofort: () =>
     const istTeiltrefferModus =
       hatSuche && tokens.length >= 2 && vollTrefferAnzahl === 0 && teilTrefferAnzahl > 0;
 
-    // Teiltreffer: Gibt es Gerichte mit mindestens 2 passenden Zutaten, nur diese zeigen –
-    // sonst würde jede einzelne Zutat (z. B. „Mozzarella“) Dutzende Gerichte bringen.
-    const besteTrefferzahl = Math.max(0, ...alleGerichte.map((g) => g.trefferAnzahl));
+    const besteTrefferzahl = Math.max(
+      0,
+      ...alleGerichte.filter((g) => filterErgebnis.get(g)).map((g) => g.trefferAnzahl),
+    );
     const mindestTreffer = besteTrefferzahl >= 2 ? 2 : 1;
 
     let sichtbareGerichte = 0;
     for (const gericht of alleGerichte) {
-      if (!hatSuche) {
+      const passtFilter = filterErgebnis.get(gericht) ?? false;
+      if (!passtFilter) {
+        gericht.passt = false;
+      } else if (!hatSuche) {
         gericht.passt = true;
       } else if (istTeiltrefferModus) {
         gericht.passt = gericht.trefferAnzahl >= mindestTreffer;
@@ -618,7 +1077,9 @@ function initSuche(kategorien: KategorieEintrag[], zeigeAlleBloeckeSofort: () =>
       if (gericht.passt) sichtbareGerichte++;
     }
 
-    const animieren = kannAnimieren();
+    aktualisiereFilterUi(sichtbareGerichte);
+
+    const animieren = !sofort && kannAnimieren();
     stoppeAnimationen();
 
     // 1. Ausblendende sichtbare Zeilen sanft ausblenden (120ms)
@@ -663,7 +1124,6 @@ function initSuche(kategorien: KategorieEintrag[], zeigeAlleBloeckeSofort: () =>
       for (const abs of kat.abschnitte) {
         let absHatTreffer = false;
 
-        // Reihenfolge: in Stufe 2 nach Trefferzahl absteigend, sonst Originalreihenfolge
         const sortiert = [...abs.gerichte].sort((a, b) => {
           if (istTeiltrefferModus) {
             const diff = b.trefferAnzahl - a.trefferAnzahl;
@@ -722,10 +1182,17 @@ function initSuche(kategorien: KategorieEintrag[], zeigeAlleBloeckeSofort: () =>
 
       kat.el.hidden = !katHatTreffer;
       if (kat.navItem) kat.navItem.hidden = !katHatTreffer;
-      if (kat.extras) kat.extras.hidden = hatSuche;
+      if (kat.extras) {
+        kat.extras.hidden =
+          hatSuche ||
+          zustand.vegetarisch ||
+          zustand.mitZutaten.size > 0 ||
+          zustand.ohneZutaten.size > 0 ||
+          zustand.maxPreis !== null ||
+          zustand.ohneAllergene.size > 0;
+      }
     }
 
-    // Teiltreffer-Hinweis oben
     if (istTeiltrefferModus) {
       teiltrefferBanner.textContent = textTeiltrefferHinweis.replace(
         '{anzahl}',
@@ -736,16 +1203,16 @@ function initSuche(kategorien: KategorieEintrag[], zeigeAlleBloeckeSofort: () =>
       teiltrefferBanner.hidden = true;
     }
 
-    // Keine-Treffer-Box
-    const zeigeLeer = hatSuche && sichtbareGerichte === 0;
+    const zeigeLeer = (hatSuche || hatFilter) && sichtbareGerichte === 0;
     if (zeigeLeer) {
-      leerTextEl.textContent = textKeinTreffer.replace('{begriff}', rohWert);
+      leerTextEl.textContent = hatSuche
+        ? textKeinTreffer.replace('{begriff}', rohWert)
+        : textKeinTrefferFilter;
       leerBox.hidden = false;
     } else {
       leerBox.hidden = true;
     }
 
-    // Kategorie-Leiste und sticky Überschriften informieren
     window.dispatchEvent(new CustomEvent('speisekarte:filter'));
 
     // 4. Animationen nach DOM-Update (FLIP-Blockhöhen + gestaffelte Zeilen + Banner)
@@ -805,9 +1272,16 @@ function initSuche(kategorien: KategorieEintrag[], zeigeAlleBloeckeSofort: () =>
     }
 
     // 5. Status melden & ggf. zum ersten Ergebnis scrollen
-    meldeStatus(sichtbareGerichte, hatSuche, tokens.length >= 2, istTeiltrefferModus, sofort);
+    meldeStatus(
+      sichtbareGerichte,
+      hatSuche,
+      hatFilter,
+      tokens.length >= 2,
+      istTeiltrefferModus,
+      sofort,
+    );
 
-    if (hatSuche) {
+    if (ausloeser === 'suche' && hatSuche) {
       const erstesZiel = zeigeLeer
         ? leerBox
         : istTeiltrefferModus
@@ -817,11 +1291,235 @@ function initSuche(kategorien: KategorieEintrag[], zeigeAlleBloeckeSofort: () =>
     }
   };
 
+  function beiFilterAenderung(sofort = true) {
+    schreibeUrlZustand();
+    void wendeFilterAn(sofort, 'filter');
+  }
+
+  function filterZuruecksetzen() {
+    zustand.vegetarisch = false;
+    zustand.kategorien.clear();
+    zustand.mitZutaten.clear();
+    zustand.ohneZutaten.clear();
+    zustand.maxPreis = null;
+    zustand.ohneAllergene.clear();
+    beiFilterAenderung(true);
+  }
+
+  // ---------- Filter-Dialog (Mobil Bottom-Sheet & Desktop Popover) ----------
+  let panelOffen = false;
+  let panelGeneration = 0;
+
+  const holeFokussierbareElemente = (): HTMLElement[] => {
+    if (!filterPanel) return [];
+    return Array.from(
+      filterPanel.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      ),
+    ).filter((el) => !el.closest('[hidden]') && el.getClientRects().length > 0);
+  };
+
+  const oeffnePanel = () => {
+    if (!filterPanel || !filterBackdrop || !filterBtn || panelOffen) return;
+    const meine = ++panelGeneration;
+    panelOffen = true;
+
+    filterBackdrop.hidden = false;
+    filterPanel.hidden = false;
+    filterBtn.setAttribute('aria-expanded', 'true');
+    document.documentElement.classList.add('filter-offen');
+
+    if (!reduziertMedia.matches) {
+      void filterPanel.offsetHeight;
+    }
+
+    if (meine !== panelGeneration) return;
+    filterBackdrop.classList.add('ist-offen');
+    filterPanel.classList.add('ist-offen');
+
+    const fokusZiel = fertigBtn ?? holeFokussierbareElemente()[0] ?? filterPanel;
+    fokusZiel.focus({ preventScroll: true });
+  };
+
+  const schliessePanel = (fokusZurueck: boolean) => {
+    if (!filterPanel || !filterBackdrop || !filterBtn || !panelOffen) return;
+    const meine = ++panelGeneration;
+    panelOffen = false;
+
+    filterBackdrop.classList.remove('ist-offen');
+    filterPanel.classList.remove('ist-offen');
+    filterBtn.setAttribute('aria-expanded', 'false');
+    document.documentElement.classList.remove('filter-offen');
+
+    const verstecken = () => {
+      if (meine !== panelGeneration || panelOffen) return;
+      filterBackdrop.hidden = true;
+      filterPanel.hidden = true;
+    };
+
+    if (reduziertMedia.matches) {
+      verstecken();
+    } else {
+      window.setTimeout(verstecken, desktopMedia.matches ? 210 : 360);
+    }
+
+    if (fokusZurueck) {
+      filterBtn.focus({ preventScroll: true });
+    }
+  };
+
+  filterBtn?.addEventListener('click', () => {
+    if (panelOffen) {
+      schliessePanel(true);
+    } else {
+      oeffnePanel();
+    }
+  });
+
+  fertigBtn?.addEventListener('click', () => schliessePanel(true));
+  anzeigenBtn?.addEventListener('click', () => schliessePanel(true));
+  filterBackdrop?.addEventListener('click', () => schliessePanel(true));
+  resetBtn?.addEventListener('click', filterZuruecksetzen);
+  aktiveFilterResetBtn?.addEventListener('click', filterZuruecksetzen);
+
+  document.addEventListener('keydown', (event) => {
+    if (!panelOffen || !filterPanel) return;
+
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      schliessePanel(true);
+      return;
+    }
+
+    if (event.key === 'Tab') {
+      const elemente = holeFokussierbareElemente();
+      if (elemente.length === 0) {
+        event.preventDefault();
+        filterPanel.focus();
+        return;
+      }
+
+      const erstes = elemente[0];
+      const letztes = elemente[elemente.length - 1];
+      const aktuell = document.activeElement;
+      const imPanel = filterPanel.contains(aktuell);
+
+      if (event.shiftKey && (!imPanel || aktuell === erstes)) {
+        event.preventDefault();
+        letztes.focus();
+      } else if (!event.shiftKey && (!imPanel || aktuell === letztes)) {
+        event.preventDefault();
+        erstes.focus();
+      }
+    }
+  });
+
+  // a) Vegetarisch-Schalter
+  const schalteVegetarisch = () => {
+    zustand.vegetarisch = !zustand.vegetarisch;
+    beiFilterAenderung();
+  };
+
+  vegSwitch?.addEventListener('click', (event) => {
+    event.stopPropagation();
+    schalteVegetarisch();
+  });
+
+  vegZeile?.addEventListener('click', () => {
+    schalteVegetarisch();
+    vegSwitch?.focus();
+  });
+
+  // b) Kategorien-Chips
+  for (const btn of katChips) {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.filterKat;
+      if (!id) return;
+      if (zustand.kategorien.has(id)) {
+        zustand.kategorien.delete(id);
+      } else {
+        zustand.kategorien.add(id);
+      }
+      beiFilterAenderung();
+    });
+  }
+
+  // c) Zutaten-Chips (3-stufig: neutral -> mit -> ohne -> neutral)
+  zutatenListeEl?.addEventListener('click', (event) => {
+    const target = event.target instanceof Element ? event.target : null;
+    const btn = target?.closest<HTMLButtonElement>('[data-filter-zutat]');
+    const id = btn?.dataset.filterZutat;
+    if (!id) return;
+
+    const aktuell = holeZutatZustand(id);
+    if (aktuell === 'neutral') {
+      zustand.mitZutaten.add(id);
+      zustand.ohneZutaten.delete(id);
+    } else if (aktuell === 'mit') {
+      zustand.mitZutaten.delete(id);
+      zustand.ohneZutaten.add(id);
+    } else {
+      zustand.mitZutaten.delete(id);
+      zustand.ohneZutaten.delete(id);
+    }
+    beiFilterAenderung();
+  });
+
+  // d) Preis Segmented Control (Radiogroup-Muster)
+  const waehlePreisSegment = (radio: HTMLButtonElement, fokussieren: boolean) => {
+    const wert = radio.dataset.filterPreis ?? '';
+    const zahl = wert ? Number(wert) : null;
+    zustand.maxPreis = zahl !== null && ERLAUBTE_PREISE.has(zahl) ? zahl : null;
+    beiFilterAenderung();
+    if (fokussieren) radio.focus();
+  };
+
+  for (const radio of preisRadios) {
+    radio.addEventListener('click', () => waehlePreisSegment(radio, false));
+  }
+
+  preisGruppe?.addEventListener('keydown', (event) => {
+    if (preisRadios.length === 0) return;
+    const aktuellIndex = preisRadios.findIndex((r) => r === document.activeElement);
+    if (aktuellIndex === -1) return;
+
+    let zielIndex: number | null = null;
+    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+      zielIndex = (aktuellIndex + 1) % preisRadios.length;
+    } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+      zielIndex = (aktuellIndex - 1 + preisRadios.length) % preisRadios.length;
+    } else if (event.key === 'Home') {
+      zielIndex = 0;
+    } else if (event.key === 'End') {
+      zielIndex = preisRadios.length - 1;
+    }
+
+    if (zielIndex !== null) {
+      event.preventDefault();
+      waehlePreisSegment(preisRadios[zielIndex], true);
+    }
+  });
+
+  // e) Allergen-Chips
+  for (const btn of allergenChips) {
+    btn.addEventListener('click', () => {
+      const kuerzel = btn.dataset.filterAllergen;
+      if (!kuerzel) return;
+      if (zustand.ohneAllergene.has(kuerzel)) {
+        zustand.ohneAllergene.delete(kuerzel);
+      } else {
+        zustand.ohneAllergene.add(kuerzel);
+      }
+      beiFilterAenderung();
+    });
+  }
+
+  // Sucheingabe
   eingabe.addEventListener('input', () => {
     if (leerenBtn) leerenBtn.hidden = eingabe.value.length === 0;
     window.clearTimeout(eingabeTimer);
     eingabeTimer = window.setTimeout(() => {
-      void wendeFilterAn(false);
+      void wendeFilterAn(false, 'suche');
     }, 80);
   });
 
@@ -830,15 +1528,24 @@ function initSuche(kategorien: KategorieEintrag[], zeigeAlleBloeckeSofort: () =>
       event.preventDefault();
       window.clearTimeout(eingabeTimer);
       eingabe.value = '';
-      void wendeFilterAn(true);
+      void wendeFilterAn(true, 'suche');
     }
   });
 
   leerenBtn?.addEventListener('click', () => {
     window.clearTimeout(eingabeTimer);
     eingabe.value = '';
-    void wendeFilterAn(true);
+    void wendeFilterAn(true, 'suche');
     eingabe.focus();
+  });
+
+  // Initialen Filterzustand aus URL laden und anwenden
+  ladeUrlZustand();
+  void wendeFilterAn(true, 'init');
+
+  window.addEventListener('popstate', () => {
+    ladeUrlZustand();
+    void wendeFilterAn(true, 'init');
   });
 }
 
@@ -856,6 +1563,7 @@ function initSpeisekarte() {
     const block = sektion.querySelector<HTMLElement>('[data-kategorie-block]');
     if (!id || !block) continue;
 
+    let katNameFuerKategorie = id;
     const abschnitte: AbschnittEintrag[] = [];
     for (const absEl of Array.from(sektion.querySelectorAll<HTMLElement>('[data-abschnitt]'))) {
       const liste = absEl.querySelector<HTMLElement>('[data-gerichte-liste]');
@@ -864,8 +1572,14 @@ function initSpeisekarte() {
       const gerichte: GerichtEintrag[] = [];
       for (const gerichtEl of Array.from(absEl.querySelectorAll<HTMLElement>('[data-gericht]'))) {
         const felder: TextFeld[] = [];
+        let nameUndBeschreibung = '';
+
         for (const feldEl of Array.from(gerichtEl.querySelectorAll<HTMLElement>('[data-feld]'))) {
           const original = feldEl.dataset.original ?? feldEl.textContent ?? '';
+          const feldTyp = feldEl.dataset.feld ?? '';
+          if (feldTyp === 'name' || feldTyp === 'beschreibung') {
+            nameUndBeschreibung += ` ${original}`;
+          }
           felder.push({
             el: feldEl,
             original,
@@ -874,13 +1588,30 @@ function initSpeisekarte() {
           });
         }
 
+        const katId = gerichtEl.dataset.kategorieId ?? id;
         const katName = gerichtEl.dataset.kategorieName ?? '';
+        if (katName) katNameFuerKategorie = katName;
         const absTitel = gerichtEl.dataset.abschnittTitel ?? '';
         const kontext = `${katName} ${absTitel}`;
+        const preisRoh = gerichtEl.dataset.preis;
+        const preisZahl = preisRoh !== undefined && preisRoh !== '' ? Number(preisRoh) : null;
+        const kennzRoh = gerichtEl.dataset.kennzeichnung ?? '';
+        const kennzeichnungen = new Set(
+          kennzRoh
+            .split(',')
+            .map((k) => k.trim())
+            .filter(Boolean),
+        );
 
         gerichte.push({
           el: gerichtEl,
           index: Number(gerichtEl.dataset.index ?? gerichte.length),
+          kategorieId: katId,
+          vegetarisch: gerichtEl.dataset.vegetarisch === '1',
+          preis: preisZahl !== null && Number.isFinite(preisZahl) ? preisZahl : null,
+          kennzeichnungen,
+          zutaten: new Set<string>(),
+          zutatSuchtext: normalisiereMitIndex(nameUndBeschreibung, true).text,
           felder,
           kontextUmlaut: normalisiereMitIndex(kontext, true).text,
           kontextEinfach: normalisiereMitIndex(kontext, false).text,
@@ -897,6 +1628,7 @@ function initSpeisekarte() {
 
     kategorien.push({
       id,
+      name: katNameFuerKategorie,
       el: sektion,
       block,
       sentinel: sektion.querySelector<HTMLElement>('[data-sticky-sentinel]'),
@@ -909,9 +1641,8 @@ function initSpeisekarte() {
 
   initLargeTitle();
   initStickyKoepfe(kategorien);
-  const zeigeAlleBloeckeSofort = initBlockEinblendung(kategorien);
   initExtrasDetails();
-  initSuche(kategorien, zeigeAlleBloeckeSofort);
+  initSucheUndFilter(kategorien);
 }
 
 initSpeisekarte();

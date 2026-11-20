@@ -3,6 +3,7 @@
 // bzw. ruhiger Kartenliste (Mobil/Tablet, reduced motion, ohne JS)
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
+import AbschnittTitel from '../AbschnittTitel.astro';
 import Button from '../Button.astro';
 import Karte from '../Karte.astro';
 import texte from '../../content/texte.json';
@@ -87,8 +88,10 @@ const drehungenMobil = [-1, 1, -1, 1, -1];
     </div>
 
     <div class="container genuss__grid">
-      <div class="genuss__intro">
-        <h2 id="genuss-titel" class="genuss__titel">{texte.genuss.ueberschrift}</h2>
+      <div class="genuss__intro" data-einblenden>
+        <AbschnittTitel id="genuss-titel" farbe="rot" class="genuss__titel">
+          {texte.genuss.ueberschrift}
+        </AbschnittTitel>
         <p class="genuss__text">{texte.genuss.text}</p>
         <div class="genuss__aktion">
           <Button href={`${base}speisekarte`} variante="rot" groesse="klein">
@@ -355,12 +358,6 @@ const drehungenMobil = [-1, 1, -1, 1, -1];
     flex-direction: column;
     align-items: flex-start;
     gap: var(--abstand-m);
-  }
-
-  .genuss__titel {
-    font-size: var(--text-xl);
-    font-weight: var(--gewicht-fett);
-    line-height: var(--zeilenhoehe-eng);
   }
 
   .genuss__text {

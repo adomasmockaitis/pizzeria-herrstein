@@ -1,5 +1,6 @@
 ---
 // Abschnitt "Öffnungszeiten & Kontakt" mit Live-Status-Badge und Kontaktdaten
+import AbschnittTitel from '../AbschnittTitel.astro';
 import Button from '../Button.astro';
 import Karte from '../Karte.astro';
 import { gruppiereOeffnungszeiten } from '../../scripts/oeffnungsstatus';
@@ -13,16 +14,16 @@ const statusTexte = texte.oeffnungsstatus;
 ---
 
 <section class="ok" aria-labelledby="oeffnungszeiten-kontakt-titel">
-  <div class="ok__kopf">
+  <div class="ok__kopf" data-einblenden>
     <div class="container">
-      <h2 id="oeffnungszeiten-kontakt-titel" class="sektion-titel">
+      <AbschnittTitel id="oeffnungszeiten-kontakt-titel" farbe="gruen">
         {oeffnungsTexte.ueberschrift}
-      </h2>
+      </AbschnittTitel>
     </div>
   </div>
 
   <div class="container">
-    <div class="ok__grid">
+    <div class="ok__grid" data-einblenden>
       <!-- Rote Karte: Unsere Öffnungszeiten -->
       <Karte id="oeffnungszeiten" farbe="rot" schatten class="ok-karte">
         <div

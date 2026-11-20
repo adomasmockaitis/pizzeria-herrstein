@@ -384,11 +384,8 @@ const { kategorien } = Astro.props;
     transition:
       background-color var(--dauer-kurz) ease,
       color 200ms var(--kurve-ein),
-      transform 100ms ease;
-  }
-
-  .kat-navi__link:active {
-    transform: scale(0.96);
+      transform 100ms ease,
+      opacity 100ms ease;
   }
 
   .kat-navi__link--aktiv {

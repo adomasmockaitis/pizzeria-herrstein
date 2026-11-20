@@ -1,5 +1,6 @@
 ---
 // Allergen- und Zusatzstoff-Legende sowie Stand- und Personal-Hinweis am Ende der Speisekarte
+import AbschnittTitel from '../AbschnittTitel.astro';
 import texte from '../../content/texte.json';
 import {
   formatiereStand,
@@ -25,10 +26,10 @@ const standText = formatierterStand
 
 <section class="legende" aria-labelledby="legende-titel">
   <div class="container">
-    <div class="legende__box">
-      <h2 id="legende-titel" class="legende__titel">
+    <div class="legende__box" data-einblenden>
+      <AbschnittTitel id="legende-titel" farbe="rot" class="legende__titel">
         {texte.speisekarte.legendeUeberschrift}
-      </h2>
+      </AbschnittTitel>
 
       {zeigeUnsicherHinweis && (
         <p class="legende__hinweis" role="note">
@@ -104,11 +105,6 @@ const standText = formatierterStand
   }
 
   .legende__titel {
-    font-family: var(--schrift-basis);
-    font-weight: var(--gewicht-fett);
-    font-size: var(--text-xl);
-    line-height: var(--zeilenhoehe-eng);
-    color: var(--farbe-leiste-text);
     margin-bottom: var(--abstand-m);
   }
 

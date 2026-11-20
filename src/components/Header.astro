@@ -114,21 +114,6 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
         </span>
 
         <div class="unterseite-leiste__aktionen">
-          <a
-            href={kontakt.telefon.link}
-            class="unterseite-leiste__anruf-mobil auf-rot"
-            aria-label={anrufenAriaLabel}
-          >
-            <Image
-              src={telefonIcon}
-              alt=""
-              width={18}
-              height={18}
-              loading="eager"
-              class="unterseite-leiste__anruf-icon"
-              aria-hidden="true"
-            />
-          </a>
           <div class="unterseite-leiste__anruf-desktop">
             <Button
               href={kontakt.telefon.link}
@@ -1016,11 +1001,6 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
       transform 100ms ease;
   }
 
-  .unterseite-leiste__zurueck:active {
-    transform: scale(0.96);
-    opacity: 0.75;
-  }
-
   .unterseite-leiste__chevron {
     flex-shrink: 0;
   }
@@ -1055,54 +1035,17 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
     align-items: center;
   }
 
-  .unterseite-leiste__anruf-mobil {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    padding: 3px;
-    margin-inline-end: -3px;
-    border-radius: 50%;
-    background-color: var(--farbe-rot);
-    background-clip: content-box;
-    transition:
-      background-color var(--dauer-kurz) ease,
-      transform 100ms ease;
-  }
-
-  .unterseite-leiste__anruf-mobil:active {
-    transform: scale(0.96);
-  }
-
-  .unterseite-leiste__anruf-icon {
-    flex-shrink: 0;
-    object-fit: contain;
-  }
-
   .unterseite-leiste__anruf-desktop {
     display: none;
-  }
-
-  .unterseite-leiste__anruf-desktop :global(.btn:active) {
-    transform: scale(0.96);
   }
 
   @media (hover: hover) {
     .unterseite-leiste__zurueck:hover {
       opacity: 0.75;
     }
-
-    .unterseite-leiste__anruf-mobil:hover {
-      background-color: var(--farbe-rot-dunkel);
-    }
   }
 
   @media (min-width: 768px) {
-    .unterseite-leiste__anruf-mobil {
-      display: none;
-    }
-
     .unterseite-leiste__anruf-desktop {
       display: flex;
       align-items: center;
@@ -1111,8 +1054,7 @@ const oeffnungszeitenKurz = kurzinfoTeile.join(' · ');
 
   @media (prefers-reduced-motion: reduce) {
     .unterseite-leiste__titel,
-    .unterseite-leiste__zurueck,
-    .unterseite-leiste__anruf-mobil {
+    .unterseite-leiste__zurueck {
       transition: none;
     }
   }

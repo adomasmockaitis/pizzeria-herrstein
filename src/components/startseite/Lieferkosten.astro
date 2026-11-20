@@ -1,6 +1,7 @@
 ---
 // Abschnitt "Lieferkosten" mit Live-Ortssuche, abwechselnd farbigen Zonen-Karten und Fallback-Hinweis
 import { Image } from 'astro:assets';
+import AbschnittTitel from '../AbschnittTitel.astro';
 import Button from '../Button.astro';
 import Karte from '../Karte.astro';
 import kontakt from '../../content/kontakt.json';
@@ -23,10 +24,10 @@ const sichtbareZonen = lieferzonen.zonen.filter((zone) => zone.sichtbar);
   data-anzahl-gesamt={sichtbareZonen.length}
 >
   <div class="container">
-    <div class="lieferkosten__kopf">
-      <h2 id="lieferkosten-titel" class="sektion-titel">
+    <div class="lieferkosten__kopf" data-einblenden>
+      <AbschnittTitel id="lieferkosten-titel" farbe="rot">
         {texte.lieferkosten.ueberschrift}
-      </h2>
+      </AbschnittTitel>
       <p class="lieferkosten__untertitel">{texte.lieferkosten.untertitel}</p>
     </div>
 
@@ -65,7 +66,7 @@ const sichtbareZonen = lieferzonen.zonen.filter((zone) => zone.sichtbar);
 
     <p class="visually-hidden" role="status" aria-live="polite" data-suche-status></p>
 
-    <div class="lieferkosten__zonen">
+    <div class="lieferkosten__zonen" data-einblenden>
       <!-- Deko-Lieferauto (nur >= 1024px): steht wie in Figma links unten an der letzten Zonen-Karte -->
       <div class="lieferkosten__auto" aria-hidden="true">
         <Image
@@ -507,13 +508,13 @@ const sichtbareZonen = lieferzonen.zonen.filter((zone) => zone.sichtbar);
   }
 
   .lieferkosten__kopf {
-    text-align: center;
+    text-align: left;
     margin-bottom: var(--abstand-xl);
   }
 
   .lieferkosten__untertitel {
     margin-top: var(--abstand-m);
-    margin-inline: auto;
+    margin-inline: 0;
     font-size: var(--text-basis);
     line-height: var(--zeilenhoehe);
   }

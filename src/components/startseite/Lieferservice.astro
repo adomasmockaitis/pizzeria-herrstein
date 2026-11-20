@@ -1,6 +1,7 @@
 ---
 // Abschnitt "Heiß & frisch - direkt zu dir nach Hause" mit 2x2-Bestellkarten und Deko-Mockups
 import { Image } from 'astro:assets';
+import AbschnittTitel from '../AbschnittTitel.astro';
 import Button from '../Button.astro';
 import Karte from '../Karte.astro';
 import { formatiereOeffnungszeitenKurz } from '../../scripts/oeffnungsstatus';
@@ -26,10 +27,10 @@ const { bestellinfoPunkte } = texte.lieferservice;
 
 <section class="lieferservice" id="lieferservice" aria-labelledby="lieferservice-titel">
   <div class="container">
-    <div class="lieferservice__kopf">
-      <h2 id="lieferservice-titel" class="sektion-titel">
+    <div class="lieferservice__kopf" data-einblenden>
+      <AbschnittTitel id="lieferservice-titel" farbe="gruen">
         {texte.lieferservice.ueberschrift}
-      </h2>
+      </AbschnittTitel>
       <p class="lieferservice__intro">{texte.lieferservice.intro}</p>
       <p class="lieferservice__firma">{lieferzonen.firmenlieferung.text}</p>
     </div>
@@ -62,7 +63,7 @@ const { bestellinfoPunkte } = texte.lieferservice;
         </div>
       </div>
 
-      <div class="lieferservice__grid">
+      <div class="lieferservice__grid" data-einblenden>
         <!-- 1. Rot: Telefonisch bestellen -->
         <Karte farbe="rot" schatten class="bestell-karte">
           <Image
@@ -239,13 +240,13 @@ const { bestellinfoPunkte } = texte.lieferservice;
   }
 
   .lieferservice__kopf {
-    text-align: center;
+    text-align: left;
     margin-bottom: var(--abstand-xl);
   }
 
   .lieferservice__intro,
   .lieferservice__firma {
-    margin-inline: auto;
+    margin-inline: 0;
     font-size: var(--text-basis);
     line-height: var(--zeilenhoehe);
   }

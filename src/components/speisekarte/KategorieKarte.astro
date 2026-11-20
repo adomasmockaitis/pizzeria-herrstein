@@ -1,5 +1,6 @@
 ---
 // Kategorie-Abschnitt mit mitlaufender Überschrift (sticky) und heller Gerichte-Liste
+import AbschnittTitel from '../AbschnittTitel.astro';
 import texte from '../../content/texte.json';
 import {
   formatierePreis,
@@ -33,12 +34,14 @@ const istLangerHinweis = Boolean(kategorie.hinweis && kategorie.hinweis.length >
           hatGroessen && 'kategorie-sektion__kopf-innen--groessen',
         ]}
       >
-        <h2
+        <AbschnittTitel
           id={titelId}
-          class:list={['kategorie-sektion__titel', `kategorie-sektion__titel--${farbe}`]}
+          farbe={farbe}
+          variante="kompakt"
+          class="kategorie-sektion__titel"
         >
           {kategorie.name}
-        </h2>
+        </AbschnittTitel>
 
         {hatGroessen && kategorie.groessen && (
           <div class="kategorie-sektion__groessen" aria-hidden="true">
@@ -51,7 +54,11 @@ const istLangerHinweis = Boolean(kategorie.hinweis && kategorie.hinweis.length >
   </header>
 
   <div class="container">
-    <div class="kategorie-block" data-kategorie-block>
+    <div
+      class:list={['kategorie-block', `kategorie-block--${farbe}`]}
+      data-kategorie-block
+      data-einblenden
+    >
       {kategorie.hinweis && !istLangerHinweis && (
         <p class="kategorie-block__hinweis">{kategorie.hinweis}</p>
       )}
@@ -98,6 +105,7 @@ const istLangerHinweis = Boolean(kategorie.hinweis && kategorie.hinweis.length >
                 const einzelPreis = formatierePreis(gericht.preis);
                 const kleinPreis = formatierePreis(gericht.preisKlein);
                 const grossPreis = formatierePreis(gericht.preisGross);
+                const filterPreis = gericht.preisKlein ?? gericht.preis ?? gericht.preisGross;
 
                 return (
                   <li
@@ -107,8 +115,12 @@ const istLangerHinweis = Boolean(kategorie.hinweis && kategorie.hinweis.length >
                     ]}
                     data-gericht
                     data-index={gerichtIndex}
+                    data-kategorie-id={kategorie.id}
                     data-kategorie-name={kategorie.name}
                     data-abschnitt-titel={abschnitt.titel ?? ''}
+                    data-vegetarisch={gericht.vegetarisch ? '1' : undefined}
+                    data-preis={filterPreis !== null && filterPreis !== undefined ? String(filterPreis) : undefined}
+                    data-kennzeichnung={hatKennzeichnung ? gericht.kennzeichnung.join(',') : undefined}
                   >
                     <div class="gericht__kopf">
                       <span class="gericht__name" data-feld="name" data-original={gericht.name}>
@@ -331,21 +343,6 @@ const istLangerHinweis = Boolean(kategorie.hinweis && kategorie.hinweis.length >
     align-items: baseline;
   }
 
-  .kategorie-sektion__titel {
-    font-family: var(--schrift-basis);
-    font-weight: var(--gewicht-fett);
-    font-size: clamp(1.375rem, 1.15rem + 0.65vw, 1.75rem);
-    line-height: var(--zeilenhoehe-eng);
-  }
-
-  .kategorie-sektion__titel--rot {
-    color: var(--farbe-rot);
-  }
-
-  .kategorie-sektion__titel--gruen {
-    color: var(--farbe-gruen);
-  }
-
   .kategorie-sektion__groessen {
     display: contents;
   }
@@ -359,15 +356,36 @@ const istLangerHinweis = Boolean(kategorie.hinweis && kategorie.hinweis.length >
     white-space: nowrap;
   }
 
-  /* Heller Listen-Block mit konzentrischen Ecken nach PLAN.md */
+  /* Heller Listen-Block mit konzentrischen Ecken nach PLAN.md und 4px-Farbakzent oben */
   .kategorie-block {
     --karte-innen: var(--liste-innen);
+    --kategorie-akzent: var(--farbe-rot);
+    position: relative;
+    overflow: clip;
     background-color: var(--farbe-weiss);
-    padding: var(--karte-innen);
+    padding: calc(var(--karte-innen) + 4px) var(--karte-innen) var(--karte-innen);
     border-radius: calc(var(--karte-innen) + var(--radius-innen));
     box-shadow:
       0 0 0 1px var(--farbe-haarlinie),
       var(--schatten-liste);
+  }
+
+  .kategorie-block::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    inset-inline: 0;
+    height: 4px;
+    background-color: var(--kategorie-akzent);
+    pointer-events: none;
+  }
+
+  .kategorie-block--rot {
+    --kategorie-akzent: var(--farbe-rot);
+  }
+
+  .kategorie-block--gruen {
+    --kategorie-akzent: var(--farbe-gruen);
   }
 
   .kategorie-block__hinweis {
@@ -589,15 +607,12 @@ const istLangerHinweis = Boolean(kategorie.hinweis && kategorie.hinweis.length >
     user-select: none;
     transition:
       background-color var(--dauer-kurz) ease,
-      transform 100ms ease;
+      transform 100ms ease,
+      opacity 100ms ease;
   }
 
   .extras-details__summary::-webkit-details-marker {
     display: none;
-  }
-
-  .extras-details__summary:active {
-    transform: scale(0.96);
   }
 
   @media (hover: hover) {

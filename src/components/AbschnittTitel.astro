@@ -1,0 +1,73 @@
+---
+// Gemeinsame Abschnittsüberschrift für Startseite und Speisekarte (linksbündig mit kleinem Farbakzent)
+interface Props {
+  id?: string;
+  as?: 'h1' | 'h2' | 'h3';
+  farbe?: 'rot' | 'gruen';
+  variante?: 'standard' | 'kompakt';
+  class?: string;
+}
+
+const {
+  id,
+  as: Tag = 'h2',
+  farbe = 'rot',
+  variante = 'standard',
+  class: className = '',
+} = Astro.props;
+---
+
+<Tag
+  id={id}
+  class:list={[
+    'abschnitt-titel',
+    `abschnitt-titel--${farbe}`,
+    `abschnitt-titel--${variante}`,
+    className,
+  ]}
+>
+  <slot />
+</Tag>
+
+<style>
+  .abschnitt-titel {
+    --akzent-farbe: var(--farbe-rot);
+    font-family: var(--schrift-basis);
+    font-weight: var(--gewicht-fett);
+    line-height: var(--zeilenhoehe-eng);
+    text-align: left;
+    color: var(--farbe-leiste-text);
+  }
+
+  .abschnitt-titel--rot {
+    --akzent-farbe: var(--farbe-rot);
+  }
+
+  .abschnitt-titel--gruen {
+    --akzent-farbe: var(--farbe-gruen);
+  }
+
+  .abschnitt-titel::before {
+    content: '';
+    display: block;
+    width: 2rem;
+    height: 0.25rem;
+    border-radius: 999px;
+    background-color: var(--akzent-farbe);
+    margin-bottom: var(--abstand-xs);
+  }
+
+  .abschnitt-titel--standard {
+    font-size: clamp(1.75rem, 1.5rem + 0.8vw, 2.125rem);
+  }
+
+  .abschnitt-titel--kompakt {
+    font-size: clamp(1.375rem, 1.15rem + 0.65vw, 1.75rem);
+  }
+
+  .abschnitt-titel--kompakt::before {
+    width: 1.5rem;
+    height: 0.2rem;
+    margin-bottom: 0.25rem;
+  }
+</style>
