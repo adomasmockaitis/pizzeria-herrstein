@@ -1,0 +1,30 @@
+---
+// Schmaler Hinweisbalken ganz oben im Entwurfs-/Demo-Modus
+import { DEMO_MODE, DEMO_HINWEIS_TEXT } from '../config';
+---
+
+{DEMO_MODE && (
+  <div class="demo-balken auf-rot" role="note">
+    <p class="demo-balken__text">{DEMO_HINWEIS_TEXT}</p>
+  </div>
+)}
+
+<style>
+  .demo-balken {
+    position: relative;
+    z-index: 30;
+    min-height: var(--demo-balken-hoehe);
+    background-color: var(--farbe-schwarz);
+    color: var(--farbe-text-hell);
+    font-size: var(--text-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--abstand-2xs) var(--abstand-m);
+    text-align: center;
+  }
+
+  .demo-balken__text {
+    line-height: 1.3;
+  }
+</style>

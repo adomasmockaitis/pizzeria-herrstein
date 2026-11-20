@@ -1,0 +1,420 @@
+---
+// Responsiver Header: Desktop transparent über Hero (Figma) oder fest; Mobil mit Logo, Anruf-Button und Burger-Menü
+import { Image } from 'astro:assets';
+import Button from './Button.astro';
+import kontakt from '../content/kontakt.json';
+import texte from '../content/texte.json';
+import logoKlein from '../assets/logo/logo-klein.svg';
+import telefonIcon from '../assets/icons/telefon.png';
+
+interface Props {
+  transparent?: boolean;
+  aktiv?: 'home' | 'speisekarte' | string;
+}
+
+const { transparent = true, aktiv = '' } = Astro.props;
+
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+
+// Fallback-Bezeichnungen, falls texte.json unvollständig ist
+const fallbackLabels = ['Home', 'Speisekarte', 'Lieferservice', 'Öffnungszeiten', 'Kontakt'];
+const navZiele = [
+  { key: 'home', href: base },
+  { key: 'speisekarte', href: `${base}speisekarte` },
+  { key: 'lieferservice', href: `${base}#lieferservice` },
+  { key: 'oeffnungszeiten', href: `${base}#oeffnungszeiten` },
+  { key: 'kontakt', href: `${base}#kontakt` },
+];
+
+const navPunkte = navZiele.map((ziel, index) => ({
+  ...ziel,
+  label: texte.navigation?.[index]?.label ?? fallbackLabels[index],
+}));
+---
+
+<header class:list={['header', transparent ? 'header--transparent' : 'header--fest', 'auf-rot']}>
+  <div class="header__leiste">
+    <!-- Kleines Logo nur auf Mobil (< 1024px) -->
+    <a href={base} class="header__logo-link">
+      <Image
+        src={logoKlein}
+        alt={`${kontakt.name} – Startseite`}
+        class="header__logo"
+        loading="eager"
+      />
+    </a>
+
+    <!-- Hauptnavigation -->
+    <nav id="hauptmenue" class="header__nav" aria-label="Hauptnavigation">
+      <ul class="header__liste">
+        {navPunkte.map((punkt) => {
+          const istAktiv = aktiv === punkt.key;
+          return (
+            <li class="header__item">
+              <a
+                href={punkt.href}
+                class:list={['header__link', istAktiv && 'header__link--aktiv']}
+                aria-current={istAktiv ? 'page' : undefined}
+              >
+                {punkt.label}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+
+    <!-- Desktop: Roter Pill-Button rechts -->
+    <div class="header__telefon-desktop">
+      <Button
+        href={kontakt.telefon.link}
+        variante="rot"
+        groesse="klein"
+        icon="telefon"
+      >
+        {kontakt.telefon.anzeige}
+      </Button>
+    </div>
+
+    <!-- Mobil: Runder Anruf-Button + Burger-Button -->
+    <div class="header__mobil-aktionen">
+      <a
+        href={kontakt.telefon.link}
+        class="header__anruf-rund"
+        aria-label={`Anrufen: ${kontakt.telefon.anzeige}`}
+      >
+        <Image
+          src={telefonIcon}
+          alt=""
+          width={20}
+          height={20}
+          class="header__anruf-icon"
+          aria-hidden="true"
+        />
+      </a>
+
+      <button
+        type="button"
+        class="header__burger"
+        aria-expanded="false"
+        aria-controls="hauptmenue"
+        aria-label="Menü öffnen"
+      >
+        <span class="header__burger-linie" aria-hidden="true"></span>
+        <span class="header__burger-linie" aria-hidden="true"></span>
+        <span class="header__burger-linie" aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<script is:inline>
+  (() => {
+    const burger = document.querySelector('.header__burger');
+    const nav = document.getElementById('hauptmenue');
+    if (!burger || !nav) return;
+
+    const schliessen = (fokusZurueck) => {
+      burger.setAttribute('aria-expanded', 'false');
+      burger.setAttribute('aria-label', 'Menü öffnen');
+      nav.classList.remove('ist-offen');
+      if (fokusZurueck) {
+        burger.focus({ preventScroll: true });
+      }
+    };
+
+    const oeffnen = () => {
+      burger.setAttribute('aria-expanded', 'true');
+      burger.setAttribute('aria-label', 'Menü schließen');
+      nav.classList.add('ist-offen');
+    };
+
+    burger.addEventListener('click', () => {
+      const offen = burger.getAttribute('aria-expanded') === 'true';
+      if (offen) {
+        schliessen(false);
+      } else {
+        oeffnen();
+      }
+    });
+
+    // Bei Escape schließen und Fokus zurück an den Burger geben
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && burger.getAttribute('aria-expanded') === 'true') {
+        schliessen(true);
+      }
+    });
+
+    // Bei Klick auf einen Navigationslink schließen und Fokus zurückgeben
+    nav.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        if (burger.getAttribute('aria-expanded') === 'true') {
+          schliessen(true);
+        }
+      });
+    });
+  })();
+</script>
+
+<style>
+  .header {
+    width: 100%;
+    color: var(--farbe-text-hell);
+    z-index: 20;
+  }
+
+  .header--transparent {
+    position: absolute;
+    top: 0;
+    inset-inline: 0;
+  }
+
+  /* Dunkler Verlauf oben über dem Hero-Foto (Figma: ca. 305px hoch, 60% Schwarz → transparent) */
+  .header--transparent::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    inset-inline: 0;
+    height: 19rem;
+    background: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--farbe-schwarz) 60%, transparent) 0%,
+      transparent 100%
+    );
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .header--fest {
+    position: relative;
+    background-color: var(--farbe-schwarz);
+  }
+
+  .header__leiste {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--abstand-s);
+    padding: var(--abstand-s) var(--container-rand);
+    position: relative;
+  }
+
+  /* Kleines Logo auf Mobil (ohne Seitenverhältnis zu verzerren) */
+  .header__logo-link {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .header__logo {
+    height: 2.75rem;
+    width: auto;
+    aspect-ratio: 119 / 87;
+  }
+
+  /* Mobile Aktionen rechts (Anruf + Burger) */
+  .header__mobil-aktionen {
+    display: flex;
+    align-items: center;
+    gap: var(--abstand-s);
+  }
+
+  .header__anruf-rund {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background-color: var(--farbe-rot);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color var(--dauer-kurz) ease;
+  }
+
+  .header__anruf-rund:hover {
+    background-color: var(--farbe-rot-dunkel);
+  }
+
+  .header__anruf-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    object-fit: contain;
+  }
+
+  /* Burger-Button (3 CSS-Striche, 44×44 px Klickfläche) */
+  .header__burger {
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0.625rem 0.5rem;
+    border: 0;
+    border-radius: var(--radius-badge);
+    background-color: color-mix(in srgb, var(--farbe-schwarz) 55%, transparent);
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.3125rem;
+    cursor: pointer;
+    transition: background-color var(--dauer-kurz) ease;
+  }
+
+  .header__burger:hover {
+    background-color: color-mix(in srgb, var(--farbe-schwarz) 80%, transparent);
+  }
+
+  .header__burger-linie {
+    display: block;
+    width: 1.375rem;
+    height: 2px;
+    border-radius: 2px;
+    background-color: var(--farbe-offwhite);
+    transition:
+      transform var(--dauer-kurz) ease,
+      opacity var(--dauer-kurz) ease;
+  }
+
+  .header__burger[aria-expanded='true'] .header__burger-linie:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .header__burger[aria-expanded='true'] .header__burger-linie:nth-child(2) {
+    opacity: 0;
+  }
+
+  .header__burger[aria-expanded='true'] .header__burger-linie:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  /* Desktop-Telefonbutton erst ab 1024px */
+  .header__telefon-desktop {
+    display: none;
+  }
+
+  /* Mobiles Navigationspanel (volle Breite) */
+  .header__nav {
+    order: 3;
+    flex: 1 0 100%;
+    margin-inline: calc(var(--container-rand) * -1);
+    background-color: color-mix(in srgb, var(--farbe-schwarz) 92%, transparent);
+    padding: var(--abstand-s) var(--container-rand) var(--abstand-m);
+  }
+
+  /* Mit JS standardmäßig eingeklappt, nur bei .ist-offen sichtbar */
+  :global(html.js) .header__nav {
+    display: none;
+  }
+
+  :global(html.js) .header__nav.ist-offen {
+    display: block;
+  }
+
+  /* Ohne JS: Burger ausblenden, Navigation unter dem Header sichtbar lassen */
+  :global(html:not(.js)) .header__burger {
+    display: none;
+  }
+
+  :global(html:not(.js)) .header--transparent {
+    position: relative;
+    background-color: var(--farbe-schwarz);
+  }
+
+  .header__liste {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--abstand-2xs);
+  }
+
+  .header__link {
+    display: flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: var(--abstand-xs) var(--abstand-m);
+    color: var(--farbe-text-hell);
+    font-family: var(--schrift-basis);
+    font-weight: var(--gewicht-fett);
+    font-size: var(--text-basis);
+    text-decoration: none;
+    border-radius: var(--radius-badge);
+    transition: background-color var(--dauer-kurz) ease;
+  }
+
+  .header__link:hover {
+    background-color: color-mix(in srgb, var(--farbe-offwhite) 14%, transparent);
+  }
+
+  .header__link--aktiv,
+  .header__link--aktiv:hover {
+    background-color: var(--farbe-rot);
+  }
+
+  /* Desktop-Ansicht (≥ 1024px): Figma-Navigation links, Telefon-Button rechts */
+  @media (min-width: 1024px) {
+    :global(html:not(.js)) .header--transparent {
+      position: absolute;
+      background-color: transparent;
+    }
+
+    .header__leiste {
+      flex-wrap: nowrap;
+      padding-inline: clamp(1.5rem, 2.86vw, 3.4375rem);
+    }
+
+    .header--transparent .header__leiste {
+      padding-top: clamp(1.75rem, 2.86vw, 3.4375rem);
+      padding-bottom: var(--abstand-m);
+    }
+
+    .header--fest .header__leiste {
+      padding-block: var(--abstand-m);
+    }
+
+    .header__logo-link,
+    .header__mobil-aktionen {
+      display: none;
+    }
+
+    .header__nav,
+    :global(html.js) .header__nav {
+      display: block;
+      order: 0;
+      flex: 0 1 auto;
+      margin-inline: 0;
+      padding: 0;
+      background-color: transparent;
+    }
+
+    .header__liste {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--abstand-xl);
+    }
+
+    .header__link {
+      min-height: 1.75rem;
+      padding: 0;
+      font-size: var(--text-m);
+      white-space: nowrap;
+    }
+
+    .header__link:hover {
+      background-color: transparent;
+      text-decoration: underline;
+      text-underline-offset: 0.35em;
+    }
+
+    .header__link--aktiv,
+    .header__link--aktiv:hover {
+      background-color: var(--farbe-rot);
+      padding-inline: var(--abstand-m);
+      text-decoration: none;
+    }
+
+    .header__telefon-desktop {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+  }
+</style>

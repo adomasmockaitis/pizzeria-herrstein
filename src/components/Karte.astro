@@ -1,0 +1,61 @@
+---
+// Farbige Inhaltskarte (rot oder grün) im Figma-Stil
+interface Props {
+  farbe?: 'rot' | 'gruen';
+  as?: 'article' | 'section' | 'div';
+  schatten?: boolean;
+  class?: string;
+}
+
+const {
+  farbe = 'rot',
+  as: Tag = 'article',
+  schatten = false,
+  class: className = '',
+} = Astro.props;
+---
+
+<Tag
+  class:list={[
+    'karte',
+    `karte--${farbe}`,
+    schatten && 'karte--schatten',
+    'auf-rot',
+    className,
+  ]}
+>
+  <slot />
+</Tag>
+
+<style>
+  .karte {
+    border-radius: var(--radius-karte);
+    color: var(--farbe-text-hell);
+    padding: var(--abstand-l);
+  }
+
+  @media (min-width: 768px) {
+    .karte {
+      padding: calc(var(--abstand-m) * 2);
+    }
+  }
+
+  .karte--rot {
+    background-color: var(--farbe-rot);
+  }
+
+  .karte--gruen {
+    background-color: var(--farbe-gruen);
+  }
+
+  .karte--schatten {
+    box-shadow: var(--schatten-karte);
+  }
+
+  /* Textlinks innerhalb der Karte bleiben hell und unterstrichen */
+  .karte :global(a:not(.btn)) {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+</style>

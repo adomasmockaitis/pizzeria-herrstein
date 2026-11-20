@@ -1,0 +1,209 @@
+---
+// Fußzeile im Figma-Stil mit dunklem Verlauf, Logo, Navigation, Trikolore-Linie und rechtlichen Links
+import { Image } from 'astro:assets';
+import kontakt from '../content/kontakt.json';
+import texte from '../content/texte.json';
+import logoKlein from '../assets/logo/logo-klein.svg';
+
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+const aktuellesJahr = new Date().getFullYear();
+
+const fallbackLabels = ['Home', 'Speisekarte', 'Lieferservice', 'Öffnungszeiten', 'Kontakt'];
+const navZiele = [
+  { href: base },
+  { href: `${base}speisekarte` },
+  { href: `${base}#lieferservice` },
+  { href: `${base}#oeffnungszeiten` },
+  { href: `${base}#kontakt` },
+];
+
+const navPunkte = navZiele.map((ziel, index) => ({
+  ...ziel,
+  label: texte.navigation?.[index]?.label ?? fallbackLabels[index],
+}));
+---
+
+<footer class="footer auf-rot">
+  <div class="container footer__inhalt">
+    <a href={base} class="footer__logo-link">
+      <Image
+        src={logoKlein}
+        alt={`${kontakt.name} – Startseite`}
+        width={119}
+        height={87}
+        class="footer__logo"
+      />
+    </a>
+
+    <nav class="footer__nav" aria-label="Fußnavigation">
+      <ul class="footer__nav-liste">
+        {navPunkte.map((punkt) => (
+          <li>
+            <a href={punkt.href} class="footer__link">{punkt.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <!-- Trikolore-Linie (grün | offwhite | rot) -->
+    <div class="footer__trikolore" aria-hidden="true">
+      <span class="footer__trikolore-gruen"></span>
+      <span class="footer__trikolore-weiss"></span>
+      <span class="footer__trikolore-rot"></span>
+    </div>
+
+    <div class="footer__unten">
+      <div class="footer__copyright">
+        <p class="footer__copy-zeile">
+          &copy; {aktuellesJahr} {kontakt.name}. Alle Rechte vorbehalten.
+        </p>
+        <p class="footer__credit">Website by Adomas Mockaitis.</p>
+      </div>
+
+      <div class="footer__rechtliches">
+        <a href={`${base}impressum`} class="footer__link">Impressum</a>
+        <a href={`${base}datenschutz`} class="footer__link">Datenschutz</a>
+      </div>
+    </div>
+
+    <p class="footer__fotonachweis">
+      Fotos: Ivan Torres, Inna Gurina, Nicholas Grande via Unsplash
+    </p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    min-height: 16.875rem;
+    padding-top: var(--abstand-2xl);
+    padding-bottom: var(--abstand-l);
+    color: var(--farbe-text-hell);
+    /* Verlauf von transparent oben zu schwarz unten (hoher Kontrast für offwhite Text) */
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      color-mix(in srgb, var(--farbe-schwarz) 65%, transparent) 30%,
+      color-mix(in srgb, var(--farbe-schwarz) 92%, transparent) 62%,
+      var(--farbe-schwarz) 100%
+    );
+  }
+
+  .footer__inhalt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .footer__logo-link {
+    display: inline-flex;
+    margin-bottom: var(--abstand-m);
+  }
+
+  .footer__logo {
+    width: 119px;
+    height: 87px;
+  }
+
+  .footer__nav {
+    margin-bottom: var(--abstand-m);
+  }
+
+  .footer__nav-liste {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--abstand-xs) calc(var(--abstand-m) * 2);
+  }
+
+  .footer__link {
+    color: var(--farbe-text-hell);
+    font-family: var(--schrift-basis);
+    font-weight: var(--gewicht-normal);
+    font-size: var(--text-m);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+  }
+
+  .footer__link:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+  }
+
+  /* Trikolore-Linie: 4px hoch, drei gleiche Segmente, äußere Ecken 4px gerundet */
+  .footer__trikolore {
+    width: 100%;
+    height: 4px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: var(--schatten-klein);
+    margin-bottom: var(--abstand-m);
+  }
+
+  .footer__trikolore-gruen {
+    background-color: var(--farbe-gruen-figma);
+  }
+
+  .footer__trikolore-weiss {
+    background-color: var(--farbe-offwhite);
+  }
+
+  .footer__trikolore-rot {
+    background-color: var(--farbe-rot);
+  }
+
+  .footer__unten {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--abstand-s);
+  }
+
+  .footer__copyright {
+    display: flex;
+    flex-direction: column;
+    gap: var(--abstand-2xs);
+  }
+
+  .footer__copy-zeile {
+    font-size: var(--text-m);
+  }
+
+  .footer__credit,
+  .footer__fotonachweis {
+    font-size: var(--text-xs);
+    color: color-mix(in srgb, var(--farbe-offwhite) 85%, transparent);
+  }
+
+  .footer__rechtliches {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--abstand-s) var(--abstand-l);
+  }
+
+  .footer__fotonachweis {
+    margin-top: var(--abstand-s);
+  }
+
+  @media (min-width: 768px) {
+    .footer__unten {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .footer__fotonachweis {
+      align-self: flex-start;
+      text-align: left;
+    }
+  }
+</style>

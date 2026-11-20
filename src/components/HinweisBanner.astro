@@ -1,0 +1,28 @@
+---
+// Optionaler Hinweis-Banner (z. B. Betriebsurlaub) aus hinweis.json
+import hinweis from '../content/hinweis.json';
+---
+
+{hinweis.aktiv && (
+  <div class="hinweis-banner auf-rot" role="status">
+    <p class="hinweis-banner__text">{hinweis.text}</p>
+  </div>
+)}
+
+<style>
+  .hinweis-banner {
+    position: relative;
+    z-index: 25;
+    background-color: var(--farbe-gruen);
+    color: var(--farbe-text-hell);
+    font-size: var(--text-m);
+    font-weight: var(--gewicht-fett);
+    text-align: center;
+    padding: var(--abstand-xs) var(--abstand-m);
+  }
+
+  .hinweis-banner__text {
+    max-width: var(--container-max);
+    margin-inline: auto;
+  }
+</style>

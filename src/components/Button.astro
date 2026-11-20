@@ -1,0 +1,145 @@
+---
+// Wiederverwendbarer Pill-Button (Link) mit optionalem Icon
+import { Image } from 'astro:assets';
+import telefonIcon from '../assets/icons/telefon.png';
+import whatsappIcon from '../assets/icons/whatsapp.png';
+import pinIcon from '../assets/icons/pin.png';
+
+interface Props {
+  href: string;
+  variante?: 'rot' | 'hell' | 'gruen';
+  groesse?: 'normal' | 'klein';
+  icon?: 'telefon' | 'whatsapp' | 'pin';
+  extern?: boolean;
+  class?: string;
+  ariaLabel?: string;
+}
+
+const {
+  href,
+  variante = 'rot',
+  groesse = 'normal',
+  icon,
+  extern = false,
+  class: className = '',
+  ariaLabel,
+} = Astro.props;
+
+const icons = {
+  telefon: telefonIcon,
+  whatsapp: whatsappIcon,
+  pin: pinIcon,
+} as const;
+
+const iconBild = icon ? icons[icon] : undefined;
+const iconGroesse = groesse === 'klein' ? 16 : 19;
+---
+
+<a
+  href={href}
+  class:list={[
+    'btn',
+    `btn--${variante}`,
+    `btn--${groesse}`,
+    variante !== 'hell' && 'auf-rot',
+    className,
+  ]}
+  target={extern ? '_blank' : undefined}
+  rel={extern ? 'noopener noreferrer' : undefined}
+  aria-label={ariaLabel}
+>
+  {iconBild && (
+    <Image
+      src={iconBild}
+      alt=""
+      width={iconGroesse}
+      height={iconGroesse}
+      class="btn__icon"
+      aria-hidden="true"
+    />
+  )}
+  <span class="btn__text"><slot /></span>
+</a>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--abstand-xs);
+    border-radius: var(--radius-pill);
+    font-family: var(--schrift-basis);
+    font-weight: var(--gewicht-fett);
+    font-size: var(--text-m);
+    line-height: 1.2;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition:
+      background-color var(--dauer-kurz) ease,
+      border-color var(--dauer-kurz) ease;
+  }
+
+  /* Normale Größe (Figma: ca. 46px Höhe, 2.5rem seitliches Padding) */
+  .btn--normal {
+    min-height: 2.875rem;
+    padding: var(--abstand-xs) var(--abstand-xl);
+  }
+
+  /* Kleine Größe: auf Touch mindestens 44×44 px Klickfläche */
+  .btn--klein {
+    min-height: 2.75rem;
+    min-width: 2.75rem;
+    padding: var(--abstand-xs) var(--abstand-m);
+  }
+
+  /* Auf Desktop mit Mauszeiger kompakte Figma-Höhe (28px) */
+  @media (min-width: 768px) and (pointer: fine) {
+    .btn--klein {
+      min-height: 1.75rem;
+      min-width: auto;
+      padding: 0 var(--abstand-m);
+    }
+  }
+
+  .btn__icon {
+    flex-shrink: 0;
+    object-fit: contain;
+  }
+
+  /* Farbvarianten */
+  .btn--rot {
+    background-color: var(--farbe-rot);
+    color: var(--farbe-text-hell);
+  }
+
+  .btn--rot:hover {
+    background-color: var(--farbe-rot-dunkel);
+  }
+
+  .btn--gruen {
+    background-color: var(--farbe-gruen);
+    color: var(--farbe-text-hell);
+  }
+
+  .btn--gruen:hover {
+    background-color: var(--farbe-gruen-dunkel);
+  }
+
+  .btn--hell {
+    background-color: var(--farbe-offwhite);
+    color: var(--farbe-schwarz);
+    border-color: var(--farbe-offwhite);
+  }
+
+  .btn--hell:hover {
+    background-color: color-mix(in srgb, var(--farbe-offwhite) 90%, var(--farbe-schwarz));
+    border-color: color-mix(in srgb, var(--farbe-offwhite) 90%, var(--farbe-schwarz));
+  }
+
+  /* Weiße PNG-Icons auf hellem Button schwarz einfärben */
+  .btn--hell .btn__icon {
+    filter: brightness(0);
+  }
+</style>

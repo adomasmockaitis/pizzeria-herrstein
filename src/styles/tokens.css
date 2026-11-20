@@ -1,0 +1,76 @@
+/*
+  Design Tokens – abgeleitet aus Figma "Desktop - 11" (Node 1:770).
+  Alle Farben, Schriften, Größen, Radien und Abstände an EINER Stelle.
+*/
+
+/* Selbst gehostete Schriften (kein Google-Fonts-Aufruf, DSGVO) */
+@import '@fontsource/montserrat/latin-500.css';
+@import '@fontsource/montserrat/latin-700.css';
+@import '@fontsource/montserrat/latin-800.css';
+@import '@fontsource/dm-serif-display/latin-400.css';
+
+:root {
+  /* ---------- Farben ---------- */
+  --farbe-rot: #c40010;            /* Figma: Hauptfarbe, Buttons, Karten */
+  --farbe-rot-dunkel: #a3000d;     /* Hover-Zustand (abgeleitet) */
+  --farbe-gruen-figma: #009a29;    /* Figma-Original */
+  /* Weiße Schrift auf #009a29 hat nur 3,6:1 Kontrast (zu wenig für kleine Schrift).
+     Deshalb minimal dunkler für Flächen mit Text: 4,7:1 (WCAG AA). */
+  --farbe-gruen: #00832a;
+  --farbe-gruen-dunkel: #006b22;   /* Hover-Zustand (abgeleitet) */
+  --farbe-offwhite: #fbfaf9;       /* Seitenhintergrund + Schrift auf Farbe */
+  --farbe-schwarz: #000000;
+  --farbe-text: #000000;
+  --farbe-text-hell: var(--farbe-offwhite);
+
+  /* ---------- Schriften ---------- */
+  --schrift-basis: 'Montserrat', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --schrift-headline: 'DM Serif Display', Georgia, 'Times New Roman', serif;
+
+  --gewicht-normal: 500;   /* Figma: Montserrat Medium */
+  --gewicht-fett: 700;     /* Figma: Montserrat Bold */
+  --gewicht-extrafett: 800;
+
+  /* Schriftgrößen (Figma-Werte bei 1920 px; große Größen skalieren mit clamp) */
+  --text-xs: 0.75rem;      /* 12px */
+  --text-s: 0.8125rem;     /* 13px – kleine Beschreibungen in Karten */
+  --text-m: 0.875rem;      /* 14px – Navigation, Buttons */
+  --text-basis: 1rem;      /* 16px */
+  --text-l: 1.25rem;       /* 20px – Kartentitel */
+  --text-xl: 1.5rem;       /* 24px – Abschnittsüberschriften */
+  --text-2xl: clamp(1.375rem, 1.1rem + 0.8vw, 2rem);      /* 32px – Zonen-Titel, Preise */
+  --text-hero-sub: clamp(1.0625rem, 0.9rem + 0.7vw, 1.625rem); /* 26px */
+  --text-hero: clamp(2.5rem, 1.2rem + 4.2vw, 5.3125rem);  /* 85px */
+
+  --zeilenhoehe: 1.4;
+  --zeilenhoehe-eng: 1.15;
+
+  /* ---------- Radien ---------- */
+  --radius-pill: 30px;     /* Buttons */
+  --radius-badge: 20px;    /* Nav-Pills, Preis-Badges */
+  --radius-karte: 23px;    /* Karten */
+
+  /* ---------- Schatten ---------- */
+  --schatten-klein: 0 2px 4px rgba(0, 0, 0, 0.25);
+  --schatten-text: 2px 2px 5.8px rgba(0, 0, 0, 0.44);
+  --schatten-karte: 0 2px 4px rgba(0, 0, 0, 0.25);
+
+  /* ---------- Abstände ---------- */
+  --abstand-2xs: 0.25rem;
+  --abstand-xs: 0.5rem;
+  --abstand-s: 0.75rem;
+  --abstand-m: 1rem;
+  --abstand-l: 1.5rem;
+  --abstand-xl: 2.5rem;
+  --abstand-2xl: 4rem;
+  --abstand-sektion: clamp(3rem, 2rem + 4vw, 6rem);
+
+  /* ---------- Layout ---------- */
+  --container-max: 1224px;   /* Figma: Inhaltsbreite ca. 1224 px (348–1575) */
+  --container-rand: clamp(1rem, 4vw, 3.4rem);
+  --header-hoehe: 4.5rem;
+  --demo-balken-hoehe: 2rem;
+
+  /* ---------- Bewegung ---------- */
+  --dauer-kurz: 150ms;
+}

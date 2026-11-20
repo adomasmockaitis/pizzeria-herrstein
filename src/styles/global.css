@@ -1,0 +1,161 @@
+/* Globale Basisstile, Reset, Fokus-Regeln und Hilfsklassen */
+@import './tokens.css';
+
+/* Moderner kleiner Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+ol,
+figure,
+blockquote {
+  margin: 0;
+}
+
+ul,
+ol {
+  padding: 0;
+}
+
+img,
+picture,
+svg {
+  max-width: 100%;
+  display: block;
+}
+
+img {
+  height: auto;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* Sanftes Scrollen mit Abstand für den Header */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--header-hoehe);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Grundlayout (Mobile first: Platz unten für MobileAktionsleiste) */
+body {
+  background-color: var(--farbe-offwhite);
+  color: var(--farbe-text);
+  font-family: var(--schrift-basis);
+  font-weight: var(--gewicht-normal);
+  line-height: var(--zeilenhoehe);
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 768px) {
+  body {
+    padding-bottom: 0;
+  }
+}
+
+main {
+  flex: 1;
+}
+
+main:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Sichtbarer Tastatur-Fokus */
+:focus-visible {
+  outline: 3px solid var(--farbe-rot);
+  outline-offset: 3px;
+}
+
+/* Auf roten und dunklen/farbigen Flächen weißer Fokus-Rahmen */
+:where(.auf-rot) :focus-visible,
+.auf-rot:focus-visible {
+  outline-color: var(--farbe-offwhite);
+}
+
+/* Container für Seiteninhalte */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-rand);
+}
+
+/* Nur für Screenreader sichtbar */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Skip-Link: erst bei Tastaturfokus sichtbar */
+.skip-link {
+  position: fixed;
+  top: var(--abstand-s);
+  left: var(--abstand-s);
+  z-index: 100;
+  padding: var(--abstand-s) var(--abstand-m);
+  background-color: var(--farbe-rot);
+  color: var(--farbe-text-hell);
+  font-weight: var(--gewicht-fett);
+  font-size: var(--text-m);
+  text-decoration: none;
+  border-radius: var(--radius-badge);
+  box-shadow: var(--schatten-klein);
+  transform: translateY(-200%);
+  transition: transform var(--dauer-kurz) ease;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* Abschnittsüberschriften im Stil der Figma-Vorlage */
+h2 {
+  font-family: var(--schrift-basis);
+  font-weight: var(--gewicht-fett);
+  font-size: var(--text-xl);
+  line-height: var(--zeilenhoehe-eng);
+}
+
+.sektion-titel {
+  text-align: center;
+}

@@ -1,39 +1,234 @@
 ---
-import { DEMO_MODE, DEMO_HINWEIS_TEXT } from '../config';
+// Checkpoint-Seite für Phase 2: Vorschau von Layout, Header, Hero, Buttons, Karten und Footer
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/Button.astro';
+import Karte from '../components/Karte.astro';
 import kontakt from '../content/kontakt.json';
-import lieferzonen from '../content/lieferzonen.json';
+import texte from '../content/texte.json';
+import heroPizza from '../assets/fotos/hero-pizza-ivan-torres.jpg';
+import logoGross from '../assets/logo/logo-gross.svg';
+import telefonIcon from '../assets/icons/telefon.png';
+import whatsappIcon from '../assets/icons/whatsapp.png';
 
-const sichtbareZonen = lieferzonen.zonen.filter((zone) => zone.sichtbar);
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 ---
 
-<html lang="de">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{kontakt.name}</title>
-    {DEMO_MODE && <meta name="robots" content="noindex, nofollow" />}
-  </head>
-  <body>
-    {DEMO_MODE && (
-      <div role="status">
-        <strong>{DEMO_HINWEIS_TEXT}</strong>
+<BaseLayout
+  title={kontakt.name}
+  description={texte.hero.subline}
+  headerTransparent={true}
+  aktiv="home"
+>
+  <!-- Provisorischer Hero-Bereich (Phase-2-Checkpoint) -->
+  <section class="hero auf-rot" id="top">
+    <Image
+      src={heroPizza}
+      alt="Frisch gebackene Pizza mit geschmolzenem Käse und frischen Kräutern auf einem Holzbrett"
+      widths={[640, 1024, 1440, 1920]}
+      sizes="100vw"
+      loading="eager"
+      fetchpriority="high"
+      class="hero__hintergrund"
+    />
+    <div class="hero__overlay" aria-hidden="true"></div>
+
+    <div class="container hero__inhalt">
+      <h1 class="hero__titel">
+        <Image
+          src={logoGross}
+          alt={kontakt.name}
+          class="hero__logo"
+          loading="eager"
+        />
+      </h1>
+
+      <div class="hero__aktionen">
+        <Button href={kontakt.telefon.link} variante="rot" icon="telefon">
+          {texte.hero.buttonPrimaer}
+        </Button>
+        <Button href={`${base}speisekarte`} variante="hell">
+          {texte.hero.buttonSekundaer}
+        </Button>
       </div>
-    )}
+    </div>
+  </section>
 
-    <main>
-      <h1>{kontakt.name}</h1>
-      <p>
-        Telefon: <a href={kontakt.telefon.link}>{kontakt.telefon.anzeige}</a>
-      </p>
+  <!-- Vorschau der Basis-Bausteine (Phase 2) -->
+  <section class="vorschau">
+    <div class="container">
+      <h2 class="sektion-titel vorschau__titel">Bausteine (Vorschau Phase 2)</h2>
 
-      <h2>Lieferzonen</h2>
-      <ul>
-        {sichtbareZonen.map((zone) => (
-          <li>
-            <strong>{zone.name}</strong> ({zone.preis} €): {zone.orte.join(', ')}
-          </li>
-        ))}
-      </ul>
-    </main>
-  </body>
-</html>
+      <div class="vorschau__grid">
+        <Karte farbe="rot" schatten class="bestell-karte">
+          <Image
+            src={telefonIcon}
+            alt=""
+            width={48}
+            height={48}
+            class="bestell-karte__icon"
+            aria-hidden="true"
+          />
+          <h3 class="bestell-karte__titel">{texte.lieferservice.karten.telefon}</h3>
+          <p class="bestell-karte__untertitel">Rufen Sie uns direkt an</p>
+          <p class="bestell-karte__nummer">{kontakt.telefon.anzeige}</p>
+          <div class="bestell-karte__aktion">
+            <Button href={kontakt.telefon.link} variante="gruen" groesse="klein" icon="telefon">
+              Jetzt anrufen
+            </Button>
+          </div>
+        </Karte>
+
+        <Karte farbe="gruen" schatten class="bestell-karte">
+          <Image
+            src={whatsappIcon}
+            alt=""
+            width={48}
+            height={48}
+            class="bestell-karte__icon"
+            aria-hidden="true"
+          />
+          <h3 class="bestell-karte__titel">{texte.lieferservice.karten.whatsapp}</h3>
+          <p class="bestell-karte__untertitel">Schreiben Sie uns eine Nachricht</p>
+          <p class="bestell-karte__nummer">{kontakt.whatsapp.anzeige}</p>
+          <div class="bestell-karte__aktion">
+            <Button
+              href={kontakt.whatsapp.link}
+              variante="rot"
+              groesse="klein"
+              icon="whatsapp"
+              extern
+            >
+              WhatsApp öffnen
+            </Button>
+          </div>
+        </Karte>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* Provisorischer Hero */
+  .hero {
+    position: relative;
+    min-height: 70vh;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    padding-top: calc(var(--header-hoehe) + var(--abstand-xl));
+    padding-bottom: var(--abstand-2xl);
+    color: var(--farbe-text-hell);
+  }
+
+  .hero__hintergrund {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+
+  .hero__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--farbe-schwarz) 25%, transparent) 0%,
+      color-mix(in srgb, var(--farbe-schwarz) 45%, transparent) 100%
+    );
+  }
+
+  .hero__inhalt {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--abstand-xl);
+    text-align: center;
+  }
+
+  .hero__titel {
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Seitenverhältnis des großen SVG-Logos (245.327 × 177.329) exakt wahren */
+  .hero__logo {
+    width: min(15.33rem, 68vw);
+    height: auto;
+    aspect-ratio: 245.327 / 177.329;
+  }
+
+  .hero__aktionen {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--abstand-m);
+  }
+
+  /* Vorschau-Sektion */
+  .vorschau {
+    padding-block: var(--abstand-sektion);
+  }
+
+  .vorschau__titel {
+    margin-bottom: var(--abstand-xl);
+  }
+
+  .vorschau__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--abstand-l);
+  }
+
+  @media (min-width: 768px) {
+    .vorschau__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Bestellkarten nach Figma-Vorlage (Karte ist eigene Komponente, daher :global) */
+  .vorschau__grid :global(.bestell-karte) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .bestell-karte__icon {
+    width: 3rem;
+    height: 3rem;
+    object-fit: contain;
+    margin-bottom: var(--abstand-m);
+  }
+
+  .bestell-karte__titel {
+    font-size: var(--text-l);
+    font-weight: var(--gewicht-fett);
+    line-height: var(--zeilenhoehe-eng);
+  }
+
+  .bestell-karte__untertitel {
+    font-size: var(--text-s);
+    margin-top: var(--abstand-2xs);
+  }
+
+  .bestell-karte__nummer {
+    font-size: var(--text-2xl);
+    font-weight: var(--gewicht-fett);
+    line-height: var(--zeilenhoehe-eng);
+    margin-block: var(--abstand-l);
+  }
+
+  .bestell-karte__aktion {
+    margin-top: auto;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+</style>

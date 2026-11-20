@@ -1,0 +1,96 @@
+---
+// Feste Schnellkontakt-Leiste am unteren Bildschirmrand (nur < 768px sichtbar)
+import { Image } from 'astro:assets';
+import kontakt from '../content/kontakt.json';
+import telefonIcon from '../assets/icons/telefon.png';
+import whatsappIcon from '../assets/icons/whatsapp.png';
+---
+
+<aside class="aktionsleiste auf-rot" aria-label="Schnellkontakt">
+  <a href={kontakt.telefon.link} class="aktionsleiste__btn aktionsleiste__btn--rot">
+    <Image
+      src={telefonIcon}
+      alt=""
+      width={20}
+      height={20}
+      class="aktionsleiste__icon"
+      aria-hidden="true"
+    />
+    <span>Anrufen</span>
+  </a>
+
+  <a
+    href={kontakt.whatsapp.link}
+    class="aktionsleiste__btn aktionsleiste__btn--gruen"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <Image
+      src={whatsappIcon}
+      alt=""
+      width={20}
+      height={20}
+      class="aktionsleiste__icon"
+      aria-hidden="true"
+    />
+    <span>WhatsApp</span>
+  </a>
+</aside>
+
+<style>
+  .aktionsleiste {
+    position: fixed;
+    bottom: 0;
+    inset-inline: 0;
+    width: 100%;
+    z-index: 40;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background-color: var(--farbe-schwarz);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-shadow: 0 -2px 8px color-mix(in srgb, var(--farbe-schwarz) 25%, transparent);
+  }
+
+  .aktionsleiste__btn {
+    min-height: 3.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--abstand-xs);
+    padding: var(--abstand-s) var(--abstand-m);
+    color: var(--farbe-text-hell);
+    font-family: var(--schrift-basis);
+    font-weight: var(--gewicht-fett);
+    font-size: var(--text-m);
+    text-decoration: none;
+    transition: background-color var(--dauer-kurz) ease;
+  }
+
+  .aktionsleiste__btn--rot {
+    background-color: var(--farbe-rot);
+  }
+
+  .aktionsleiste__btn--rot:hover {
+    background-color: var(--farbe-rot-dunkel);
+  }
+
+  .aktionsleiste__btn--gruen {
+    background-color: var(--farbe-gruen);
+  }
+
+  .aktionsleiste__btn--gruen:hover {
+    background-color: var(--farbe-gruen-dunkel);
+  }
+
+  .aktionsleiste__icon {
+    flex-shrink: 0;
+    object-fit: contain;
+  }
+
+  /* Ab Tablet (768px) ausblenden */
+  @media (min-width: 768px) {
+    .aktionsleiste {
+      display: none;
+    }
+  }
+</style>
