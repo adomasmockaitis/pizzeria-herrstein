@@ -1,8 +1,11 @@
 name: Deploy auf GitHub Pages
 
+# Veröffentlicht immer den Hauptzweig unter /pizzeria-herrstein/ und zusätzlich jeden
+# Zweig "experiment/<name>" als Vorschau unter /pizzeria-herrstein/vorschau/<name>/.
 on:
   push:
-    branches: [main]
+    branches: [main, 'experiment/**']
+  delete:
   workflow_dispatch:
 
 permissions:
@@ -18,8 +21,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Repository auschecken
+      - name: Repository auschecken (Hauptzweig)
         uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
 
       - name: Node.js einrichten
         uses: actions/setup-node@v7
@@ -33,8 +39,36 @@ jobs:
       - name: Abhängigkeiten installieren
         run: npm ci
 
-      - name: Website bauen
+      - name: Website bauen (Hauptzweig)
         run: npm run build
+
+      - name: Vorschauen der Experiment-Zweige bauen
+        shell: bash
+        run: |
+          set -euo pipefail
+          liste=""
+          for zweig in $(git for-each-ref --format='%(refname:short)' 'refs/remotes/origin/experiment/'); do
+            name="${zweig#origin/experiment/}"
+            name="${name//\//-}"
+            echo "Baue Vorschau: $name ($zweig)"
+            git worktree add --detach "../vorschau-$name" "$zweig"
+            (
+              cd "../vorschau-$name"
+              npm ci
+              BASE="/pizzeria-herrstein/vorschau/$name" npm run build
+            )
+            mkdir -p "dist/vorschau/$name"
+            cp -r "../vorschau-$name/dist/." "dist/vorschau/$name/"
+            liste="$liste<li><a href=\"./$name/\">$name</a></li>"
+          done
+          if [ -n "$liste" ]; then
+            cat > dist/vorschau/index.html <<HTML
+          <!doctype html><html lang="de"><meta charset="utf-8"><meta name="robots" content="noindex, nofollow">
+          <meta name="viewport" content="width=device-width, initial-scale=1"><title>Vorschauen</title>
+          <body style="font-family:system-ui;padding:24px"><h1>Vorschauen (Experimente)</h1><ul>$liste</ul>
+          <p><a href="../">Zur normalen Demo</a></p></body></html>
+          HTML
+          fi
 
       - name: Pages-Artefakt hochladen
         uses: actions/upload-pages-artifact@v5

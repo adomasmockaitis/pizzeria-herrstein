@@ -78,3 +78,9 @@ npm run build
 ```
 
 Bei Hosting-Anbietern wie Netlify oder Cloudflare Pages werden `SITE` und `BASE` einfach in den Build-Umgebungsvariablen hinterlegt.
+
+## Vorschauen für Experimente
+
+Jeder Zweig mit dem Namen `experiment/<name>` wird automatisch zusätzlich zur normalen Demo veröffentlicht:
+`https://adomasmockaitis.github.io/pizzeria-herrstein/vorschau/<name>/` (Übersicht: `/pizzeria-herrstein/vorschau/`).
+Die normale Demo kommt immer aus `main`. Wird ein Experiment-Zweig gelöscht, verschwindet seine Vorschau beim nächsten Deploy.
