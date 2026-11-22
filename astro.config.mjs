@@ -1,8 +1,8 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 
-const site = process.env.SITE || 'https://adomasmockaitis.github.io';
-const base = process.env.BASE || '/pizzeria-herrstein';
+const site = process.env.SITE || 'https://pizzeria-herrstein.adomas-mockaitis.de';
+const base = process.env.BASE || '/';
 
 // https://astro.build/config
 export default defineConfig({
