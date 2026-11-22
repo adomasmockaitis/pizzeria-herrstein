@@ -69,7 +69,7 @@ jobs:
             (
               cd "../vorschau-$name"
               npm ci
-              BASE="/pizzeria-herrstein/vorschau/$name" npm run build
+              BASE="/vorschau/$name" npm run build
             )
             mkdir -p "dist/vorschau/$name"
             cp -r "../vorschau-$name/dist/." "dist/vorschau/$name/"
